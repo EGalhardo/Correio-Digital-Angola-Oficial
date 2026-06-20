@@ -34,7 +34,12 @@ async function startServer() {
 
   const ai = new GoogleGenAI({
     apiKey: apiKey || '',
-    apiVersion: 'v1beta'
+    apiVersion: 'v1beta',
+    httpOptions: {
+      headers: {
+        'User-Agent': 'aistudio-build'
+      }
+    }
   });
 
   const getRuntimeFlags = () => ({
@@ -257,6 +262,32 @@ Se o utilizador pedir para explicar o que está aberto, resumir a página, ou fi
         systemPrompt += `\n\n[CRITICAL DIALECT INSTRUCTION]:\nO utilizador atual prefere interagir no dialeto regional de Angola: "${selectedDialect}". Por favor, ignore a instrução de responder em Português de Angola; você DEVE responder integralmente no dialeto "${selectedDialect}". Seja nativo, evite jargões em português fora de termos oficiais inevitáveis, e mantenha o tom do Correio Digital de Angola nesta língua regional.`;
       }
 
+      // Extract any incoming system message from frontend, and merge it with backend systemPrompt
+      let finalSystemPrompt = systemPrompt;
+      const filteredMessages = (messages || []).filter((m: any) => {
+        if (m.role === 'system' || m.role === 'System') {
+          if (m.content || m.text) {
+            finalSystemPrompt += "\n\n" + (m.content || m.text);
+          }
+          return false; // exclude from normal chat turns
+        }
+        return true;
+      });
+
+      // Merge consecutive messages with the same role to strictly alternate to avoid GoogleGenAIError
+      const alternateMessages: { role: 'user' | 'assistant'; content: string }[] = [];
+      for (const msg of filteredMessages) {
+        const role = msg.role === 'assistant' || msg.role === 'model' || msg.role === 'bot' ? 'assistant' : 'user';
+        const content = msg.content || msg.text || '';
+        if (!content) continue;
+        
+        if (alternateMessages.length > 0 && alternateMessages[alternateMessages.length - 1].role === role) {
+          alternateMessages[alternateMessages.length - 1].content += "\n\n" + content;
+        } else {
+          alternateMessages.push({ role, content });
+        }
+      }
+
       // 1. Try Groq if key is configured
       if (groqApiKey) {
         try {
@@ -264,9 +295,12 @@ Se o utilizador pedir para explicar o que está aberto, resumir a página, ou fi
             messages: [
               {
                 role: "system",
-                content: systemPrompt
+                content: finalSystemPrompt
               },
-              ...messages
+              ...alternateMessages.map(m => ({
+                role: m.role,
+                content: m.content
+              }))
             ],
             model: "llama-3.1-8b-instant",
           });
@@ -279,16 +313,16 @@ Se o utilizador pedir para explicar o que está aberto, resumir a página, ou fi
       // 2. Try Gemini if configured
       if (apiKey) {
         try {
-          const formattedContents = messages.map((m: any) => ({
+          const formattedContents = alternateMessages.map((m: any) => ({
             role: m.role === 'assistant' ? 'model' : 'user',
-            parts: [{ text: m.content || m.text || '' }]
+            parts: [{ text: m.content }]
           }));
 
           const response = await ai.models.generateContent({
-            model: "gemini-2.5-flash",
+            model: "gemini-3.5-flash",
             contents: formattedContents,
             config: {
-              systemInstruction: systemPrompt,
+              systemInstruction: finalSystemPrompt,
               temperature: 0.5,
             }
           });
@@ -353,7 +387,7 @@ Se o utilizador pedir para explicar o que está aberto, resumir a página, ou fi
     }, 20000);
 
     try {
-      console.log("Connecting to Gemini Live with model: gemini-2.0-flash-exp");
+      console.log("Connecting to Gemini Live with model: gemini-3.1-flash-live-preview");
       
       const CDA_PROJECT_INFO = `
 O Correio Digital de Angola moderniza a administração ao tornar o Bilhete de Identidade o endereço oficial dos cidadãos. 
@@ -369,7 +403,7 @@ A nossa inteligência artificial ajuda a traduzir termos jurídicos complexos e 
       const govSysInstr = `Você é o Consultor de Segurança e Redação Oficial do Governo de Angola. ${CDA_PROJECT_INFO} Sua função é auxiliar administradores na gestão de protocolos e redação de normas. Inicie saudando e perguntando como pode ser útil. Seja eficiente, formal, institucional e conhecedor das normas de protocolo. Não utilize asteriscos ou símbolos na sua fala. Utilize sempre o nome completo Correio Digital de Angola.`;
 
       const session = await ai.live.connect({
-        model: "gemini-2.0-flash-exp",
+        model: "gemini-3.1-flash-live-preview",
         callbacks: {
           onmessage: (message: LiveServerMessage) => {
             if (message.serverContent) {
