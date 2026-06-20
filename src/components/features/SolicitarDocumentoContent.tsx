@@ -1504,7 +1504,7 @@ export function SolicitarDocumentoContent({
                          <LazyImage 
                            src="https://i.postimg.cc/Rq5TKbdk/Correio-Digital-Angola.png" 
                            alt="Coat of arms" 
-                           style={{ height: '100%', width: 'auto', objectFit: 'contain', filter: 'invert(1)' }}
+                           style={{ height: '100%', width: 'auto', objectFit: 'contain', filter: 'invert(1)', backgroundColor: 'transparent' }}
                          />
                        </div>
                       <span className="text-[10px] font-black uppercase tracking-[0.25em] text-indigo-300 block">República de Angola</span>

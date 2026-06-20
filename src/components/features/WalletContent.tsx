@@ -224,7 +224,7 @@ export function WalletContent({
                          <LazyImage 
                            src="https://i.postimg.cc/Rq5TKbdk/Correio-Digital-Angola.png" 
                            alt="" 
-                           style={{ width: '100%', height: '100%', filter: 'invert(1)' }}
+                           style={{ width: '100%', height: '100%', filter: 'invert(1)', backgroundColor: 'transparent' }}
                          />
                        </div>
                       <div className="text-white/70 text-[9px] font-black uppercase tracking-[0.2em] leading-none mb-1">Cédula Digital</div>

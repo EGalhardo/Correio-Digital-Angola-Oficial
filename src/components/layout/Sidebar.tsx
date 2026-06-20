@@ -86,7 +86,7 @@ export function Sidebar({
           alt="Correio Digital" 
           priority={true}
           placeholder="skeleton"
-          style={{ height: '74px', width: 'auto', objectFit: 'contain' }}
+          style={{ height: '74px', width: 'auto', objectFit: 'contain', backgroundColor: 'transparent' }}
           className="transition-all"
         />
       </div>

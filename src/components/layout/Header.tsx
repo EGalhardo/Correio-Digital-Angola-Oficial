@@ -238,7 +238,7 @@ export function Header({
             alt="Correio Digital" 
             priority={true}
             placeholder="skeleton"
-            style={{ height: '46px', width: 'auto', objectFit: 'contain', cursor: 'pointer' }}
+            style={{ height: '46px', width: 'auto', objectFit: 'contain', cursor: 'pointer', backgroundColor: 'transparent' }}
           />
           {isAdmin && (
             <span className={`ml-2 text-[8px] font-black uppercase px-1.5 py-0.5 rounded leading-none bg-slate-900 text-white`}>
