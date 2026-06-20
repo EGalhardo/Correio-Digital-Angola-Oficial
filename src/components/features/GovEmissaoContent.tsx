@@ -25,7 +25,7 @@ export function GovEmissaoContent({
   const [progress, setProgress] = useState(0);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
-  const [correspondenciaTab, setCorrespondenciaTab] = useState('naoLidas');
+  const [correspondenciaTab, setCorrespondenciaTab] = useState('lidas');
   const [searchMail, setSearchMail] = useState('');
 
   const [formData, setFormData] = useState({
@@ -66,7 +66,7 @@ export function GovEmissaoContent({
       subject: item.subject.startsWith('Pedido:') ? `Resposta ao ${item.subject}` : `Comunicação: ${item.subject}`,
       content: `Prezado(a) ${item.user},\n\nEm resposta à sua solicitação/mensagem de ${item.date}, informamos que...`
     });
-    setCorrespondenciaTab('naoLidas'); // Keep context
+    setCorrespondenciaTab('lidas'); // Keep context
     setShowForm(true);
   };
 

@@ -22,7 +22,15 @@ async function startServer() {
   
   // Initialize Groq Client
   const groqApiKey = process.env.GROQ_API_KEY || process.env.Teste01 || '';
-  const groq = new Groq({ apiKey: groqApiKey });
+  
+  let groq: Groq | null = null;
+  if (groqApiKey) {
+    try {
+      groq = new Groq({ apiKey: groqApiKey });
+    } catch (e) {
+      console.warn("CRITICAL: Failed to instantiate Groq client:", e);
+    }
+  }
 
   if (!apiKey) {
     console.warn("CRITICAL: No Gemini API Key found!");
@@ -32,15 +40,22 @@ async function startServer() {
     console.warn("CRITICAL: No Groq API Key found (Checked GROQ_API_KEY and Teste01)!");
   }
 
-  const ai = new GoogleGenAI({
-    apiKey: apiKey || '',
-    apiVersion: 'v1beta',
-    httpOptions: {
-      headers: {
-        'User-Agent': 'aistudio-build'
-      }
+  let ai: GoogleGenAI | null = null;
+  if (apiKey) {
+    try {
+      ai = new GoogleGenAI({
+        apiKey: apiKey,
+        apiVersion: 'v1beta',
+        httpOptions: {
+          headers: {
+            'User-Agent': 'aistudio-build'
+          }
+        }
+      });
+    } catch (e) {
+      console.warn("CRITICAL: Failed to instantiate GoogleGenAI client:", e);
     }
-  });
+  }
 
   const getRuntimeFlags = () => ({
     local_bootstrap: (process.env.VITE_ENABLE_LOCAL_BOOTSTRAP || 'true') !== 'false',
@@ -143,8 +158,8 @@ async function startServer() {
         userPrompt = text;
       }
 
-      // Try using Gemini if API key is present
-      if (apiKey) {
+      // Try using Gemini if client is present
+      if (ai) {
         try {
           const response = await ai.models.generateContent({
             model: "gemini-3.5-flash",
@@ -158,12 +173,12 @@ async function startServer() {
             return res.json({ result: response.text });
           }
         } catch (geminiErr: any) {
-          console.error("Gemini failed in /api/gov-ai, falling back to Groq since it's configured... Error:", geminiErr);
+          console.error("Gemini failed in /api/gov-ai, falling back to Groq... Error:", geminiErr);
         }
       }
 
-      // Fallback to Groq if Gemini fails or is not present
-      if (groqApiKey) {
+      // Fallback to Groq if client is present
+      if (groq) {
         try {
           const completion = await groq.chat.completions.create({
             messages: [
@@ -288,8 +303,8 @@ Se o utilizador pedir para explicar o que está aberto, resumir a página, ou fi
         }
       }
 
-      // 1. Try Groq if key is configured
-      if (groqApiKey) {
+      // 1. Try Groq if client is present
+      if (groq) {
         try {
           const completion = await groq.chat.completions.create({
             messages: [
@@ -310,8 +325,8 @@ Se o utilizador pedir para explicar o que está aberto, resumir a página, ou fi
         }
       }
 
-      // 2. Try Gemini if configured
-      if (apiKey) {
+      // 2. Try Gemini if client is present
+      if (ai) {
         try {
           const formattedContents = alternateMessages.map((m: any) => ({
             role: m.role === 'assistant' ? 'model' : 'user',
@@ -336,7 +351,9 @@ Se o utilizador pedir para explicar o que está aberto, resumir a página, ou fi
       }
 
       // 3. Complete and helpful fallback in offline mode if both APIs can't be reached
-      const lastMessage = messages[messages.length - 1]?.content || '';
+      const chatMsgList = messages || [];
+      const lastMessageObj = chatMsgList.length > 0 ? chatMsgList[chatMsgList.length - 1] : null;
+      const lastMessage = lastMessageObj ? (lastMessageObj.content || lastMessageObj.text || '') : '';
       let offlineResponse = "Olá! Atualmente estou a operar em Modo Sandbox local e offline por razões de conectividade institucional. Como assistente virtual do Correio Digital de Angola, garanto-lhe que a sua correspondência está selada e segura nos servidores centrais.";
       
       if (lastMessage.toLowerCase().includes('nif') || lastMessage.toLowerCase().includes('contribuinte')) {
@@ -378,6 +395,15 @@ Se o utilizador pedir para explicar o que está aberto, resumir a página, ou fi
     clientWs.on("error", (err) => {
       console.error("Client WebSocket error:", err);
     });
+
+    if (!ai) {
+      console.warn("WebSocket attempted without Gemini Client instantiated");
+      if (clientWs.readyState === 1) {
+        clientWs.send(JSON.stringify({ type: 'error', message: 'A chave da API Gemini não está configurada neste servidor VPS/Produção.' }));
+        clientWs.close();
+      }
+      return;
+    }
 
     // Keep-alive to prevent connection timeouts
     const pingInterval = setInterval(() => {

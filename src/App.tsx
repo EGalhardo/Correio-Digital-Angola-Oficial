@@ -757,12 +757,12 @@ export default function App() {
     setLoginError(null);
   }, [loginSubMode, appMode]);
   
-  const [correspondenciaTab, setCorrespondenciaTab] = useState('naoLidas');
+  const [correspondenciaTab, setCorrespondenciaTab] = useState('lidas');
   const [videoSessionCount, setVideoSessionCount] = useState(0);
   const [isComposing, setIsComposing] = useState(false);
   const [composeData, setComposeData] = useState<{ to: string; subject: string; body: string; attachments?: string[] }>({ to: '', subject: '', body: '', attachments: [] });
 
-  const [documentosTab, setDocumentosTab] = useState('naoLidas');
+  const [documentosTab, setDocumentosTab] = useState('lidas');
   const [isDocComposing, setIsDocComposing] = useState(false);
   const [docComposeData, setDocComposeData] = useState({ to: '', subject: '', body: '' });
 
