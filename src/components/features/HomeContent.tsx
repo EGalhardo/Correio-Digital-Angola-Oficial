@@ -154,15 +154,15 @@ export function HomeContent({
         )}
       </div>
 
-      <section className="bg-white border border-slate-200 rounded-[24px] md:rounded-[32px] p-5 shadow-sm overflow-hidden relative group">
-        <div className="flex flex-col md:flex-row md:items-center justify-between md:relative gap-2 mb-4 pb-2 border-b border-slate-50">
+      <section className="bg-[#0E2B64] border border-[#0E2B64]/50 rounded-[24px] md:rounded-[32px] p-5 shadow-sm overflow-hidden relative group text-white">
+        <div className="flex flex-col md:flex-row md:items-center justify-between md:relative gap-2 mb-4 pb-2 border-b border-white/10">
           <div className="flex items-center gap-2">
-             <div className="w-1.5 h-6 bg-primary rounded-full" />
+             <div className="w-1.5 h-6 bg-amber-400 rounded-full" />
              <div className="min-w-0">
-                <h3 className="text-slate-950 font-black text-xs md:text-base italic tracking-tighter uppercase leading-none">{t("Instituições Conectadas")}</h3>
+                <h3 className="text-white font-black text-xs md:text-base italic tracking-tighter uppercase leading-none">{t("Instituições Conectadas")}</h3>
              </div>
           </div>
-          <div className="md:absolute md:left-1/2 md:-translate-x-1/2 text-[9px] font-black text-slate-500 uppercase tracking-widest text-center mt-1 md:mt-0">
+          <div className="md:absolute md:left-1/2 md:-translate-x-1/2 text-[9px] font-black text-slate-300 uppercase tracking-widest text-center mt-1 md:mt-0">
             {t("Governação Electrónica")}
           </div>
           <div className="hidden md:block" />

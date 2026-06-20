@@ -219,7 +219,7 @@ export const CitizenProfile: React.FC<CitizenProfileProps> = ({
                   setIsPrefsOpen(true);
                   setPrefSubTab('geral');
                 }}
-                className="px-4 py-2.5 bg-slate-900 hover:bg-slate-850 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-1.5 shadow-sm cursor-pointer"
+                className="px-4 py-2.5 bg-[#0E2B64] hover:bg-[#081a3d] text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-1.5 shadow-sm cursor-pointer"
               >
                 <Settings size={14} />
                 Actualizar Informações

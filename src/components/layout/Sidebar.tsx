@@ -116,7 +116,7 @@ export function Sidebar({
       <div className="mt-auto pt-6 border-t space-y-2 border-slate-100">
         <button
           onClick={() => handleLogout(false)}
-          className="w-full flex items-center gap-4 px-5 py-4 rounded-2xl font-black transition-all bg-slate-900 text-white hover:bg-slate-800 border-0 shadow-sm cursor-pointer"
+          className="w-full flex items-center gap-4 px-5 py-4 rounded-2xl font-black transition-all bg-[#0E2B64] text-white hover:bg-[#081a3d] border-0 shadow-sm cursor-pointer"
         >
           <LogOut size={20} className="text-white" />
           <span className="text-xs uppercase tracking-widest">{translate("Sair do Canal")}</span>
