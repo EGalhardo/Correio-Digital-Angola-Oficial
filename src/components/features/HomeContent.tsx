@@ -187,7 +187,7 @@ export function HomeContent({
                   onDoubleClickInstitution?.(name);
                 }
               }}
-              className="px-4 py-2 rounded-xl text-[10px] md:text-xs font-black bg-slate-900 text-white border border-slate-900/10 whitespace-nowrap hover:bg-slate-800 transition-all cursor-pointer shrink-0 shadow-md hover:shadow-lg grow-0 text-left"
+              className="px-4 py-2 rounded-xl text-[10px] md:text-xs font-black bg-[#081A3D] text-white border border-[#081A3D]/10 whitespace-nowrap hover:bg-[#0c2350] transition-all cursor-pointer shrink-0 shadow-md hover:shadow-lg grow-0 text-left"
               title={(isInst || !onDoubleClickInstitution) ? name : "Dê duplo clique para ver detalhes desta instituição"}
             >
               {name}
