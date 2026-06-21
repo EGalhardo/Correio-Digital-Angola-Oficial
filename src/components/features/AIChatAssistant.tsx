@@ -12,7 +12,7 @@ import { PAGE_PRESENTATIONS, hasPagePresentation } from '../../services/voicePre
 
 const WELCOME_MESSAGES = {
   pt: {
-    welcome: "Seja muito bem vindo ao Correio Digital Angola. Uma plataforma nacional inteligente de correspondência oficial digital, integrada, segura e preparada para servir milhões de cidadãos em todo o território nacional. Em que posso ajudar?",
+    welcome: "Seja muito bem-vindo ao Correio Digital Angola. Uma plataforma de correspondência Nacional com o objetivo de unir as Instituições a população.",
     admin: "Saudações. Como posso ser útil na gestão do SOC hoje?",
     inst: "Olá. Em que posso ser útil com suas operações institucionais hoje?"
   },
@@ -182,12 +182,13 @@ export function AIChatAssistant({
   useEffect(() => {
     const currentGreeting = getGreetingText(currentLanguage);
     setMessages(prev => {
+      if (iaLiveActive) return prev;
       if (prev.length <= 1) {
         return [{ role: 'assistant', content: currentGreeting }];
       }
       return prev;
     });
-  }, [currentLanguage, isAdmin, isInst]);
+  }, [currentLanguage, isAdmin, isInst, iaLiveActive]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -205,6 +206,10 @@ export function AIChatAssistant({
 
       if (pageText) {
         setMessages(prev => {
+          const welcomeText = getGreetingText(currentLanguage);
+          if (prev.length <= 1 && (prev.length === 0 || prev[0].content === welcomeText)) {
+            return [{ role: 'assistant', content: pageText }];
+          }
           if (prev[prev.length - 1]?.content !== pageText) {
             return [...prev, { role: 'assistant', content: pageText }];
           }
