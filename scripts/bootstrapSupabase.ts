@@ -201,7 +201,8 @@ async function run() {
   for (const msg of MOCK_INSTITUTIONAL_INBOX) {
     const inferredCitizenBi = msg.details?.body?.match(/BI:\s*([A-Z0-9]+)/i)?.[1] || MOCK_SESSION_USER.bi;
     await upsertProfile({ bi: inferredCitizenBi, name: msg.org.replace('Cidadão: ', ''), role: 'user' });
-    await insertCitizenMessage(msg, inferredCitizenBi, 'AGT');
+    const targetInstitution = msg.institution || 'AGT';
+    await insertCitizenMessage(msg, inferredCitizenBi, targetInstitution);
   }
 
   for (const correspondence of MOCK_GOV_CORRESPONDENCES) {

@@ -10,6 +10,7 @@ import { useSession } from '../../services/sessionStore';
 import { AppNotification, AppMode, LanguageCode, LANGUAGE_OPTIONS } from '../../types';
 import { useLanguage } from '../../hooks/useLanguage';
 import { LazyImage } from '../ui/LazyImage';
+import { hasPagePresentation } from '../../services/voicePresentations';
 import type { JSX } from 'react';
 
 interface HeaderProps {
@@ -269,14 +270,20 @@ export function Header({
           <LanguageSelectorDropdown currentLanguage={currentLanguage} setCurrentLanguage={setCurrentLanguage} />
 
           <button 
-            disabled={currentLanguage !== 'pt'}
-            onClick={currentLanguage === 'pt' ? handleMicClick : undefined}
+            disabled={currentLanguage !== 'pt' || !hasPagePresentation(appMode, tab)}
+            onClick={(currentLanguage === 'pt' && hasPagePresentation(appMode, tab)) ? handleMicClick : undefined}
             className={`relative flex items-center justify-center p-2 rounded-full transition-all focus:outline-none ${
-              currentLanguage !== 'pt' ? 'opacity-30 cursor-not-allowed' : ''
+              (currentLanguage !== 'pt' || !hasPagePresentation(appMode, tab)) ? 'opacity-30 cursor-not-allowed' : ''
             } ${
               iaLiveActive ? (isAdmin ? 'bg-red-500/15' : isInst ? 'bg-red-600/10' : 'bg-primary/10') : 'active:bg-slate-50'
             }`}
-            title={currentLanguage === 'pt' ? "Conversar com IA (Voz)" : "Voz indisponível em dialetos regionais"}
+            title={
+              currentLanguage !== 'pt' 
+                ? "Voz indisponível em dialetos regionais" 
+                : !hasPagePresentation(appMode, tab) 
+                  ? "Apresentação de voz indisponível nesta página" 
+                  : "Apresentar esta página por voz"
+            }
           >
             {iaLiveActive && (
               <motion.div
@@ -368,14 +375,20 @@ export function Header({
           <LanguageSelectorDropdown currentLanguage={currentLanguage} setCurrentLanguage={setCurrentLanguage} />
 
           <button 
-            disabled={currentLanguage !== 'pt'}
-            onClick={currentLanguage === 'pt' ? handleMicClick : undefined}
+            disabled={currentLanguage !== 'pt' || !hasPagePresentation(appMode, tab)}
+            onClick={(currentLanguage === 'pt' && hasPagePresentation(appMode, tab)) ? handleMicClick : undefined}
             className={`relative flex items-center justify-center p-2 rounded-full transition-all focus:outline-none ${
-              currentLanguage !== 'pt' ? 'opacity-30 cursor-not-allowed' : ''
+              (currentLanguage !== 'pt' || !hasPagePresentation(appMode, tab)) ? 'opacity-30 cursor-not-allowed' : ''
             } ${
               iaLiveActive ? (isAdmin ? 'bg-red-500/15' : isInst ? 'bg-red-600/10' : 'bg-primary/10') : 'hover:bg-slate-50 hover:bg-opacity-10'
             }`}
-            title={currentLanguage === 'pt' ? "Conversar com IA (Voz)" : "Voz indisponível em dialetos regionais"}
+            title={
+              currentLanguage !== 'pt' 
+                ? "Voz indisponível em dialetos regionais" 
+                : !hasPagePresentation(appMode, tab) 
+                  ? "Apresentação de voz indisponível nesta página" 
+                  : "Apresentar esta página por voz"
+            }
           >
             {iaLiveActive && (
               <motion.div

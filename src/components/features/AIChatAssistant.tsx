@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Send, X, Bot, User, Loader2, Mic, Shield, ArrowRight, Check, XCircle, Navigation } from 'lucide-react';
 import { AppMode, LanguageCode } from '../../types';
 import { USER_PROFILE_PHOTO } from '../../constants/data';
+import { PAGE_PRESENTATIONS, hasPagePresentation } from '../../services/voicePresentations';
 
 const WELCOME_MESSAGES = {
   pt: {
@@ -199,26 +200,50 @@ export function AIChatAssistant({
   useEffect(() => {
     iaLiveActiveRef.current = iaLiveActive;
     if (iaLiveActive) {
-      const welcomeText = "Seja muito bem vindo ao Correio Digital Angola. Uma plataforma nacional inteligente de correspondência oficial digital, integrada, segura e preparada para servir milhões de cidadãos em todo o território nacional. Em que posso ajudar?";
-      
-      setMessages(prev => {
-        // If there's only the default initial message, replace or pre-populate it.
-        if (prev.length === 1 && prev[0].role === 'assistant') {
-          return [{ role: 'assistant', content: welcomeText }];
-        }
-        if (prev[prev.length - 1]?.content !== welcomeText) {
-          return [...prev, { role: 'assistant', content: welcomeText }];
-        }
-        return prev;
-      });
+      const modePresentations = PAGE_PRESENTATIONS[appMode];
+      const pageText = activeTab && modePresentations ? modePresentations[activeTab] : null;
 
-      // Small delay to allow audio synthesis engine stability, then speak welcome message out loud
-      const timer = setTimeout(() => {
-        if (currentLanguage === 'pt') {
-          speak(welcomeText);
-        }
-      }, 300);
-      return () => clearTimeout(timer);
+      if (pageText) {
+        setMessages(prev => {
+          if (prev[prev.length - 1]?.content !== pageText) {
+            return [...prev, { role: 'assistant', content: pageText }];
+          }
+          return prev;
+        });
+
+        const timer = setTimeout(() => {
+          if (currentLanguage === 'pt') {
+            speak(pageText, () => {
+              // Automatically deactivate microphone upon finishing presentation
+              if (stopIaVoice) {
+                stopIaVoice();
+              }
+            });
+          }
+        }, 300);
+        return () => clearTimeout(timer);
+      } else {
+        const welcomeText = getGreetingText(currentLanguage);
+        
+        setMessages(prev => {
+          // If there's only the default initial message, replace or pre-populate it.
+          if (prev.length === 1 && prev[0].role === 'assistant') {
+            return [{ role: 'assistant', content: welcomeText }];
+          }
+          if (prev[prev.length - 1]?.content !== welcomeText) {
+            return [...prev, { role: 'assistant', content: welcomeText }];
+          }
+          return prev;
+        });
+
+        // Small delay to allow audio synthesis engine stability, then speak welcome message out loud
+        const timer = setTimeout(() => {
+          if (currentLanguage === 'pt') {
+            speak(welcomeText);
+          }
+        }, 300);
+        return () => clearTimeout(timer);
+      }
     } else {
       window.speechSynthesis.cancel();
       if (recognitionRef.current) {
@@ -232,7 +257,7 @@ export function AIChatAssistant({
         } catch (e) {}
       }
     }
-  }, [iaLiveActive, currentLanguage]);
+  }, [iaLiveActive, currentLanguage, activeTab, appMode]);
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -241,7 +266,7 @@ export function AIChatAssistant({
     }
   }, [messages, isLoading]);
 
-  const speak = (text: string) => {
+  const speak = (text: string, onEndCallback?: () => void) => {
     if (currentLanguage !== 'pt') return;
     if (!iaLiveActiveRef.current) return;
     window.speechSynthesis.cancel();
@@ -260,9 +285,13 @@ export function AIChatAssistant({
     utterance.pitch = 1.0;
     
     utterance.onend = () => {
-      // Resume listening after speaking if still active
-      if (iaLiveActiveRef.current && recognitionRef.current) {
-        try { recognitionRef.current.start(); } catch(e) {}
+      if (onEndCallback) {
+        onEndCallback();
+      } else {
+        // Resume listening after speaking if still active
+        if (iaLiveActiveRef.current && recognitionRef.current) {
+          try { recognitionRef.current.start(); } catch(e) {}
+        }
       }
     };
 
@@ -430,19 +459,19 @@ export function AIChatAssistant({
       
       if (isConfirm) {
         confirmNavigation();
-        if (!textOverride) setInput('');
+        setInput('');
         return;
       } else if (isCancel) {
         setMessages(prev => [...prev, userMsg]);
         cancelNavigation();
-        if (!textOverride) setInput('');
+        setInput('');
         return;
       } else {
         setMessages(prev => [...prev, userMsg, { 
           role: 'assistant', 
           content: `Não entendi a sua resposta. Por favor, responda com "Sim" para confirmar ou "Não" para cancelar a navegação para "${pendingNavigation.tabLabel}".` 
         }]);
-        if (!textOverride) setInput('');
+        setInput('');
         return;
       }
     }
@@ -488,7 +517,7 @@ export function AIChatAssistant({
       const askMsg = NAV_CONFIRM_MESSAGES.pt.ask.replace('{page}', tabLabel);
       setMessages(prev => [...prev, userMsg, { role: 'assistant', content: askMsg }]);
       
-      if (!textOverride) setInput('');
+      setInput('');
       
       if (iaLiveActive) {
         speak(askMsg);
@@ -497,7 +526,7 @@ export function AIChatAssistant({
     }
 
     setMessages(prev => [...prev, userMsg]);
-    if (!textOverride) setInput('');
+    setInput('');
     setIsLoading(true);
 
     try {
@@ -533,6 +562,7 @@ export function AIChatAssistant({
       if (iaLiveActive) speak(userFriendlyError);
     } finally {
       setIsLoading(false);
+      setInput('');
     }
   };
 

@@ -748,13 +748,484 @@ export const MOCK_CORRESPONDENCES: Message[] = [
     },
     sensitivity: "Sensível",
     priorityScale: "Importante"
+  },
+  {
+    id: 11,
+    org: "AGT",
+    preview: "Notificação de liquidação do Imposto sobre Veículos Motorizados (IVM).",
+    date: "Hoje",
+    unread: 1,
+    status: "Urgente",
+    details: {
+      subject: "Liquidação de IVM - Matrícula LD-23-45-AO",
+      body: "Exmo. Senhor Edlasio Galhardo,\n\nServimo-nos da presente para notificar que a liquidação do Imposto sobre Veículos Motorizados (IVM) referente à sua viatura com matrícula LD-23-45-AO encontra-se pendente de pagamento.\n\nO prazo regulamentar para liquidação voluntária sem juros de mora termina no final do corrente mês. Poderá proceder ao pagamento em qualquer terminal automático (Multicaixa) ou através de homebanking utilizando as coordenadas de referência geradas no nosso portal.\n\nAgradecemos a sua cooperação para a regularização tempestiva do seu cadastro fiscal.\n\nAtentamente,\nRegisto de Contribuintes - AGT",
+      state: "Envio Eletrônico",
+      deadline: "30 de Junho de 2026",
+      actions: ["Ver taxas", "Gerar DLI", "Pagar"]
+    },
+    sensitivity: "Sensível",
+    priorityScale: "Urgente"
+  },
+  {
+    id: 12,
+    org: "SME",
+    preview: "Solicitação de agendamento biométrico para renovação de Passaporte Ordinário.",
+    date: "Hoje",
+    unread: 1,
+    status: "Não Lida",
+    details: {
+      subject: "Agendamento de Biometria - Passaporte Ordinário",
+      body: "Caro Cidadão Edlasio Galhardo,\n\nInformamos que o seu pedido virtual de renovação de Passaporte Ordinário foi pré-processado pela nossa Direção de Atendimento Público.\n\nPara prosseguir com a recolha de impressões digitais, fotografia física e assinatura digitalizada, solicitamos que formalize o agendamento no Posto de Atendimento do SME mais próximo das suas conveniências.\n\nApresente este comprovativo oficial juntamente com o seu Bilhete de Identidade original válido no dia selecionado.\n\nMelhores cumprimentos,\nServiço de Migração e Estrangeiros",
+      state: "Pendente Agendamento",
+      deadline: "15 de Julho de 2026",
+      actions: ["Reservar Data", "Localizar Posto", "Imprimir Guia"]
+    },
+    sensitivity: "Privado",
+    priorityScale: "Normal"
+  },
+  {
+    id: 13,
+    org: "ENDE",
+    preview: "Notificação técnica sobre manutenção programada de rede elétrica no seu bairro.",
+    date: "Hoje",
+    unread: 1,
+    status: "Informativo",
+    details: {
+      subject: "Interrupção Temporária de Eletricidade - Maianga",
+      body: "Exmo. Cliente Edlasio Galhardo,\n\nA Empresa Nacional de Distribuição de Electricidade (ENDE) comunica aos seus estimados utentes residentes na comuna da Maianga que, por motivos de intervenção técnica preventiva no posto de transformação local, haverá interrupção programada no fornecimento elétrico.\n\nData da intervenção: Próximo sábado, no intervalo das 08h00 às 13h00.\n\nAgradecemos desde já a sua melhor compreensão pelos eventuais transtornos decorrentes deste trabalho indispensável para a melhoria e estabilidade da rede de distribuição.\n\nCom os melhores cumprimentos,\nServiço Técnico ENDE",
+      state: "Divulgação Ativa",
+      deadline: "Sem prazo",
+      actions: ["Ver Mapa de Cortes", "Falar com Apoio"]
+    },
+    sensitivity: "Público",
+    priorityScale: "Normal"
+  },
+  {
+    id: 14,
+    org: "EPAL",
+    preview: "Confirmação de vistoria periódica homologada do contador de água residencial.",
+    date: "Hoje",
+    unread: 1,
+    status: "Informativo",
+    details: {
+      subject: "Vistoria Técnica de Medidor Realizada",
+      body: "Estimado Utente Edlasio Galhardo,\n\nServimo-nos do presente para informar que a nossa equipa de técnicos especializados realizou com sucesso a vistoria periódica ao medidor de águas instalado no seu domicílio.\n\nO aparelho foi inspecionado, higienizado e recalibrado para certificar a perfeita exatidão nas próximas leituras de facturação. Não foram registadas fugas físicas no circuito de entrada oficial.\n\nA transparência e o controlo do seu consumo doméstico representam prioridades fundamentais nos nossos serviços.\n\nAtentamente,\nDireção de Inspeção EPAL",
+      state: "Inspecionado",
+      deadline: "Sem prazo",
+      actions: ["Visualizar Relatório", "Contactar Inspetor"]
+    },
+    sensitivity: "Público",
+    priorityScale: "Normal"
+  },
+  {
+    id: 15,
+    org: "MINJUS",
+    preview: "Notificação oficial sobre registo de marca corporativa validado sob processo #9011.",
+    date: "Hoje",
+    unread: 1,
+    status: "Urgente",
+    details: {
+      subject: "Registo de Propriedade Intelectual Homologado",
+      body: "Exmo. Requerente Edlasio Galhardo,\n\nA Direção Nacional da Propriedade Intelectual do Ministério da Justiça e dos Direitos Humanos tem a honra de comunicar que foi deferido o seu pedido de registo de marca corporativa.\n\nCom a conclusão da fase de publicação em Diário da República sem oposições legais de terceiros, o seu título definitivo de propriedade e exploração exclusiva encontra-se devidamente registado e protegido ao abrigo de leis vigentes.\n\nO certificado oficial já se encontra disponível para descarga em formato PDF assinado digitalmente com chaves de segurança do Estado.\n\nAtentamente,\nDirecção Nacional de Propriedade Intelectual",
+      state: "Concluído",
+      deadline: "20 de Julho de 2026",
+      actions: ["Descarregar Certificado", "Ver Publicação"]
+    },
+    sensitivity: "Restrito",
+    priorityScale: "Importante"
+  },
+  {
+    id: 16,
+    org: "MINSA",
+    preview: "Notificação do Programa Nacional de Vacinação e reforço vacinal.",
+    date: "Hoje",
+    unread: 1,
+    status: "Não Lida",
+    details: {
+      subject: "Reforço Vacinal Disponível - Campanha Nacional",
+      body: "Caro Cidadão Edlasio Galhardo,\n\nO Ministério da Saúde (MINSA) informa que o seu histórico clínico digital sinaliza a elegibilidade para receber a dose anual de reforço vacinal correspondente ao plano de prevenção nacional.\n\nCampanha em curso de segunda a sexta-feira em qualquer centro médico ou posto de vacinação comunitário habilitado no país.\n\nProteja-se e contribua para a imunidade coletiva nacional. O atendimento realiza-se com a apresentação simples do seu Bilhete de Identidade.\n\nAtenciosamente,\nDireção Geral de Saúde Pública",
+      state: "Elegível",
+      deadline: "Sem prazo",
+      actions: ["Agendar Vacinação", "Ver Centros de Saúde"]
+    },
+    sensitivity: "Privado",
+    priorityScale: "Normal"
+  },
+  {
+    id: 17,
+    org: "PNA",
+    preview: "Notificação administrativa sobre registo de propriedade móvel e trânsito.",
+    date: "Hoje",
+    unread: 1,
+    status: "Não Lida",
+    details: {
+      subject: "Atualização de Registo Automóvel no Sistema Integrado",
+      body: "Prezado Proprietário Edlasio Galhardo,\n\nInformamos que a Direção de Trânsito e Segurança Rodoviária da Polícia Nacional de Angola registou uma alteração cadastral com sucesso na propriedade do seu veículo automóvel.\n\nOs registos de transferência de título foram unificados eletronicamente com as tabelas da AGT e da Direção Geral de Registos do MINJUS, assegurando conformidade às leis rodoviárias em vigor no território nacional.\n\nSugerimos o porte do seu título unificado na app móvel em qualquer fiscalização de trânsito rotineira.\n\nCom os melhores cumprimentos,\nGabinete de Comunicações PNA",
+      state: "Registo Atualizado",
+      deadline: "Sem prazo",
+      actions: ["Verificar Automóveis", "Baixar Título"]
+    },
+    sensitivity: "Privado",
+    priorityScale: "Normal"
+  },
+  {
+    id: 18,
+    org: "INSS",
+    preview: "Extrato de contribuições de segurança social atualizado para o primeiro quadrimestre.",
+    date: "Hoje",
+    unread: 1,
+    status: "Informativo",
+    details: {
+      subject: "Extrato Técnico de Segurança Social - Q1 2026",
+      body: "Estimado Beneficiário Edlasio Galhardo,\n\nO Instituto Nacional de Segurança Social (INSS) torna público o extrato consolidado de contribuições previdenciárias vinculadas ao seu Número de Inscrição Social referente ao primeiro quadrimestre do ano corrente.\n\nAs deduções salariais regulamentares foram devidamente canalizadas e homologadas pelo seu empregador habitual dentro dos prazos de lei.\n\nA salvaguarda da sua carreira contributiva futura é gerida com o máximo rigor técnico nos nossos servidores.\n\nCom estima,\nGabinete Contributivo - INSS",
+      state: "Dados Consolidados",
+      deadline: "Sem prazo",
+      actions: ["Consultar Extrato Completo", "Fazer Simulação"]
+    },
+    sensitivity: "Privado",
+    priorityScale: "Normal"
+  },
+  {
+    id: 19,
+    org: "CNE",
+    preview: "Notificação informativa sobre atualização do seu posto de registo eleitoral automático.",
+    date: "Hoje",
+    unread: 1,
+    status: "Não Lida",
+    details: {
+      subject: "Confirmação de Posto de Voto Registado",
+      body: "Exmo. Cidadão Edlasio Galhardo,\n\nA Comissão Nacional Eleitoral (CNE), no âmbito da organização dos cadernos de registo cívico e eleitoral, informa que o seu credenciamento e correspondente assembleia de voto padrão foram atualizados de forma automática com base no seu domicílio fiscal declarado.\n\nAssembleia associada: Escola Primária nº 1045 - Maianga Sede, Luanda.\n\nO exercício pleno do dever e direito cívico constitui a fundação da estabilidade das instituições nacionais.\n\nAtenciosamente,\nDireção de Organização Eleitoral",
+      state: "Posto Atribuído",
+      deadline: "Sem prazo",
+      actions: ["Confirmar Domicílio", "Ver Regulamento"]
+    },
+    sensitivity: "Público",
+    priorityScale: "Normal"
+  },
+  {
+    id: 20,
+    org: "Registo Civil",
+    preview: "Informação técnica referente ao cancelamento de averbamento manual duplicado.",
+    date: "Hoje",
+    unread: 1,
+    status: "Urgente",
+    details: {
+      subject: "Saneamento de Duplicidade de Assento de Nascimento",
+      body: "Prezado Requerente Edlasio Galhardo,\n\nA Conservatória do Registo Civil informa que concluiu as dligências técnicas e de verificação no âmbito do programa nacional de higienização do arquivo civil unificado digital.\n\nFoi detetado e devidamente anulado um registo duplicado residual de assento de nascimento originado nos livros manuscritos antigos da província. O seu assento principal número 990184/2012 permanece intacto e plenamente válido para todo e qualquer efeito legal.\n\nEsta medida assegura a integridade cívica e evita fraudes de duplicidade de chaves identitárias.\n\nAtenciosamente,\nConservador-Chefe de Registo de Luanda",
+      state: "Saneado",
+      deadline: "Sem prazo",
+      actions: ["Obter Assento Autêntico", "Relatar Inconsistência"]
+    },
+    sensitivity: "Sensível",
+    priorityScale: "Urgente"
   }
 ];
 
 export const MOCK_INSTITUTIONAL_INBOX: Message[] = [
   {
+    id: 2001,
+    org: "Cidadão: Edlasio Galhardo",
+    institution: "AGT",
+    preview: "Divergência na declaração anual de imposto sobre rendimento de trabalho.",
+    date: "08:15",
+    unread: 1,
+    status: "Urgente",
+    details: {
+      subject: "Divergência Tributária - Declaração de IRT",
+      body: "Exmos. Senhores da Administração Geral Tributária (AGT),\n\nSubmeti a minha declaração anual de imposto sobre o rendimento de trabalho (IRT) através do portal eletrónico e recebi uma notificação sobre uma suposta divergência de valores declarados pela minha entidade patronal.\n\nAnexei os meus recibos de vencimento homologados e o respetivo extrato bancário comprovando que os valores declarados coincidem exatamente com o auferido. Solicito a revisão urgente e a oportuna correção técnica das vossas bases tributárias para evitar multas processuais indevidas.\n\nAtentamente,\nEdlasio Galhardo\nBI: 009874562LA041",
+      actions: ["Analisar Declaração", "Agendar Audiência", "Arquivar"]
+    },
+    priorityScale: "Importante"
+  },
+  {
+    id: 2002,
+    org: "Cidadão: Edlasio Galhardo",
+    institution: "AGT",
+    preview: "Reclamação de dupla cobrança de Imposto Predial Urbano.",
+    date: "08:30",
+    unread: 0,
+    status: "Lida",
+    details: {
+      subject: "Duplicidade de Cobrança IPU - Imóvel Maianga",
+      body: "Exmos. Senhores,\n\nVenho por este meio manifestar a minha profunda preocupação face à cobrança duplicada que consta no sistema referente ao Imposto Predial Urbano (IPU) do meu imóvel localizado na Maianga.\n\nA fatura correspondente ao exercício fiscal de 2025 foi devidamente quitada via Multicaixa em 12 de Fevereiro de 2026, porém, o vosso sistema continua a assinalar o montante como pendente de liquidação e gerou uma nova cobrança de penalização.\n\nSolicito o cruzamento urgente do meu comprovativo de pagamento eletrónico para a regularização definitiva deste saldo devedor fantasma.\n\nCom elevados cumprimentos,\nEdlasio Galhardo\nBI: 009874562LA041",
+      actions: ["Conciliar Saldo", "Verificar Guias", "Responder"]
+    },
+    priorityScale: "Normal"
+  },
+  {
+    id: 2003,
+    org: "Cidadão: Edlasio Galhardo",
+    institution: "SME",
+    preview: "Atraso excedido no prazo regulamentar para entrega de visto de turismo de familiar.",
+    date: "08:45",
+    unread: 1,
+    status: "Urgente",
+    details: {
+      subject: "Revisão de Visto Ordinário de Familiar Pendente",
+      body: "Ilustres Senhores Diretores do Serviço de Migração e Estrangeiros (SME),\n\nSubmeti uma petição formal de concessão de Visto Ordinário para reagrupamento familiar em benefício de um parente direto de nacionalidade estrangeira há mais de 45 dias úteis.\n\nO prazo oficial para deferimento já expirou e até ao momento não obtivemos qualquer atualização sobre o estado real do processo eletrónico. Tratando-se de uma urgência de caráter de saúde familiar, imploro pelo vosso célere deferimento técnico ou esclarecimento de pendência imediata.\n\nCordialmente,\nEdlasio Galhardo\nBI: 009874562LA041",
+      actions: ["Verificar Visto", "Deferir Processo", "Chamar Cidadão"]
+    },
+    priorityScale: "Urgente"
+  },
+  {
+    id: 2004,
+    org: "Cidadão: Edlasio Galhardo",
+    institution: "SME",
+    preview: "Pedido de prorrogação extraordinária de permanência de passaporte estrangeiro.",
+    date: "09:00",
+    unread: 0,
+    status: "Lida",
+    details: {
+      subject: "Prorrogação de Permanência Extraordinária",
+      body: "Exmos. Senhores do SME,\n\nFormulo por este meio um pedido para prorrogação do período de permanência de passaporte ordinário de visitante oficial, ao abrigo do artigo 12.º do Regulamento Geral de Estrangeiros na República de Angola.\n\nO voo de regresso originalmente agendado para o estrangeiro sofreu um cancelamento técnico fortuito pela companhia aérea operadora, e a próxima data viável situa-se além do atual termo legal de permanência autorizado.\n\nSubmeto a documentação comprovativa da transportadora aérea para validação das chaves biométricas de entrada.\n\nAtentamente,\nEdlasio Galhardo\nBI: 009874562LA041",
+      actions: ["Aprovar Extensão", "Comprovar Bilhete", "Indefirir"]
+    },
+    priorityScale: "Normal"
+  },
+  {
+    id: 2005,
+    org: "Cidadão: Edlasio Galhardo",
+    institution: "ENDE",
+    preview: "Participação oficial de corte indevido de fornecimento por avaria técnica.",
+    date: "09:15",
+    unread: 1,
+    status: "Urgente",
+    details: {
+      subject: "Corte Indevido e Reclamação de Quebra de Fase",
+      body: "Exma. Gerência Técnica da ENDE,\n\nSubmeto esta reclamação urgente face à brusca interrupção do fornecimento elétrico regular na minha residência, ocorrida hoje às 07h15.\n\nO corte de energia ocorreu sem qualquer aviso prévio ou histórico de faturas em aberto no vosso sistema. Constatamos, no entanto, que o disjuntor geral da rua apresenta fumo e sobreaquecimento, sugerindo uma grave avaria de fase técnica na rede local.\n\nSolicito o envio urgente de uma equipa técnica de piquete de manutenção para prevenir eventuais incêndios ou danos adicionais na vizinhança.\n\nMelhores cumprimentos,\nEdlasio Galhardo\nBI: 009874562LA041",
+      actions: ["Acionar Piquete", "Verificar Consumo", "Enviar Alerta"]
+    },
+    priorityScale: "Crítico"
+  },
+  {
+    id: 2006,
+    org: "Cidadão: Edlasio Galhardo",
+    institution: "ENDE",
+    preview: "Solicitação de substituição definitiva de contador analógico por contador pré-pago.",
+    date: "09:30",
+    unread: 0,
+    status: "Lida",
+    details: {
+      subject: "Migração Obrigatória para Sistema de Energia Pré-Pago",
+      body: "Caros Senhores do Apoio Técnico ENDE,\n\nSolicito formalmente a substituição do medidor analógico convencional instalado no meu domicílio por um contador moderno do sistema pré-pago (Credelec).\n\nAs leituras estimadas que constam nas minhas faturas anteriores registam valores que excedem de sobremaneira o consumo real dos aparelhos domésticos activos. A migração técnica permitirá um melhor autocontrol e racionalização diária de energia.\n\nSubmeto a cópia do meu contrato assinado para formalidades contratuais.\n\nAtentamente,\nEdlasio Galhardo\nBI: 009874562LA041",
+      actions: ["Agendar Instalação", "Verificar Cadastro", "Arquivar"]
+    },
+    priorityScale: "Normal"
+  },
+  {
+    id: 2007,
+    org: "Cidadão: Edlasio Galhardo",
+    institution: "EPAL",
+    preview: "Denúncia de rotura na tubagem principal da via pública na comuna de Belas.",
+    date: "09:45",
+    unread: 1,
+    status: "Urgente",
+    details: {
+      subject: "Inundação Técnica - Rotura na Distribuição Pública",
+      body: "Exmos. Senhores da Empresa Pública de Águas de Luanda (EPAL),\n\nParticipo a ocorrência de uma severa rutura técnica na conduta principal de abastecimento localizada na passadeira de peões da entrada principal de Belas.\n\nA vazão contínua de água potável inundou integralmente o asfalto, constrangendo severamente a circulação de peões e de trânsito rodoviário. Centenas de milhares de litros estão a ser desperdiçados no local.\n\nPede-se o envio urgente de engenharia hidráulica de emergência para bloquear a conduta e reparar o rompimento estrutural.\n\nMelhores cumprimentos,\nEdlasio Galhardo\nBI: 009874562LA041",
+      actions: ["Enviar Brigada", "Cortar Válvula", "Notificar Autoridades"]
+    },
+    priorityScale: "Crítico"
+  },
+  {
+    id: 2008,
+    org: "Cidadão: Edlasio Galhardo",
+    institution: "EPAL",
+    preview: "Reclamação sobre baixa pressão persistente na rede doméstica de águas.",
+    date: "10:05",
+    unread: 0,
+    status: "Lida",
+    details: {
+      subject: "Reclamação de Débito de Pressão Insuficiente",
+      body: "Estimada Direção de Abastecimento da EPAL,\n\nVenho manifestar a minha desilusão face à severa e contínua insuficiência na pressão da rede de abastecimento que abastece as nossas moradias há mais de uma semana.\n\nA fraca pressão inviabiliza que o fluxo hídrico chegue aos reservatórios elevados dos andares residenciais superiores, forçando o transporte manual penoso. Solicitamos uma auditoria técnica às vossas bombas de propulsão zonais.\n\nAtentamente,\nEdlasio Galhardo\nBI: 009874562LA041",
+      actions: ["Monitorar Pressão", "Enviar Técnico", "Indefirir"]
+    },
+    priorityScale: "Normal"
+  },
+  {
+    id: 2009,
+    org: "Cidadão: Edlasio Galhardo",
+    institution: "MINJUS",
+    preview: "Pedido de emissão eletrónica de certidão de registo comercial de sociedade.",
+    date: "10:15",
+    unread: 1,
+    status: "Urgente",
+    details: {
+      subject: "Pedido Urgente de Certidão Comercial de Sociedade",
+      body: "Excelentíssimo Senhor Conservador do Registo Comercial,\n\nEu, Edlasio Galhardo, na qualidade de sócio-gerente, solicito a emissão por via eletrónica da certidão de teor de registo comercial atualizado da sociedade comercial registada sob a firma 'Galhardo Digital Soluções Limitada'.\n\nEste documento é peremptório para a nossa participação iminente num concurso público internacional de infraestruturas tecnológicas.\n\nEfectuei o pagamento correspondente de emolumentos por transferência imediata e solicito o envio digital na minha Pasta Digital de Angola.\n\nCom respeito,\nEdlasio Galhardo\nBI: 009874562LA041",
+      actions: ["Emitir Certidão", "Confirmar Pagamento", "Arquivar"]
+    },
+    priorityScale: "Importante"
+  },
+  {
+    id: 2010,
+    org: "Cidadão: Edlasio Galhardo",
+    institution: "MINJUS",
+    preview: "Reclamação referente a erro ortográfico no assento de registo civil digital.",
+    date: "10:30",
+    unread: 1,
+    status: "Informativo",
+    details: {
+      subject: "Retificação Administrativa de Nome Civil",
+      body: "Exmos. Senhores Conservadores de Registo Civil,\n\nDetetei um erro material de digitação no meu assento de nascimento eletrónico emitido na vossa plataforma.\n\nO nome do meu progenitor paternal foi incorretamente digitado como 'Antonio Galhardo' quando a ortografia correta é 'António Galhardo' com o respetivo acento gráfico que consta na certidão original e física de arquivo.\n\nSolicito o saneamento gratuito e imediato desta incoerência ortográfica digital para garantir a plena conformidade documental e evitar impedimentos futuros.\n\nAtentamente,\nEdlasio Galhardo\nBI: 009874562LA041",
+      actions: ["Retificar Nome", "Aceder ao Livro", "Notificar Mudança"]
+    },
+    priorityScale: "Normal"
+  },
+  {
+    id: 2011,
+    org: "Cidadão: Edlasio Galhardo",
+    institution: "MINSA",
+    preview: "Solicitação de alteração de posto médico de família atribuído no plano nacional.",
+    date: "10:45",
+    unread: 1,
+    status: "Informativo",
+    details: {
+      subject: "Reatribuição de Centro de Saúde de Família",
+      body: "Estimada Coordenação do Programa de Saúde Primária,\n\nEu, Edlasio Galhardo, venho solicitar a reatribuição do posto médico onde estou inscrito clinicamente no sistema de saúde nacional.\n\nDevido à recente alteração definitiva do meu domicílio residencial para a comuna de Cacuaco, o anterior hospital atribuído na Maianga tornou-se geograficamente inacessível para consultas regulares e assistência primária de urgência.\n\nAnexo o comprovativo do novo domicílio fiscal emitido pela AGT para efeitos de conformidade e atualização do meu registo clínico.\n\nAtentamente,\nEdlasio Galhardo\nBI: 009874562LA041",
+      actions: ["Alterar Posto", "Transferir Prontuário", "Arquivar"]
+    },
+    priorityScale: "Normal"
+  },
+  {
+    id: 2012,
+    org: "Cidadão: Edlasio Galhardo",
+    institution: "PNA",
+    preview: "Participação eletrónica de sinistro rodoviário menor para efeitos de seguradora.",
+    date: "11:00",
+    unread: 1,
+    status: "Urgente",
+    details: {
+      subject: "Participação de Acidente de Trânsito com Danos Materiais",
+      body: "Exmos. Senhores da Direção de Trânsito da Polícia Nacional,\n\nVenho submeter uma participação eletrónica de sinistro rodoviário sem vítimas pessoais, ocorrido em 20 de Junho de 2026 pelas 18h30 na Avenida Deolinda Rodrigues, Luanda.\n\nO veículo de outrem efetuou uma manobra inadequada colidindo contra a traseira do meu automóvel de matrícula LD-23-45-AO. Ambas as partes acordaram amigavelmente no ato, porém, necessito do vosso registo de ocorrência oficial visado para efeito de participação em seguradoras e requisição de reembolso de reparação.\n\nAtentamente,\nEdlasio Galhardo\nBI: 009874562LA041",
+      actions: ["Homologar Sinistro", "Agendar Peritagem", "Verificar Fotos"]
+    },
+    priorityScale: "Importante"
+  },
+  {
+    id: 2013,
+    org: "Cidadão: Edlasio Galhardo",
+    institution: "INSS",
+    preview: "Reclamação de períodos de contribuições em falta do ano de 2024 na folha patronal.",
+    date: "11:15",
+    unread: 1,
+    status: "Urgente",
+    details: {
+      subject: "Períodos Contributivos em Falta - 2024",
+      body: "Estimados Senhores Administradores do INSS,\n\nApós consultar detidamente o meu extrato contributivo através do Vosso novo portal online de segurança social, detetei com enorme indignação a absoluta ausência de registo de contribuições para os meses de Setembro e Outubro de 2024.\n\nSaliento que o meu vencimento sofreu os descontos obrigatórios na folha salarial pela minha entidade patronal à época. Solicito uma fiscalização extraordinária ao cadastro contributivo da referida empresa para reposição integral desses dois meses essenciais na minha contagem futura de aposentação.\n\nAtentamente,\nEdlasio Galhardo\nBI: 009874562LA041",
+      actions: ["Auditar Empresa", "Atualizar Contagem", "Responder"]
+    },
+    priorityScale: "Importante"
+  },
+  {
+    id: 2014,
+    org: "Cidadão: Edlasio Galhardo",
+    institution: "CNE",
+    preview: "Pedido de alteração extraordinária do domicílio de assembleia eleitoral.",
+    date: "11:30",
+    unread: 1,
+    status: "Informativo",
+    details: {
+      subject: "Alteração Excecional de Assembleia de Voto",
+      body: "Exmos. Senhores da Comissão Nacional Eleitoral (CNE),\n\nEu, Edlasio Galhardo, inscrito na base de eleitores, solicito uma alteração excecional da assembleia de voto que me foi atribuída por defeito no sistema.\n\nPor força de compromissos profissionais inadiáveis de relevante utilidade estatal na província de Benguela no dia regulamentar do escrutínio, estarei impedido de exercer o meu dever cívico na assembleia original em Luanda. Solicito que o meu registo eleitoral provisório seja ativado no posto de voto mais adequado de Benguela Centro.\n\nCom elevados cumprimentos,\nEdlasio Galhardo\nBI: 009874562LA041",
+      actions: ["Transferir Eleitor", "Emitir Credencial", "Arquivar"]
+    },
+    priorityScale: "Normal"
+  },
+  {
+    id: 2015,
+    org: "Cidadão: Edlasio Galhardo",
+    institution: "Registo Civil",
+    preview: "Solicitação eletrónica de reemissão de assento de registo matrimonial.",
+    date: "11:45",
+    unread: 1,
+    status: "Informativo",
+    details: {
+      subject: "Pedido de Assento de Casamento Digitalizado",
+      body: "Ilustre Conservador de Registo Civil,\n\nSolicito por este meio a reemissão e autenticação digital em formato eletrónico CDA da cópia integral de assento de casamento civil consensual, lavrado sob o Livro de Matrimónios do ano de 2022 desta Conservatória de Registo Civil de Belas, sob titularidade de Edlasio Galhardo.\n\nA certidão destina-se a fins puramente administrativos internos e requerimento de crédito de habitação bonificada para jovem casal.\n\nEfectuei o pagamento legal emolumentar e remeti comprovativos bancários em anexo.\n\nSubmeto com devoção,\nEdlasio Galhardo\nBI: 009874562LA041",
+      actions: ["Reemitir Assento", "Validar Assinatura", "Responder"]
+    },
+    priorityScale: "Normal"
+  },
+  {
+    id: 2016,
+    org: "Cidadão: Edlasio Galhardo",
+    institution: "Notariado",
+    preview: "Pedido de reconhecimento presencial com depósito de assinatura digitalizada.",
+    date: "12:00",
+    unread: 1,
+    status: "Urgente",
+    details: {
+      subject: "Agendamento de Depósito de Assinatura Presencial",
+      body: "Excelentíssimo Senhor Tabelião,\n\nGostaria de solicitar o agendamento de uma sessão notarial formal para depósito legal e chancela pública da minha assinatura pessoal manuscrita, para conversão subsequente em assinatura eletrónica qualificada e fidedigna no barramento digital do Estado.\n\nEstes trâmites de autenticação fidedigna são cruciais para a validação das procurações que passarei a emitir virtualmente de forma desmaterializada a favor de advogados constituídos.\n\nCom respeito profissional,\nEdlasio Galhardo\nBI: 009874562LA041",
+      actions: ["Confirmar Sessão", "Validar Assinatura", "Recusar"]
+    },
+    priorityScale: "Importante"
+  },
+  {
+    id: 2017,
+    org: "Cidadão: Edlasio Galhardo",
+    institution: "Tribunal de Comarca",
+    preview: "Reclamação de sobreposição horária em audiências judiciais arbitrais concorrentes.",
+    date: "12:15",
+    unread: 1,
+    status: "Urgente",
+    details: {
+      subject: "Reclamação de Sobreposição - Conflito de Agendas Judiciais",
+      body: "Exmos. Senhores Oficiais de Justiça do Tribunal de Comarca,\n\nParticipo-vos a existência de uma sobreposição absoluta de horários nas audiências arbitrais judiciais eletrónicas unificadas que me foram notificadas no meu portal do CDA.\n\nTenho agendada uma sessão processual cível para o dia 30 de Junho às 10h00, e simultaneamente uma sessão fiscal no âmbito das reclamações da AGT às 10h15. Torna-se fisicamente impossível comparecer em ambas as chamadas virtuais concorrentes.\n\nSolicito o adiamento amigável e readequação de horários da audiência fiscal.\n\nAtentamente,\nEdlasio Galhardo\nBI: 009874562LA041",
+      actions: ["Remarcar Sessão", "Adiar Audiência", "Contactar Partes"]
+    },
+    priorityScale: "Importante"
+  },
+  {
+    id: 2018,
+    org: "Cidadão: Edlasio Galhardo",
+    institution: "Universidade Pública",
+    preview: "Pedido de emissão de diploma eletrónico assinado por reitoria da UAN.",
+    date: "12:30",
+    unread: 1,
+    status: "Informativo",
+    details: {
+      subject: "Emissão de Diploma Eletrónico de Licenciatura - UAN",
+      body: "Ilustre Gabinete Académico da Reitoria da Universidade Agostinho Neto,\n\nEu, Edlasio Galhardo, diplomado do curso de Licenciatura em Engenharia Informática e de Sistemas, formulo a petição para emissão eletrónica de cópia definitiva do meu diploma de licenciatura qualificado pela tecnologia CDA do Estado angolano.\n\nConcluí a minha formação e respetiva homologação do trabalho de fim de curso em Outubro de 2025. O documento assinado digitalmente com certificado da Reitoria facilitará a minha candidatura de inserção ao mercado de trabalho exterior.\n\nCumprimentos,\nEdlasio Galhardo\nBI: 009874562LA041",
+      actions: ["Chancelar Diploma", "Ver Histórico", "Responder"]
+    },
+    priorityScale: "Normal"
+  },
+  {
+    id: 2019,
+    org: "Cidadão: Edlasio Galhardo",
+    institution: "AGT",
+    preview: "Dúvida cadastral referente a isenção de imposto de selo em transação imobiliária.",
+    date: "12:45",
+    unread: 1,
+    status: "Informativo",
+    details: {
+      subject: "Esclarecimento Cadastral - Imposto de Selo Jovem",
+      body: "Exmos. Senhores Técnicos de Atendimento da AGT,\n\nNa qualidade de jovem agregador, pretendo solicitar um esclarecimento prático sobre a aplicação real da cláusula de isenção de imposto de selo em contratos de arrendamento habitacional celebrados com jovens ao abrigo das medidas municipais de habitação social.\n\nO simulador automático no Vosso balcão emitiu uma guia contendo a cobrança integral, desrespeitando o previsto no código de isenções vigentes. Solicito a clarificação ou a correção automática da minha simulação número #88219.\n\nCordialmente,\nEdlasio Galhardo\nBI: 009874562LA041",
+      actions: ["Rever Isenção", "Recalcular Guia", "Arquivar"]
+    },
+    priorityScale: "Normal"
+  },
+  {
+    id: 2020,
+    org: "Cidadão: Edlasio Galhardo",
+    institution: "SME",
+    preview: "Comunicação de extravio físico de passaporte ordinário requirindo anulação no sistema.",
+    date: "13:00",
+    unread: 1,
+    status: "Urgente",
+    details: {
+      subject: "Cancelamento de Passaporte Ordinário Extraviado",
+      body: "Exmos. Senhores do Serviço de Migração e Estrangeiros (SME),\n\nParticipo formalmente pelo presente canal eletrónico o furto e consequente extravio definitivo do meu passaporte ordinário de categoria nacional, ocorrido no passado fim-de-semana.\n\nAo abrigo das orientações de segurança cívica, requeiro o cancelamento imediato das respetivas chaves eletrónicas e impressões digitais holográficas associadas de forma preventiva, impossibilitando qualquer tentativa de usurpação de identidade no exterior. Anexo o auto de queixa da Polícia Nacional.\n\nAtentamente,\nEdlasio Galhardo\nBI: 009874562LA041",
+      actions: ["Anular Passaporte", "Registrar Sinistro", "Oficiar PNA"]
+    },
+    priorityScale: "Urgente"
+  },
+  {
     id: 1001,
     org: "Cidadão: Edlasio Galhardo",
+    institution: "AGT",
     preview: "Pedido de esclarecimento sobre submissão de NIF.",
     date: "08:45",
     unread: 1,
@@ -791,6 +1262,156 @@ export const MOCK_INSTITUTIONAL_INBOX: Message[] = [
       subject: "Solicitação de Dedução Fiscal de Saúde",
       body: "Caros colegas,\n\nNotei que uma fatura de despesas médicas não foi considerada para dedução automática no meu IRT fiscal regular. Gostaria de saber como proceder para a devida correção manual no sistema.\n\nObrigado.\n\nAtentamente,\nJosé Kalunga",
       actions: ["Analisar Fatura", "Corrigir Saldo", "Responder"],
+    },
+    priorityScale: "Normal"
+  },
+  {
+    id: 2021,
+    org: "Cidadão: Edlasio Galhardo",
+    institution: "AGT",
+    preview: "Reclamação de erro na liquidação do Imposto de Selo referente ao ano transacto.",
+    date: "12:15",
+    unread: 1,
+    status: "Normal",
+    details: {
+      subject: "Reclamação de Liquidação Tributária de IS do Ano de 2025",
+      body: "Exmos. Senhores da Administração Geral Tributária (AGT),\n\nVenho por este meio requerer a vossa atenção para um erro grave na liquidação de Imposto de Selo (IS) efectuado sobre a minha conta bancária pessoal em Fevereiro de 2025.\n\nFui tributado erroneamente com uma taxa agravada de 10%, quando a legislação específica prevê uma isenção total para as contas de aforro e habitação jovem. Peço a reapreciação deste lançamento fiscal indevido.\n\nCom os melhores cumprimentos,\nEdlasio Galhardo\nBI: 009874562LA041",
+      actions: ["Analisar Reclamação", "Rever Liquidação", "Arquivar"]
+    },
+    priorityScale: "Normal"
+  },
+  {
+    id: 2022,
+    org: "Cidadão: Edlasio Galhardo",
+    institution: "AGT",
+    preview: "Apresentação de documentos de Prova de Vida para requerer isenção fiscal juvenil.",
+    date: "12:30",
+    unread: 1,
+    status: "Informativo",
+    details: {
+      subject: "Submissão de Prova de Vida para Efeitos de Isenção Fiscal Jovem",
+      body: "Estimados Senhores do Atendimento Electrónico,\n\nSubmeto por esta via o meu atestado de Prova de Vida, devidamente chancelado, para efeitos de renovação do benefício de Isenção Fiscal Jovem sobre o arrendamento urbano.\n\nSolicito que os vossos serviços procedam à actualização do meu perfil contributivo para que o benefício seja reflectido nas próximas guias de pagamento automatizado.\n\nAtentamente,\nEdlasio Galhardo\nBI: 009874562LA041",
+      actions: ["Processar Prova", "Validar Cadastro", "Arquivar"]
+    },
+    priorityScale: "Normal"
+  },
+  {
+    id: 2023,
+    org: "Cidadão: Edlasio Galhardo",
+    institution: "AGT",
+    preview: "Solicitação de clarificação técnica sobre o cálculo de deduções do IRT.",
+    date: "12:45",
+    unread: 1,
+    status: "Informativo",
+    details: {
+      subject: "Pedido de Esclarecimento sobre Cálculo de Retenção na Fonte de IRT",
+      body: "Exma. Repartição Fiscal Virtual,\n\nVerifico que, nas últimas três liquidações automatizadas de IRT, a taxa aplicada excedeu o indexante salarial estipulado para a minha faixa de rendimento declarada no sistema.\n\nPeço que me informem se houve alguma alteração regulamentar recente ou se se trata de uma incoerência na tabela de processamento digital do barramento da AGT.\n\nMelhores cumprimentos,\nEdlasio Galhardo\nBI: 009874562LA041",
+      actions: ["Auditar Alíquotas", "Ver Histórico", "Responder"]
+    },
+    priorityScale: "Normal"
+  },
+  {
+    id: 2024,
+    org: "Cidadão: Edlasio Galhardo",
+    institution: "AGT",
+    preview: "Reclamação referente a juros de mora acumulados indevidamente em guia de liquidação.",
+    date: "13:00",
+    unread: 1,
+    status: "Urgente",
+    details: {
+      subject: "Reclamação de Cobrança Indevida de Juros de Mora em Guia Liquidada",
+      body: "Exmos. Senhores do Apoio ao Contribuinte,\n\nSubmeto a presente reclamação motivada pela imposição de juros de mora na guia de liquidação n.º GD-88219. A referida guia foi devidamente liquidada no próprio dia de emissão oficial.\n\nApesar disso, o sistema continuou a assinalar a dívida como activa por mais 15 dias, gerando a mora indevida. Solicito o estorno imediato dos juros cobrados na minha conta virtual.\n\nAtentamente,\nEdlasio Galhardo\nBI: 009874562LA041",
+      actions: ["Verificar Comprovativo", "Anular Mora", "Responder"]
+    },
+    priorityScale: "Importante"
+  },
+  {
+    id: 2025,
+    org: "Cidadão: Edlasio Galhardo",
+    institution: "AGT",
+    preview: "Comunicação oficial de venda de morada tributária para actualização cadastral.",
+    date: "13:15",
+    unread: 1,
+    status: "Informativo",
+    details: {
+      subject: "Notificação de Venda de Imóvel Maianga para Actualização de Cadastro",
+      body: "Prezada Direcção de Cadastro Imobiliário,\n\nVenho comunicar oficialmente a alienação do imóvel sito na Maianga, registado sob o artigo matricial n.º 1293-A, efectuada a favor do novo proprietário.\n\nRemeto cópia da escritura pública lavrada para que procedam com urgência à desvinculação deste imóvel do meu cadastro e cessação das minhas obrigações perante o IPU correspondente.\n\nCumprimentos,\nEdlasio Galhardo\nBI: 009874562LA041",
+      actions: ["Actualizar Cadastro", "Baixar IPU", "Arquivar"]
+    },
+    priorityScale: "Normal"
+  },
+  {
+    id: 2026,
+    org: "Cidadão: Edlasio Galhardo",
+    institution: "AGT",
+    preview: "Submissão de impugnação de multa aduaneira imputada em mercadoria informática.",
+    date: "13:30",
+    unread: 1,
+    status: "Urgente",
+    details: {
+      subject: "Impugnação de Auto de Infracção Aduaneira",
+      body: "Exma. Alfândega de Luanda,\n\nImpugno o Auto de Infracção em relação ao desembaraço das minhas ferramentas de desenvolvimento de software portáteis. A mercadoria foi catalogada indevidamente como insumo comercial.\n\nTrata-se de ferramentas de uso exclusivamente profissional e pessoal de um cidadão, que gozam de isenção aduaneira directa segundo o Estatuto de Mobilidade Digital angolano.\n\nCom respeito,\nEdlasio Galhardo\nBI: 009874562LA041",
+      actions: ["Rever Pauta", "Chancelar Isenção", "Responder"]
+    },
+    priorityScale: "Urgente"
+  },
+  {
+    id: 2027,
+    org: "Cidadão: Edlasio Galhardo",
+    institution: "AGT",
+    preview: "Pedido urgente de emissão de Certidão de Não Devedor para candidatura pública.",
+    date: "13:45",
+    unread: 1,
+    status: "Urgente",
+    details: {
+      subject: "Solicitação de Certidão Negativa de Dívida Tributária de Urgência",
+      body: "Exmos. Senhores,\n\nSolicito a pronta emissão da minha Certidão de Não Devedor por via desmaterializada no portal do Cidadão.\n\nPreenchi todos os pré-requisitos cadastrais e não tenho quaisquer débitos activos registados perante o Estado Angolano. Este documento é o último que falta submeter para a nossa empresa poder concorrer ao contrato de fornecimento governamental.\n\nAtentamente,\nEdlasio Galhardo\nBI: 009874562LA041",
+      actions: ["Emitir Certidão", "Validar Débito", "Arquivar"]
+    },
+    priorityScale: "Crítico"
+  },
+  {
+    id: 2028,
+    org: "Cidadão: Edlasio Galhardo",
+    institution: "AGT",
+    preview: "Solicitação de compensação de saldos credores de IVA em cobranças tributárias futuras.",
+    date: "14:00",
+    unread: 1,
+    status: "Normal",
+    details: {
+      subject: "Pedido de Compensação de Créditos de IVA em Conta Corrente Fiscal",
+      body: "Estimada Direcção Geral da AGT,\n\nFormulo um pedido de compensação de créditos acumulados do imposto sobre o valor acrescentado (IVA), no valor global de 450.000 Kz, para amortização directa da minha próxima guia de IPU.\n\nOs comprovativos de facturação electrónica em modelo SAF-T foram submetidos e validados previamente na vossa plataforma. Peço a regularização respectiva na minha conta corrente fiscal.\n\nCom os melhores cumprimentos,\nEdlasio Galhardo\nBI: 009874562LA041",
+      actions: ["Liquidar Crédito", "Cruzamento Dados", "Responder"]
+    },
+    priorityScale: "Normal"
+  },
+  {
+    id: 2029,
+    org: "Cidadão: Edlasio Galhardo",
+    institution: "AGT",
+    preview: "Clarificação sobre declaração de mais-valias de criptomoedas em Angola.",
+    date: "14:15",
+    unread: 1,
+    status: "Informativo",
+    details: {
+      subject: "Dúvida sobre Tratamento Tributário de Criptoactivos no Novo Código",
+      body: "Caros Técnicos de Atendimento,\n\nGostaria de obter uma nota técnica explicativa sobre o tratamento de imposto incidente sobre mais-valias obtidas através de negociação em moedas digitais e criptoactivos no território nacional.\n\nO novo código geral prevê a tributação sobre investimentos imobiliários convencionais, mas permanece omisso quanto a activos digitais. Gostaria de declarar voluntariamente em conformidade.\n\nRespeitosamente,\nEdlasio Galhardo\nBI: 009874562LA041",
+      actions: ["Emitir Nota Técnica", "Agendar Esclarecimento", "Arquivar"]
+    },
+    priorityScale: "Normal"
+  },
+  {
+    id: 2030,
+    org: "Cidadão: Edlasio Galhardo",
+    institution: "AGT",
+    preview: "Aviso urgente sobre erro intermitente de segurança no barramento de validação de XML.",
+    date: "14:30",
+    unread: 1,
+    status: "Normal",
+    details: {
+      subject: "Participação de Falha no Mecanismo do Portal de Factura Electrónica",
+      body: "Exmos. Senhores Administradores Técnicos TI da AGT,\n\nIdentifiquei uma intermitência técnica recorrente no vosso módulo de recepção e processamento de ficheiros SAF-T de facturação electrónica, que gera um erro '502 Bad Gateway'.\n\nEssa falha impede a integridade da submissão em tempo útil das facturas de prestação de serviços dos contribuintes. Espero que esta informação sirva para acelerar a correcção por parte das vossas equipas de engenharia informática.\n\nAtentamente,\nEdlasio Galhardo\nBI: 009874562LA041",
+      actions: ["Avisar Equipa Dev", "Ver Relatório", "Responder"]
     },
     priorityScale: "Normal"
   }

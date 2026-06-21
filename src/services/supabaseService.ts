@@ -300,7 +300,7 @@ export const supabaseService = {
         senderBi: citizenBi,
         recipientBi: institutionCode,
         org: institutionCode,
-        unread: true,
+        unread: msg.unread !== undefined ? (typeof msg.unread === 'number' ? msg.unread !== 0 : !!msg.unread) : true,
       });
       const { data, error } = await supabase.from('messages').upsert([payload]).select();
       if (error) throw error;
@@ -323,7 +323,7 @@ export const supabaseService = {
         senderBi: institutionCode,
         recipientBi: resolvedBi,
         org: institutionCode,
-        unread: true,
+        unread: msg.unread !== undefined ? (typeof msg.unread === 'number' ? msg.unread !== 0 : !!msg.unread) : true,
       });
       const { data, error } = await supabase.from('messages').upsert([payload]).select();
       if (error) throw error;
@@ -1158,7 +1158,7 @@ export const supabaseService = {
       // 9. Insert institution inbox messages when provided
       for (const msg of params.institutionInbox || []) {
         try {
-          const targetInstitution = params.institutionCode || 'AGT';
+          const targetInstitution = msg.institution || params.institutionCode || 'AGT';
           const inferredCitizenBi = msg.details?.body?.match(/BI:\s*([A-Z0-9]+)/i)?.[1] || params.profile.bi;
           const res = await this.sendCitizenMessage(msg, inferredCitizenBi, targetInstitution);
           if (res) messageCount++;

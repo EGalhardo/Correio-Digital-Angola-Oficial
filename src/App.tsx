@@ -607,6 +607,7 @@ export default function App() {
   const [contactToDelete, setContactToDelete] = useState<Contact | null>(null);
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
   const [messageSource, setMessageSource] = useState('correspondencias');
+  const [wasOpenedUnread, setWasOpenedUnread] = useState(false);
   
   // Mic Activation State (UI only)
   const [iaLiveActive, setIaLiveActive] = useState(false);
@@ -769,6 +770,14 @@ export default function App() {
   const [contactForm, setContactForm] = useState({ name: '', bi: '', relation: '', phone: '', type: 'Normal' as 'Normal' | 'Emergência' });
   const [activeSlide, setActiveSlide] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    if (!selectedMessage && wasOpenedUnread) {
+      setCorrespondenciaTab('lidas');
+      setDocumentosTab('lidas');
+      setWasOpenedUnread(false);
+    }
+  }, [selectedMessage, wasOpenedUnread]);
   const [showInviteConfirm, setShowInviteConfirm] = useState(false);
   const [pageLoading, setPageLoading] = useState(true);
   const [searchMail, setSearchMail] = useState('');
@@ -1675,6 +1684,7 @@ export default function App() {
   const handleSelectMessage = (message: Message) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     setSelectedMessage(message);
+    setWasOpenedUnread(!!message.unread);
     if (isOnline && hasValidSupabaseKeys()) {
       const baseId = message.id >= 10000 ? message.id - 10000 : message.id;
       supabaseService.getMessageStateHistory(baseId).then((history) => {

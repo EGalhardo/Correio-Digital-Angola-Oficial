@@ -50,6 +50,7 @@ export interface Message {
   date: string;
   unread?: number;
   status: string;
+  institution?: string;
   details?: MessageDetail;
   protocol?: DigitalProtocol;
   stateHistory?: CorrespondenceStateEvent[];
