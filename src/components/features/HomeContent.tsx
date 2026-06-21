@@ -97,13 +97,13 @@ export function HomeContent({
           <div className={`w-12 h-12 md:w-16 md:h-16 ${isInst ? 'bg-white border-slate-100' : 'bg-green-600 border-green-600'} rounded-2xl flex items-center justify-center shadow-sm shrink-0 border`}>
             {isInst ? (
               <LazyImage 
-                src="https://i.postimg.cc/1XDX0qsQ/agt.png" 
+                src="https://i.postimg.cc/4x1mS4hQ/AGT.jpg" 
                 alt="AGT" 
                 style={{
-                  width: '2.5rem',
-                  height: '2.5rem',
+                  width: '100%',
+                  height: '100%',
                 }}
-                className="w-10 h-10 md:w-12 md:h-12 object-contain"
+                className="w-full h-full object-cover rounded-2xl"
               />
             ) : (
               <ShieldCheck size={24} className="md:w-8 md:h-8 text-white" />
