@@ -19,6 +19,7 @@ interface LazyImageProps {
   style?: React.CSSProperties;
   id?: string;
   'data-testid'?: string;
+  onClick?: () => void;
 }
 
 /**
@@ -42,6 +43,7 @@ export const LazyImage = memo(function LazyImage({
   style,
   id,
   'data-testid': testId,
+  onClick,
 }: LazyImageProps) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isError, setIsError] = useState(false);
@@ -126,6 +128,7 @@ export const LazyImage = memo(function LazyImage({
       className={`lazy-image-container ${className}`}
       id={id}
       data-testid={testId}
+      onClick={onClick}
     >
       {/* CSS Animation para shimmer */}
       <style>{`
