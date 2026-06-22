@@ -3171,12 +3171,12 @@ Ficha civil do titular:
     };
 
     return (
-      <section className="min-h-screen p-4 md:p-6 bg-slate-50 flex items-center justify-center font-sans">
-        <div className="max-w-[960px] w-full mx-auto grid grid-cols-1 md:grid-cols-[1.2fr_1fr] gap-4 items-stretch">
+      <section className="min-h-screen p-4 bg-slate-50 flex items-center justify-center font-sans">
+        <div className="max-w-[816px] w-full mx-auto grid grid-cols-1 md:grid-cols-[1.2fr_1fr] gap-3.5 items-stretch">
           <motion.div 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className={`hidden md:flex bg-white rounded-3xl ${loginSubMode === 'face-capture' ? 'p-6 min-h-[420px]' : 'p-8 min-h-[520px]'} border border-[#E2E8F0] flex-col items-center justify-center text-center shadow-sm h-full relative overflow-hidden transition-all duration-300`}
+            className={`hidden md:flex bg-white rounded-3xl ${loginSubMode === 'face-capture' ? 'p-5 min-h-[357px]' : 'p-6 md:p-7 min-h-[442px]'} border border-[#E2E8F0] flex-col items-center justify-center text-center shadow-sm h-full relative overflow-hidden transition-all duration-300`}
           >
             <div className="absolute top-0 right-0 w-80 h-80 bg-primary/2 rounded-full -mr-40 -mt-40 blur-3xl pointer-events-none" />
             
@@ -3214,17 +3214,17 @@ Ficha civil do titular:
                   alt="Correio Digital" 
                   priority={true}
                   placeholder="skeleton"
-                  className={loginSubMode === 'face-capture' ? "w-36 h-auto mb-3" : "w-52 h-auto mb-5"}
+                  className={loginSubMode === 'face-capture' ? "w-30 h-auto mb-2.5" : "w-44 h-auto mb-4"}
                 />
-                <h1 className={`${loginSubMode === 'face-capture' ? 'text-lg md:text-xl mb-1.5' : 'text-xl md:text-2xl mb-3'} font-black text-slate-900 leading-tight italic uppercase tracking-tight`}>
+                <h1 className={`${loginSubMode === 'face-capture' ? 'text-base md:text-lg mb-1.5' : 'text-lg md:text-xl mb-2.5'} font-black text-slate-900 leading-tight italic uppercase tracking-tight`}>
                   {t("O seu novo endereço digital oficial")}
                 </h1>
-                <p className="text-slate-500 leading-relaxed max-w-sm text-xs font-semibold">
+                <p className="text-slate-500 leading-relaxed max-w-sm text-[11px] font-semibold">
                   {t("Receba, assine e despache correspondência governamental com validade jurídica do Estado da República de Angola.")}
                 </p>
-                <div className={`${loginSubMode === 'face-capture' ? 'mt-3' : 'mt-5'} flex flex-col items-center`}>
-                  <div className="flex items-center gap-2 px-4 py-2 bg-[#0E2B64] border border-[#0E2B64] rounded-full text-[10px] text-white font-extrabold uppercase tracking-widest">
-                    <ShieldCheck size={14} className="text-emerald-400" /> {t("Infraestrutura Oficial Segura SME & AGT")}
+                <div className={`${loginSubMode === 'face-capture' ? 'mt-2.5' : 'mt-4'} flex flex-col items-center`}>
+                  <div className="flex items-center gap-1.5 px-3 py-1.5 bg-[#0E2B64] border border-[#0E2B64] rounded-full text-[9px] text-white font-extrabold uppercase tracking-widest">
+                    <ShieldCheck size={12} className="text-emerald-400" /> {t("Infraestrutura Oficial Segura SME & AGT")}
                   </div>
                 </div>
               </div>
@@ -3235,7 +3235,7 @@ Ficha civil do titular:
             id="cda-login-form-container"
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            className={`bg-white rounded-3xl ${loginSubMode === 'face-capture' ? 'p-4 md:p-5 min-h-[420px]' : 'p-6 md:p-8 min-h-[520px]'} shadow-xl border border-[#E2E8F0] flex flex-col justify-between h-full transition-all duration-300 relative ${
+            className={`bg-white rounded-3xl ${loginSubMode === 'face-capture' ? 'p-3.5 md:p-4 min-h-[357px]' : 'p-5 md:p-6.5 min-h-[442px]'} shadow-xl border border-[#E2E8F0] flex flex-col justify-between h-full transition-all duration-300 relative ${
               highlightSteps 
                 ? 'ring-4 ring-blue-500 ring-offset-4 shadow-[0_0_30px_rgba(37,99,235,0.35)] scale-[1.01]' 
                 : ''
@@ -3314,15 +3314,15 @@ Ficha civil do titular:
                     </button>
                   </div>
 
-                  <div className="text-center space-y-1.5">
+                  <div className="text-center space-y-1">
                     {/* Centered User Avatar exactly like the first image */}
                     <div className="flex justify-center mb-0.5">
-                      <div className="w-12 h-12 rounded-full bg-[#f0f4f9] flex items-center justify-center border border-slate-100 shadow-3xs">
-                        <User className="text-[#0c2340]" size={20} />
+                      <div className="w-10 h-10 rounded-full bg-[#f0f4f9] flex items-center justify-center border border-slate-100 shadow-3xs">
+                        <User className="text-[#0c2340]" size={17} />
                       </div>
                     </div>
 
-                    <h2 className="text-2xl font-black text-[#0c2340] tracking-tight uppercase leading-none">
+                    <h2 className="text-xl font-black text-[#0c2340] tracking-tight uppercase leading-none">
                       LOGIN
                     </h2>
                     <p className="text-[9px] text-slate-400 font-extrabold uppercase tracking-wider leading-none mt-0.5">
@@ -3330,18 +3330,18 @@ Ficha civil do titular:
                     </p>
                   </div>
 
-                  <div className="space-y-3 pt-0.5">
+                  <div className="space-y-2.5 pt-0.5">
                     {/* Input wrapper with Icon on left exactly like image 1 */}
                     <div className="grid gap-1 text-left">
                       <span className="text-[9px] text-slate-500 font-extrabold tracking-wider uppercase">
                         {(isInstMode || isGovMode) ? t("Número de Agente") : t("Número de BI de Cidadão")}
                       </span>
-                      <div className="flex items-center gap-2.5 bg-white border border-slate-200 focus-within:border-[#0c2340] focus-within:ring-1 focus-within:ring-[#0c2340] rounded-xl px-2.5 py-1 transition-all">
-                        <div className="w-9 h-9 bg-[#f0f4f9] text-[#1e3a8a] rounded-lg flex items-center justify-center shrink-0">
-                          <IdCard size={16} className="text-[#2563eb]" />
+                      <div className="flex items-center gap-2 bg-white border border-slate-200 focus-within:border-[#0c2340] focus-within:ring-1 focus-within:ring-[#0c2340] rounded-xl px-2 py-0.5 transition-all">
+                        <div className="w-7.5 h-7.5 bg-[#f0f4f9] text-[#1e3a8a] rounded-md flex items-center justify-center shrink-0">
+                          <IdCard size={14} className="text-[#2563eb]" />
                         </div>
                         <input 
-                          className="w-full bg-transparent font-mono font-bold tracking-wider text-slate-800 border-none outline-none text-xs placeholder-slate-400"
+                          className="w-full bg-transparent font-mono font-bold tracking-wider text-slate-800 border-none outline-none text-[11px] placeholder-slate-400"
                           value={bi}
                           onChange={(e) => setBi(e.target.value.toUpperCase())}
                           placeholder={isInstMode ? "AGT-9921-SR" : isGovMode ? "ADM-8812-OP" : "009874562LA041"}
@@ -3354,13 +3354,13 @@ Ficha civil do titular:
                       <span className="text-[9px] text-slate-500 font-extrabold tracking-wider uppercase">
                         {t("Senha de Acesso")}
                       </span>
-                      <div className="flex items-center gap-2.5 bg-white border border-slate-200 focus-within:border-[#0c2340] focus-within:ring-1 focus-within:ring-[#0c2340] rounded-xl px-2.5 py-1 transition-all">
-                        <div className="w-9 h-9 bg-[#f0f4f9] text-[#1e3a8a] rounded-lg flex items-center justify-center shrink-0">
-                          <Lock size={15} className="text-[#2563eb]" />
+                      <div className="flex items-center gap-2 bg-white border border-slate-200 focus-within:border-[#0c2340] focus-within:ring-1 focus-within:ring-[#0c2340] rounded-xl px-2 py-0.5 transition-all">
+                        <div className="w-7.5 h-7.5 bg-[#f0f4f9] text-[#1e3a8a] rounded-md flex items-center justify-center shrink-0">
+                          <Lock size={13} className="text-[#2563eb]" />
                         </div>
                         <input 
                           type="password"
-                          className="w-full bg-transparent font-bold tracking-wider text-slate-800 border-none outline-none text-xs placeholder-slate-400"
+                          className="w-full bg-transparent font-bold tracking-wider text-slate-800 border-none outline-none text-[11px] placeholder-slate-400"
                           placeholder="••••••••••••"
                           value={loginPasswordInput}
                           onChange={(e) => setLoginPasswordInput(e.target.value)}
@@ -3368,11 +3368,11 @@ Ficha civil do titular:
                       </div>
                     </div>
 
-                    <div className="pt-1.5 flex flex-col gap-2.5">
+                    <div className="pt-1.5 flex flex-col gap-2">
                       {/* Button ENTRAR NO PORTAL */}
                       <button 
                         onClick={handleLoginSubmit}
-                        className="w-full bg-[#0E2B64] hover:bg-[#081a3d] text-white rounded-xl py-3 font-black text-[10.5px] uppercase tracking-wider shadow-[#0E2B64]/15 hover:opacity-95 transition-all cursor-pointer border-none"
+                        className="w-full bg-[#0E2B64] hover:bg-[#081a3d] text-white rounded-xl py-2.5 font-black text-[9.5px] uppercase tracking-wider shadow-[#0E2B64]/15 hover:opacity-95 transition-all cursor-pointer border-none"
                       >
                         {t("Entrar no Portal")}
                       </button>
@@ -3382,7 +3382,7 @@ Ficha civil do titular:
                         <button
                           type="button"
                           onClick={handleDemoAutofill}
-                          className="w-full bg-white hover:bg-slate-50 text-blue-600 border border-blue-600 rounded-xl py-2.5 font-bold text-[10px] uppercase tracking-wider transition-all cursor-pointer"
+                          className="w-full bg-white hover:bg-slate-50 text-blue-600 border border-blue-600 rounded-xl py-2 font-bold text-[9px] uppercase tracking-wider transition-all cursor-pointer"
                         >
                           {t("Auto Preencher Demonstração")}
                         </button>
@@ -3414,9 +3414,9 @@ Ficha civil do titular:
                             setLoginSubMode('face-capture');
                             addAuditLog('Iniciado Login Biométrico Facial', 'info');
                           }}
-                          className="w-full bg-white hover:bg-slate-100 text-[#2563eb] border border-[#E2E8F0] rounded-xl py-3 font-black text-[10.5px] uppercase tracking-wider transition-all flex items-center justify-center gap-2.5 cursor-pointer shadow-3xs"
+                          className="w-full bg-white hover:bg-slate-100 text-[#2563eb] border border-[#E2E8F0] rounded-xl py-2.5 font-black text-[9.5px] uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer shadow-3xs"
                         >
-                          <Fingerprint size={15} className="text-[#2563eb] shrink-0" />
+                          <Fingerprint size={13} className="text-[#2563eb] shrink-0" />
                           {t("Login Facial")}
                         </button>
                       </div>
@@ -3428,9 +3428,9 @@ Ficha civil do titular:
                           onClick={() => {
                             setLoginSubMode('register');
                           }}
-                          className="text-slate-600 hover:text-[#0c2340] transition-colors bg-transparent border-none cursor-pointer text-[10px] font-black uppercase tracking-widest font-sans flex items-center gap-1.5"
+                          className="text-slate-600 hover:text-[#0c2340] transition-colors bg-transparent border-none cursor-pointer text-[9px] font-black uppercase tracking-widest font-sans flex items-center gap-1"
                         >
-                          <UserPlus size={14} className="text-[#2563eb]" />
+                          <UserPlus size={12} className="text-[#2563eb]" />
                           {t("Registar")}
                         </button>
                         <button
@@ -3457,27 +3457,27 @@ Ficha civil do titular:
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  className="space-y-6 flex-1 flex flex-col justify-center text-center animate-fadeIn"
+                  className="space-y-4 flex-1 flex flex-col justify-center text-center animate-fadeIn"
                 >
                   {/* Top Avatar Circle exactly like Image 2 */}
-                  <div className="mx-auto w-20 h-20 bg-[#f0f9ff] text-blue-600 rounded-full flex items-center justify-center shadow-xs border border-blue-100 mb-2">
-                    <Smartphone size={32} className="text-[#2563eb]" />
+                  <div className="mx-auto w-[68px] h-[68px] bg-[#f0f9ff] text-blue-600 rounded-full flex items-center justify-center shadow-xs border border-blue-100 mb-1.5">
+                    <Smartphone size={26} className="text-[#2563eb]" />
                   </div>
                   
                   <div>
-                    <h3 className="text-2xl font-black text-[#0c2340] uppercase tracking-tight">{t("Autenticação de canais")}</h3>
-                    <p className="text-slate-500 text-xs font-semibold max-w-sm mx-auto mt-1 leading-relaxed">
+                    <h3 className="text-xl font-black text-[#0c2340] uppercase tracking-tight">{t("Autenticação de canais")}</h3>
+                    <p className="text-slate-500 text-[11px] font-semibold max-w-sm mx-auto mt-0.5" style={{ lineHeight: '1.4' }}>
                       {t("Enviámos um SMS com o código aleatório temporário (OTP) para o telemóvel associado:")}{' '}
                       <strong className="text-[#2563eb] font-extrabold font-mono">{phone.replace(/\d{3} \d{3}$/, '*** ***')}</strong>
                     </p>
                   </div>
 
-                  <div className="space-y-6">
-                    <div className="text-center space-y-2">
-                      <span className="text-[11px] text-slate-500 font-extrabold uppercase tracking-wider">{t("Insira o código de 6 dígitos enviado por SMS")}</span>
+                  <div className="space-y-4">
+                    <div className="text-center space-y-1.5">
+                      <span className="text-[10px] text-slate-500 font-extrabold uppercase tracking-wider">{t("Insira o código de 6 dígitos enviado por SMS")}</span>
                       
                       {/* OTP field container card with 6 slots like Image 2 */}
-                      <div className="relative py-4 max-w-md mx-auto bg-[#fafbfc]/50 border border-slate-100 rounded-2xl p-4 shadow-3xs">
+                      <div className="relative py-3.5 max-w-md mx-auto bg-[#fafbfc]/50 border border-slate-100 rounded-2xl p-3.5 shadow-3xs">
                         {/* Hidden input overlay */}
                         <input 
                           type="tel"
@@ -3489,14 +3489,14 @@ Ficha civil do titular:
                           autoFocus
                         />
                         {/* 6 Grid visual indicators */}
-                        <div className="grid grid-cols-6 gap-2.5">
+                        <div className="grid grid-cols-6 gap-2">
                           {[0, 1, 2, 3, 4, 5].map((idx) => {
                             const val = enteredOtp[idx] || '';
                             const isFocused = enteredOtp.length === idx;
                             return (
                               <div
                                 key={idx}
-                                className={`h-14 rounded-xl bg-white border flex items-center justify-center font-mono font-black text-xl transition-all ${
+                                className={`h-12 rounded-xl bg-white border flex items-center justify-center font-mono font-black text-lg transition-all ${
                                   isFocused 
                                     ? 'border-blue-500 ring-2 ring-blue-100 scale-102 shadow-xs' 
                                     : 'border-slate-200 text-slate-800'
@@ -3511,23 +3511,23 @@ Ficha civil do titular:
                     </div>
 
                     {/* Simultaion notification badge like Image 2 */}
-                    <div className="bg-blue-50/50 border border-blue-100/70 rounded-2xl p-4 flex items-center gap-3.5 text-left max-w-md mx-auto">
-                      <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center shrink-0">
-                        <Lightbulb className="text-white fill-[#fcd34d]" size={18} />
+                    <div className="bg-blue-50/50 border border-blue-100/70 rounded-2xl p-3 flex items-center gap-3 text-left max-w-md mx-auto">
+                      <div className="w-8.5 h-8.5 rounded-full bg-blue-600 flex items-center justify-center shrink-0">
+                        <Lightbulb className="text-white fill-[#fcd34d]" size={15} />
                       </div>
-                      <div className="text-xs">
+                      <div className="text-[11px]">
                         <h5 className="font-extrabold text-[#0c2340] leading-none mb-0.5">Dica de Simulação:</h5>
                         <p className="text-slate-500 font-semibold leading-normal">
-                          O código de teste recebido por canais é <strong className="text-blue-700 font-mono font-extrabold text-sm select-all">123456</strong>
+                          O código de teste recebido por canais é <strong className="text-blue-700 font-mono font-extrabold text-xs select-all">123456</strong>
                         </p>
                       </div>
                     </div>
 
                     {/* Actions precisely styled with Cancel & Validar buttons like Image 2 */}
-                    <div className="pt-2 grid grid-cols-2 gap-4 max-w-md mx-auto">
+                    <div className="pt-1 grid grid-cols-2 gap-3 max-w-md mx-auto">
                       <button 
                         onClick={() => setLoginSubMode('normal')}
-                        className="py-3.5 bg-white border border-slate-200 text-slate-600 font-black text-xs uppercase tracking-widest rounded-2xl hover:bg-slate-50 transition-all cursor-pointer shadow-3xs"
+                        className="py-2.5 bg-white border border-slate-200 text-slate-600 font-black text-[11px] uppercase tracking-widest rounded-2xl hover:bg-slate-50 transition-all cursor-pointer shadow-3xs"
                       >
                         {t("Cancelar")}
                       </button>
@@ -3540,10 +3540,10 @@ Ficha civil do titular:
                             alert(t("Código de verificação OTP incorrecto. Utilize o código de simulação 123456."));
                           }
                         }}
-                        className="py-3.5 bg-[#0E2B64] hover:bg-[#081a3d] border-none text-white font-black text-xs uppercase tracking-widest rounded-2xl flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-md"
+                        className="py-2.5 bg-[#0E2B64] hover:bg-[#081a3d] border-none text-white font-black text-[11px] uppercase tracking-widest rounded-2xl flex items-center justify-center gap-1 transition-all cursor-pointer shadow-md"
                       >
                         {t("Validar OTP")}
-                        <ChevronRight size={14} className="stroke-[2.5]" />
+                        <ChevronRight size={13} className="stroke-[2.5]" />
                       </button>
                     </div>
                   </div>
@@ -3556,11 +3556,11 @@ Ficha civil do titular:
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  className="space-y-4 flex-1 flex flex-col justify-center text-center p-2 relative"
+                  className="space-y-3.5 flex-1 flex flex-col justify-center text-center p-1.5 relative"
                 >
                   {/* Badge top */}
-                  <div className="inline-flex items-center gap-1 bg-blue-50/70 border border-blue-100/50 px-3 py-1 rounded-full text-blue-600 font-extrabold text-[9px] uppercase tracking-[0.15em] mx-auto w-fit">
-                    <Shield size={11} className="text-blue-500" />
+                  <div className="inline-flex items-center gap-1 bg-blue-50/70 border border-blue-100/50 px-2.5 py-0.5 rounded-full text-blue-600 font-extrabold text-[8.5px] uppercase tracking-[0.15em] mx-auto w-fit">
+                    <Shield size={10} className="text-blue-500" />
                     {t("LOGIN FACIAL")}
                   </div>
 
@@ -3573,23 +3573,23 @@ Ficha civil do titular:
                           setLoginSubMode('normal');
                           addAuditLog('Sair do login facial', 'info');
                         }}
-                        className="absolute left-1 p-1.5 hover:bg-slate-100 rounded-full transition-all text-slate-500 hover:text-slate-800 border-0 cursor-pointer flex items-center justify-center focus:outline-none"
+                        className="absolute left-1 p-1 hover:bg-slate-100 rounded-full transition-all text-slate-500 hover:text-slate-800 border-0 cursor-pointer flex items-center justify-center focus:outline-none"
                         title={t("Voltar")}
                       >
-                        <ArrowLeft size={18} />
+                        <ArrowLeft size={15} />
                       </button>
-                      <h2 className="text-xl md:text-2xl font-black text-[#0f172a] tracking-tight leading-none">
+                      <h2 className="text-lg md:text-xl font-black text-[#0f172a] tracking-tight leading-none">
                         {t("Login Facial")}
                       </h2>
                     </div>
-                    <p className="text-slate-500 text-[11px] font-semibold max-w-sm mx-auto leading-normal px-8">
+                    <p className="text-slate-500 text-[10px] font-semibold max-w-sm mx-auto leading-normal px-8">
                       {t("Registe o seu padrão facial tridimensional codificado na infraestrutura do")} <strong className="font-extrabold text-blue-600">SME</strong>.
                     </p>
                   </div>
 
                   {/* Circle Scanning area */}
                   <div className="relative flex justify-center py-1">
-                    <div className="relative w-38 h-38 rounded-full flex items-center justify-center bg-white shadow-lg">
+                    <div className="relative w-32 h-32 rounded-full flex items-center justify-center bg-white shadow-lg">
                       {/* SVG Ring Progress */}
                       <svg className="absolute inset-0 w-full h-full -rotate-90 pointer-events-none z-10" viewBox="0 0 100 100">
                         <circle
@@ -3625,7 +3625,7 @@ Ficha civil do titular:
                       </svg>
 
                       {/* Main dark vector circle */}
-                      <div className="w-32 h-32 rounded-full overflow-hidden bg-gradient-to-b from-[#0f172a] to-[#1e1b4b] relative flex items-center justify-center border-4 border-white shadow-inner z-5">
+                      <div className="w-26 h-26 rounded-full overflow-hidden bg-gradient-to-b from-[#0f172a] to-[#1e1b4b] relative flex items-center justify-center border-4 border-white shadow-inner z-5">
                         {/* Faint Tech Grid */}
                         <div className="absolute inset-0 bg-[linear-gradient(to_right,#334155_1px,transparent_1px),linear-gradient(to_bottom,#334155_1px,transparent_1px)] bg-[size:10px_10px] opacity-25" />
 
@@ -3697,17 +3697,17 @@ Ficha civil do titular:
                   </div>
 
                   {/* Main Action Buttons */}
-                  <div className="space-y-2.5">
+                  <div className="space-y-2">
                     <button
                       type="button"
                       disabled={isFaceScanning || !webcamReady}
                       onClick={handleDemoFaceCapture}
-                      className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 px-5 rounded-2xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 shadow-lg shadow-blue-500/15 hover:opacity-95 active:scale-95 transition-all disabled:opacity-40 disabled:scale-100 disabled:shadow-none cursor-pointer border-0"
+                      className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-2.5 px-4 rounded-2xl font-black text-[11px] uppercase tracking-widest flex items-center justify-center gap-1.5 shadow-lg shadow-blue-500/15 hover:opacity-95 active:scale-95 transition-all disabled:opacity-40 disabled:scale-100 disabled:shadow-none cursor-pointer border-0"
                     >
-                      <Fingerprint size={14} />
+                      <Fingerprint size={13} />
                       {demoFaceTemplateLoaded ? t('VALIDAR FACE LOCAL') : t('REGISTAR FACE NESTE DISPOSITIVO')}
                     </button>
-                    <div className="flex flex-wrap items-center justify-center gap-3 text-[9px] font-black uppercase tracking-widest">
+                    <div className="flex flex-wrap items-center justify-center gap-2.5 text-[8.5px] font-black uppercase tracking-widest">
                       <button
                         type="button"
                         onClick={handleDemoAutofill}
