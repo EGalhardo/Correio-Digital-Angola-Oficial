@@ -95,7 +95,7 @@ function extractTranslatableStrings(): string[] {
     "Abrir Pasta Digital", "Novas Mensagens", "Documentos Ativos",
     "Segurança CDA", "Ver Correspondências",
     "Ocultar solicitações", "Ver solicitações",
-    "Documentos Digitais", "Facturas Recebidas",
+    "Expedientes e Arquivos", "Facturas Recebidas",
     "novos arquivados", "faturas aguardando pagamento",
     "Submeter Documento", "mensagens por ler", "Nova Mensagem",
     "Lidas", "Enviadas", "Arquivadas",

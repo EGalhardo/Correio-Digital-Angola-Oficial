@@ -833,9 +833,9 @@ export function GovRelatorioContent({
                     <span className="text-[10px] text-slate-400 font-mono font-bold uppercase">Consola de Produção</span>
                   </div>
 
-                  <div className="overflow-x-auto min-h-[220px]">
-                    <table className="mobile-data-table w-full text-left font-sans text-xs">
-                      <thead>
+                  <div className="overflow-y-auto overflow-x-auto max-h-[610px] min-h-[220px] custom-scrollbar border border-slate-100 rounded-xl">
+                    <table className="mobile-data-table w-full text-left font-sans text-xs border-collapse">
+                      <thead className="sticky top-0 bg-slate-50 z-10 shadow-3xs">
                         <tr className="bg-slate-50 text-slate-450 uppercase text-[10px] font-black tracking-widest border-b border-slate-100">
                           {kpiData.csvHeader.map((h, i) => (
                             <th key={i} className="py-3.5 px-4 first:rounded-l-xl last:rounded-r-xl">{h}</th>

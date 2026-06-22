@@ -826,7 +826,7 @@ export function DocumentsContent({
           </div>
           <div>
             <h3 className="text-lg md:text-2xl font-black text-primary leading-tight">
-              {isInst ? translate('Documentos Digitais') : translate('Facturas Recebidas')}
+              {isInst ? translate('Expedientes e Arquivos') : translate('Facturas Recebidas')}
             </h3>
             <p className="text-[10px] md:text-sm text-slate-600 font-black uppercase tracking-widest">
               {isInst 
@@ -848,7 +848,7 @@ export function DocumentsContent({
       </div>
 
       <div className="flex flex-wrap items-center gap-4 px-1 text-[10px] font-black uppercase tracking-widest">
-        {!isInst && <button onClick={() => setTab('qr-code')} className="cda-link-text">{translate("QR Code")}</button>}
+        {!isInst && <button onClick={() => setTab('home')} className="cda-link-text">{translate("Painel")}</button>}
         {!isInst && <button onClick={() => setTab('historico')} className="cda-link-text">{translate("Ver Histórico")}</button>}
         <button onClick={() => setTab('notificacoes')} className="cda-link-text">{translate("Notificações")}</button>
         {isInst && <button onClick={() => setTab('inst-qrcode')} className="cda-link-text">{translate("Validação QR")}</button>}

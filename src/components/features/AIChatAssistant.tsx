@@ -127,6 +127,37 @@ const NAV_CONFIRM_MESSAGES = {
   }
 };
 
+const PAGE_FRIENDLY_NAMES: Record<AppMode, Record<string, string>> = {
+  user: {
+    home: "Painel Principal",
+    correspondencias: "Correio Digital",
+    contactos: "Círculo de Confiança",
+    perfil: "Minha Conta",
+    "video-atendimento": "Video Atendimento"
+  },
+  institution: {
+    home: "Painel Principal",
+    correspondencias: "Correio Institucional",
+    "gov-contatos": "Trabalhadores",
+    "inst-qrcode": "Validação por QR Code",
+    "inst-ai-assistant": "Assistência IA",
+    perfil: "Conta Institucional",
+    "video-atendimento": "Video Atendimento"
+  },
+  admin: {
+    "gov-dashboard": "Painel Principal SOC",
+    "gov-interoperabilidade": "Interoperabilidade",
+    "gov-correspondencias": "Correspondências",
+    "gov-contatos": "Cidadãos",
+    "gov-trabalhadores": "Trabalhadores",
+    "gov-relatorio": "Relatórios",
+    "gov-ia": "IA (Nacional)",
+    "gov-seguranca": "Auditoria de Segurança",
+    "gov-perfil": "Conta Admin",
+    "video-atendimento": "Video Atendimento"
+  }
+};
+
 interface PendingNavigation {
   targetTab: string;
   tabLabel: string;
@@ -142,6 +173,7 @@ interface AIChatAssistantProps {
   onClose: () => void;
   iaLiveActive: boolean;
   stopIaVoice?: () => void;
+  startIaVoice?: () => void;
   appMode: AppMode;
   onCreateRequest?: (type: string, priority: 'Alta' | 'Média' | 'Baixa') => void;
   onNavigate?: (tab: string) => void;
@@ -155,6 +187,7 @@ export function AIChatAssistant({
   onClose,
   iaLiveActive,
   stopIaVoice,
+  startIaVoice,
   appMode,
   onCreateRequest,
   onNavigate,
@@ -196,11 +229,16 @@ export function AIChatAssistant({
   const isTranscribingRef = useRef(false);
   const silenceTimerRef = useRef<NodeJS.Timeout | null>(null);
   const iaLiveActiveRef = useRef(iaLiveActive);
+  const skipAutoPresentationRef = useRef(false);
 
   // Sync state with mutable reference to prevent stale closures during asynchronous callbacks
   useEffect(() => {
     iaLiveActiveRef.current = iaLiveActive;
     if (iaLiveActive) {
+      if (skipAutoPresentationRef.current) {
+        skipAutoPresentationRef.current = false;
+        return;
+      }
       const modePresentations = PAGE_PRESENTATIONS[appMode];
       const pageText = activeTab && modePresentations ? modePresentations[activeTab] : null;
 
@@ -301,6 +339,69 @@ export function AIChatAssistant({
     };
 
     window.speechSynthesis.speak(utterance);
+  };
+
+  const getPageFriendlyName = (key: string): string => {
+    const modeNames = PAGE_FRIENDLY_NAMES[appMode];
+    if (modeNames && modeNames[key]) {
+      return modeNames[key];
+    }
+    // Fallback
+    return key
+      .replace('gov-', '')
+      .replace('inst-', '')
+      .replace('-', ' ')
+      .replace(/\b\w/g, c => c.toUpperCase());
+  };
+
+  const handleSelectPagePresentation = (pageKey: string) => {
+    // 1. Navigate to the page
+    if (onNavigate) {
+      onNavigate(pageKey);
+    }
+    
+    // 2. Start IA voice mode so it synthesizes speech
+    if (startIaVoice) {
+      startIaVoice();
+    }
+    
+    // Set skipAutoPresentationRef to true while setting state to avoid double speaking
+    skipAutoPresentationRef.current = true;
+    
+    // 3. Clear speech synthesis and read
+    window.speechSynthesis.cancel();
+    
+    const modePresentations = PAGE_PRESENTATIONS[appMode];
+    const pageText = modePresentations ? (modePresentations[pageKey] || modePresentations[pageKey === 'contactos' ? 'contatos' : '']) : null;
+    
+    if (pageText) {
+      const friendlyName = getPageFriendlyName(pageKey);
+      
+      // Update message list
+      setMessages(prev => {
+        // Remove any duplicate consecutive presentation messages to keep chat elegant
+        const filtered = prev.filter(m => m.content !== pageText);
+        return [
+          ...filtered,
+          { role: 'user', content: `Apresentar página: ${friendlyName}` },
+          { role: 'assistant', content: pageText }
+        ];
+      });
+      
+      // Speak
+      setTimeout(() => {
+        if (currentLanguage === 'pt') {
+          // Explicitly set voice active so speak succeeds
+          iaLiveActiveRef.current = true;
+          speak(pageText, () => {
+            // Automatically deactivate microphone upon finishing presentation
+            if (stopIaVoice) {
+              stopIaVoice();
+            }
+          });
+        }
+      }, 400);
+    }
   };
 
   // Confirmar navegação
@@ -714,31 +815,45 @@ export function AIChatAssistant({
               </motion.div>
             )}
 
-            {!isGov && messages.length === 1 && (
+            {Object.keys(PAGE_PRESENTATIONS[appMode] || {})
+              .filter(pageKey => {
+                const isFriendlyNamePage = PAGE_FRIENDLY_NAMES[appMode] && (pageKey in PAGE_FRIENDLY_NAMES[appMode]);
+                return isFriendlyNamePage && pageKey !== activeTab;
+              }).length > 0 && (
               <motion.div 
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="grid grid-cols-1 gap-2 pt-4"
+                className="pt-4 flex flex-col gap-2 border-t border-slate-100/60 mt-2"
               >
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest text-center mb-2">
-                  {SUGGESTED_ACTIONS_TITLE[currentLanguage] || SUGGESTED_ACTIONS_TITLE.pt}
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest text-center mb-1">
+                  Apresentações Disponíveis
                 </p>
-                {(SUGGESTED_ACTIONS[currentLanguage] || SUGGESTED_ACTIONS.pt).map(action => (
-                  <button 
-                    key={action.type}
-                    onClick={() => {
-                      onCreateRequest?.(action.type, action.priority as any);
-                      setMessages(prev => [...prev, 
-                        { role: 'user', content: action.label },
-                        { role: 'assistant', content: action.ack }
-                      ]);
-                    }}
-                    className="w-full py-3 px-4 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-700 hover:border-primary hover:text-primary transition-all text-left shadow-sm flex items-center justify-between group"
-                  >
-                    {action.label}
-                    <ArrowRight size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </button>
-                ))}
+                <div className="grid grid-cols-2 gap-2 max-h-[160px] overflow-y-auto pr-1 select-none custom-scrollbar">
+                  {Object.keys(PAGE_PRESENTATIONS[appMode] || {})
+                    .filter(pageKey => {
+                      const isFriendlyNamePage = PAGE_FRIENDLY_NAMES[appMode] && (pageKey in PAGE_FRIENDLY_NAMES[appMode]);
+                      return isFriendlyNamePage && pageKey !== activeTab;
+                    })
+                    .map(pageKey => {
+                      const label = getPageFriendlyName(pageKey);
+                      const hoverBorderClass = isAdmin 
+                        ? 'hover:border-slate-800 hover:text-slate-900 focus:border-slate-800' 
+                        : isInst 
+                          ? 'hover:border-red-600 hover:text-red-700 focus:border-red-600' 
+                          : 'hover:border-primary hover:text-primary focus:border-primary';
+
+                      return (
+                        <button 
+                          key={pageKey}
+                          onClick={() => handleSelectPagePresentation(pageKey)}
+                          className={`py-2.5 px-3 bg-white border border-slate-200 rounded-xl text-[11px] font-bold text-slate-700 transition-all text-left shadow-2xs flex items-center justify-between group cursor-pointer ${hoverBorderClass}`}
+                        >
+                          <span className="truncate mr-1">{label}</span>
+                          <ArrowRight size={12} className="opacity-40 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all shrink-0" />
+                        </button>
+                      );
+                    })}
+                </div>
               </motion.div>
             )}
             

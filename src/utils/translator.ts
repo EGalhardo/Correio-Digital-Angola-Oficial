@@ -495,8 +495,8 @@ export const TRANSLATE_MAP: Record<string, Record<LanguageCode, string>> = {
     nh: "Tala Okanda",
     fi: "Tala Mamboti"
   },
-  "Documentos Digitais": {
-    pt: "Documentos Digitais",
+  "Expedientes e Arquivos": {
+    pt: "Expedientes e Arquivos",
     um: "Olovikanda Vyosola",
     ki: "Mikanda ya Thangu",
     kk: "Nsamu mia nzo",

@@ -146,9 +146,6 @@ export function HomeContent({
       <div className="flex flex-wrap items-center gap-4 px-1 text-[10px] font-black uppercase tracking-widest">
         <button onClick={() => setTab('historico')} className="cda-link-text">{t("Ver Histórico")}</button>
         <button onClick={() => setTab('notificacoes')} className="cda-link-text">{t("Notificações")}</button>
-        {!isInst && (
-          <button onClick={() => setTab('qr-code')} className="cda-link-text">{t("QR Code")}</button>
-        )}
         {isInst && (
           <button onClick={() => setTab('inst-qrcode')} className="cda-link-text">{t("Validação QR")}</button>
         )}
@@ -187,7 +184,7 @@ export function HomeContent({
                   onDoubleClickInstitution?.(name);
                 }
               }}
-              className="px-4 py-2 rounded-xl text-[10px] md:text-xs font-black bg-[#081A3D] text-white border border-[#081A3D]/10 whitespace-nowrap hover:bg-[#0c2350] transition-all cursor-pointer shrink-0 shadow-md hover:shadow-lg grow-0 text-left"
+              className="px-4 py-2 rounded-full text-[10px] md:text-xs font-black bg-[#0E2B64] text-white border border-[#0E2B64] whitespace-nowrap hover:bg-[#0c2350] transition-all cursor-pointer shrink-0 shadow-md hover:shadow-lg grow-0 text-center"
               title={(isInst || !onDoubleClickInstitution) ? name : "Dê duplo clique para ver detalhes desta instituição"}
             >
               {name}

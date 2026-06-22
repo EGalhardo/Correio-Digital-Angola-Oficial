@@ -142,7 +142,7 @@ export function GovPerfilContent({
               {/* Nome Completo */}
               <div className="bg-white border border-slate-200 p-4 rounded-2xl">
                 <span className="block text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Nome Completo</span>
-                <span className="text-xs font-bold text-slate-800 block">{profileName}</span>
+                <span className="text-xs font-bold text-slate-800 block">Edlasio Galhardo</span>
               </div>
 
               {/* B.I. */}

@@ -308,6 +308,7 @@ export function Header({
                 alt="Perfil"
                 priority={true}
                 placeholder="skeleton"
+                onClick={() => setShowNotifications(!showNotifications)}
                 style={{
                   width: '2rem',
                   height: '2rem',
@@ -413,6 +414,7 @@ export function Header({
                 alt="Perfil"
                 priority={true}
                 placeholder="skeleton"
+                onClick={() => setShowNotifications(!showNotifications)}
                 style={{
                   width: '2.5rem',
                   height: '2.5rem',

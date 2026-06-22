@@ -134,7 +134,7 @@ export function GovDocsContent({ documents, requests, onUpdateStatus, setTab }: 
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 py-8 border-b border-slate-100 mb-8 font-sans">
         <div>
           <h1 className="text-xl md:text-3xl font-black text-slate-900 tracking-tighter italic uppercase leading-none font-sans">
-            Controle de Documentos Digitais
+            Controle de Emissão Documental
           </h1>
           <div className="text-slate-400 font-black text-[9px] uppercase tracking-widest mt-1.5 flex items-center gap-2 italic">
             <div className="w-1 h-2 bg-red-650 rounded-full" />

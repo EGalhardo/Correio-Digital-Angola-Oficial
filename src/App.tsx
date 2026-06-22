@@ -3176,7 +3176,7 @@ Ficha civil do titular:
           <motion.div 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className={`hidden md:flex bg-white rounded-3xl ${loginSubMode === 'face-capture' ? 'p-6 min-h-[420px]' : 'p-8 min-h-[520px]'} border border-slate-100 flex-col items-center justify-center text-center shadow-sm h-full relative overflow-hidden transition-all duration-300`}
+            className={`hidden md:flex bg-white rounded-3xl ${loginSubMode === 'face-capture' ? 'p-6 min-h-[420px]' : 'p-8 min-h-[520px]'} border border-[#E2E8F0] flex-col items-center justify-center text-center shadow-sm h-full relative overflow-hidden transition-all duration-300`}
           >
             <div className="absolute top-0 right-0 w-80 h-80 bg-primary/2 rounded-full -mr-40 -mt-40 blur-3xl pointer-events-none" />
             
@@ -3223,8 +3223,8 @@ Ficha civil do titular:
                   {t("Receba, assine e despache correspondência governamental com validade jurídica do Estado da República de Angola.")}
                 </p>
                 <div className={`${loginSubMode === 'face-capture' ? 'mt-3' : 'mt-5'} flex flex-col items-center`}>
-                  <div className="flex items-center gap-2 px-4 py-2 bg-slate-50 border border-slate-100 rounded-full text-[10px] text-slate-400 font-extrabold uppercase tracking-widest">
-                    <ShieldCheck size={14} className="text-emerald-500" /> {t("Infraestrutura Oficial Segura SME & AGT")}
+                  <div className="flex items-center gap-2 px-4 py-2 bg-[#0E2B64] border border-[#0E2B64] rounded-full text-[10px] text-white font-extrabold uppercase tracking-widest">
+                    <ShieldCheck size={14} className="text-emerald-400" /> {t("Infraestrutura Oficial Segura SME & AGT")}
                   </div>
                 </div>
               </div>
@@ -3235,7 +3235,7 @@ Ficha civil do titular:
             id="cda-login-form-container"
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            className={`bg-white rounded-3xl ${loginSubMode === 'face-capture' ? 'p-4 md:p-5 min-h-[420px]' : 'p-6 md:p-8 min-h-[520px]'} shadow-xl border border-slate-100 flex flex-col justify-between h-full transition-all duration-300 relative ${
+            className={`bg-white rounded-3xl ${loginSubMode === 'face-capture' ? 'p-4 md:p-5 min-h-[420px]' : 'p-6 md:p-8 min-h-[520px]'} shadow-xl border border-[#E2E8F0] flex flex-col justify-between h-full transition-all duration-300 relative ${
               highlightSteps 
                 ? 'ring-4 ring-blue-500 ring-offset-4 shadow-[0_0_30px_rgba(37,99,235,0.35)] scale-[1.01]' 
                 : ''
@@ -3372,7 +3372,7 @@ Ficha civil do titular:
                       {/* Button ENTRAR NO PORTAL */}
                       <button 
                         onClick={handleLoginSubmit}
-                        className="w-full bg-[#0c2340] hover:bg-slate-900 text-white rounded-xl py-3 font-black text-[10.5px] uppercase tracking-wider shadow-[#0c2340]/15 hover:opacity-95 transition-all cursor-pointer border-none"
+                        className="w-full bg-[#0E2B64] hover:bg-[#081a3d] text-white rounded-xl py-3 font-black text-[10.5px] uppercase tracking-wider shadow-[#0E2B64]/15 hover:opacity-95 transition-all cursor-pointer border-none"
                       >
                         {t("Entrar no Portal")}
                       </button>
@@ -3414,7 +3414,7 @@ Ficha civil do titular:
                             setLoginSubMode('face-capture');
                             addAuditLog('Iniciado Login Biométrico Facial', 'info');
                           }}
-                          className="w-full bg-[#f8fafc] hover:bg-slate-100 text-[#2563eb] border border-slate-200 rounded-xl py-3 font-black text-[10.5px] uppercase tracking-wider transition-all flex items-center justify-center gap-2.5 cursor-pointer shadow-3xs"
+                          className="w-full bg-white hover:bg-slate-100 text-[#2563eb] border border-[#E2E8F0] rounded-xl py-3 font-black text-[10.5px] uppercase tracking-wider transition-all flex items-center justify-center gap-2.5 cursor-pointer shadow-3xs"
                         >
                           <Fingerprint size={15} className="text-[#2563eb] shrink-0" />
                           {t("Login Facial")}
@@ -3540,7 +3540,7 @@ Ficha civil do titular:
                             alert(t("Código de verificação OTP incorrecto. Utilize o código de simulação 123456."));
                           }
                         }}
-                        className="py-3.5 bg-[#0c2340] hover:bg-slate-900 border-none text-white font-black text-xs uppercase tracking-widest rounded-2xl flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-md"
+                        className="py-3.5 bg-[#0E2B64] hover:bg-[#081a3d] border-none text-white font-black text-xs uppercase tracking-widest rounded-2xl flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-md"
                       >
                         {t("Validar OTP")}
                         <ChevronRight size={14} className="stroke-[2.5]" />
@@ -3771,7 +3771,7 @@ Ficha civil do titular:
                 initial={{ opacity: 0, scale: 0.95, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                className="fixed inset-x-4 bottom-4 md:bottom-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:max-w-sm bg-white rounded-[32px] shadow-2xl z-[301] overflow-hidden border border-slate-100 text-left font-sans flex flex-col max-h-[85vh]"
+                className="fixed inset-x-4 bottom-4 md:bottom-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:max-w-sm bg-white rounded-[32px] shadow-2xl z-[301] overflow-hidden border border-[#E2E8F0] text-left font-sans flex flex-col max-h-[85vh]"
               >
                 {/* Header */}
                 <div className="bg-gradient-to-r from-slate-900 to-indigo-950 p-6 text-white relative">
@@ -3963,6 +3963,7 @@ Ficha civil do titular:
         currentLanguage={currentLanguage}
         iaLiveActive={iaLiveActive} 
         stopIaVoice={stopIaVoice}
+        startIaVoice={startIaVoice}
         appMode={appMode}
         onCreateRequest={handleCreateRequest}
         onNavigate={setTab}

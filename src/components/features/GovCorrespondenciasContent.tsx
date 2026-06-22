@@ -340,7 +340,7 @@ export function GovCorrespondenciasContent({
           <button 
             type="button"
             onClick={() => setIsDispatchModalOpen(true)}
-            className="w-full sm:w-auto bg-slate-900 hover:bg-slate-800 text-white rounded-2xl px-5 py-3.5 flex items-center justify-center gap-2 hover:scale-[1.01] active:scale-95 transition-all text-xs font-black uppercase tracking-wider cursor-pointer border-0 outline-none"
+            className="w-full sm:w-auto bg-[#081A3D] hover:bg-[#081A3D]/90 text-white rounded-2xl px-5 py-3.5 flex items-center justify-center gap-2 hover:scale-[1.01] active:scale-95 transition-all text-xs font-black uppercase tracking-wider cursor-pointer border-0 outline-none"
             id="btn_novo_expediente"
           >
             <Plus size={15} /> Novo Expediente
@@ -496,7 +496,7 @@ export function GovCorrespondenciasContent({
             <select
               value={searchCategory}
               onChange={(e) => setSearchCategory(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-[11px] font-bold text-slate-700 outline-none focus:border-slate-800 focus:bg-white cursor-pointer"
+              className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-[11px] font-bold text-slate-700 outline-none focus:border-slate-800 cursor-pointer"
             >
               {categoriesList.map(cat => (
                 <option key={cat} value={cat}>{cat === 'Todas' ? 'Todas Categoria' : cat}</option>
@@ -590,7 +590,7 @@ export function GovCorrespondenciasContent({
         {paginatedItems.length > 0 ? (
           <div className="overflow-x-auto rounded-[24px] bg-white border border-slate-200 shadow-3xs max-h-[650px] custom-scrollbar">
             <table className="mobile-data-table w-full text-left border-collapse min-w-[1100px]">
-              <thead className="sticky top-0 z-15 bg-slate-900 border-b border-slate-800 text-white text-[9.5px] font-black uppercase tracking-widest">
+              <thead className="sticky top-0 z-15 bg-[#0E2B64] border-b border-[#0E2B64]/90 text-white text-[9.5px] font-black uppercase tracking-widest">
                 <tr>
                   <th className="py-4.5 px-6">Identificador & data</th>
                   <th className="py-4.5 px-5">Emissor / Remetente</th>

@@ -61,7 +61,7 @@ export function ActivityCenterContent({
       title: document.name,
       desc: `${document.issuer} • ${document.issuedAt}`,
       action: 'Documento',
-      target: 'qr-code',
+      target: 'pasta-digital',
       icon: FileText,
     })),
     ...docRequests.slice(0, 3).map((request) => ({
@@ -69,7 +69,7 @@ export function ActivityCenterContent({
       title: request.docType,
       desc: `${request.institution} • ${request.status}`,
       action: 'Solicitação',
-      target: isAdmin ? 'gov-docs' : 'qr-code',
+      target: isAdmin ? 'gov-docs' : 'pasta-digital',
       icon: Clock3,
     })),
     ...notifications.slice(0, 3).map((notification) => ({
@@ -104,7 +104,7 @@ export function ActivityCenterContent({
         ]
       : [
           { label: 'Correspondências', value: messages.length + sentMessages.length, description: 'Leituras e respostas registadas.' },
-          { label: 'Documentos', value: documents.length, description: 'Itens guardados na carteira digital.' },
+          { label: 'Documentos', value: documents.length, description: 'Itens guardados na pasta digital.' },
           { label: 'Solicitações', value: userRequests.length + docRequests.length, description: 'Pedidos em acompanhamento.' },
         ];
 
@@ -210,7 +210,6 @@ export function ActivityCenterContent({
                     ]
                   : [
                       { label: 'Abrir Correspondências', target: 'correspondencias' },
-                      { label: 'Abrir QR Code', target: 'qr-code' },
                       { label: 'Abrir Pasta Digital', target: 'pasta-digital' },
                     ]
               ).map((link) => (

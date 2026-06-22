@@ -484,7 +484,6 @@ export function SolicitarDocumentoContent({
         <div className="flex flex-wrap items-center gap-4 px-1 text-[10px] font-black uppercase tracking-widest mb-4">
           <button onClick={() => setTab('home')} className="text-indigo-600 hover:text-indigo-800 transition-colors cursor-pointer flex items-center gap-1 font-extrabold">{t("Voltar ao Painel")}</button>
           <span className="text-slate-300">|</span>
-          <button onClick={() => setTab('qr-code')} className="text-slate-400 hover:text-primary transition-colors cursor-pointer">{t("Carteira Digital")}</button>
           <button onClick={() => setTab('historico')} className="text-slate-400 hover:text-primary transition-colors cursor-pointer">{t("Ver Histórico")}</button>
           <button onClick={() => setTab('notificacoes')} className="text-slate-400 hover:text-primary transition-colors cursor-pointer">{t("Notificações")}</button>
         </div>
