@@ -498,9 +498,6 @@ export function GovIaContent({ onLog }: GovIaContentProps) {
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
         
         <div className="bg-white border border-slate-200 p-4.5 rounded-[20px] shadow-3xs cursor-pointer hover:border-indigo-300 transition-all text-left relative group overflow-hidden" onClick={() => setIsManageModelsOpen(true)}>
-          <div className="absolute right-0 bottom-0 translate-y-3 translate-x-3 text-slate-100 group-hover:text-indigo-100 transition-colors pointer-events-none pr-1">
-            <Cpu size={58} />
-          </div>
           <span className="text-[9px] font-black text-slate-400 uppercase tracking-wider block">Motor Principal</span>
           <span className="text-[11px] font-semibold text-indigo-600 block mt-0.5">Em uso</span>
           <span className="text-base md:text-lg font-black text-[#0a2342] block mt-1 tracking-tight truncate">{mainModel}</span>

@@ -82,7 +82,7 @@ export function Sidebar({
     }`}>
       <div className="mb-8 px-4">
         <LazyImage
-          src="https://i.postimg.cc/Rq5TKbdk/Correio-Digital-Angola.png" 
+          src="https://i.postimg.cc/Fs8cZJZt/Logomarca-PNG-(1).png" 
           alt="Correio Digital" 
           priority={true}
           placeholder="skeleton"
