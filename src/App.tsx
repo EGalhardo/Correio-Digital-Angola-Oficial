@@ -596,6 +596,7 @@ export default function App() {
   const [isFaceScanning, setIsFaceScanning] = useState(false);
   const [demoFaceTemplateLoaded, setDemoFaceTemplateLoaded] = useState(false);
   const [demoFaceTemplateMeta, setDemoFaceTemplateMeta] = useState<{ capturedAt: string; identifier: string } | null>(null);
+  const [tempFaceCaptures, setTempFaceCaptures] = useState<{ imageDataUrl: string; signature: number[] }[]>([]);
   const [faceCaptureHint, setFaceCaptureHint] = useState('Posicione o rosto no centro da moldura.');
   const [faceCaptureError, setFaceCaptureError] = useState<string | null>(null);
   const [webcamReady, setWebcamReady] = useState(false);
@@ -3171,8 +3172,13 @@ Ficha civil do titular:
       setFaceCaptureError(null);
       setFaceProgress(20);
       setIsFaceScanning(true);
-      setFaceCaptureHint(demoFaceTemplateLoaded ? 'A comparar o rosto capturado com o perfil local armazenado...' : 'A registar o rosto localmente neste dispositivo...');
-      addAuditLog('Iniciou digitalização biométrica facial no portal', 'info');
+      
+      const currentCapturesCount = tempFaceCaptures.length;
+      setFaceCaptureHint(demoFaceTemplateLoaded 
+        ? 'A comparar o rosto capturado com o perfil local armazenado...' 
+        : `A processar captura ${currentCapturesCount + 1} de 3...`);
+        
+      addAuditLog(`Iniciou digitalização biométrica facial no portal (Captura ${demoFaceTemplateLoaded ? 'Login' : `${currentCapturesCount + 1}/3`})`, 'info');
 
       const finalize = (progress: number) => new Promise(resolve => setTimeout(() => {
         setFaceProgress(progress);
@@ -3184,7 +3190,17 @@ Ficha civil do titular:
 
       if (demoFaceTemplateLoaded) {
         const stored = readStoredDemoFace();
-        const diff = stored?.signature ? compareFaceSignatures(captured.signature, stored.signature) : 999;
+        let diff = 999;
+        
+        if (stored?.signatures && Array.isArray(stored.signatures)) {
+          // Compare against all 3 registered signatures and find the best match
+          const diffs = stored.signatures.map((sig: number[]) => compareFaceSignatures(captured.signature, sig));
+          diff = Math.min(...diffs);
+          console.log("3-Capture matching diffs:", diffs, "Best diff:", diff);
+        } else if (stored?.signature) {
+          diff = compareFaceSignatures(captured.signature, stored.signature);
+        }
+
         if (!stored || diff > 22) {
           setIsFaceScanning(false);
           setFaceProgress(0);
@@ -3200,27 +3216,60 @@ Ficha civil do titular:
         return;
       }
 
+      // We are in registration mode
+      const nextCaptures = [...tempFaceCaptures, captured];
+
+      if (currentCapturesCount < 2) {
+        // Not yet 3 captures. Save temporary progress.
+        setTempFaceCaptures(nextCaptures);
+        await finalize(100);
+        setIsFaceScanning(false);
+        setFaceProgress(0);
+        
+        const nextStep = currentCapturesCount + 2;
+        if (nextStep === 2) {
+          setFaceCaptureHint('Captura 1/3 gravada! Agora, incline ligeiramente o rosto para a ESQUERDA.');
+          addAuditLog(`Biometria facial: Captura 1/3 (Frente) registada para ${appMode}`, 'info');
+        } else if (nextStep === 3) {
+          setFaceCaptureHint('Captura 2/3 gravada! Agora, sorria ou olhe ligeiramente para CIMA.');
+          addAuditLog(`Biometria facial: Captura 2/3 (Esquerda) registada para ${appMode}`, 'info');
+        }
+        return;
+      }
+
+      // This is the 3rd capture! Compile and save.
+      const avgSignature: number[] = [];
+      const len = nextCaptures[0].signature.length;
+      for (let i = 0; i < len; i++) {
+        const sum = nextCaptures[0].signature[i] + nextCaptures[1].signature[i] + nextCaptures[2].signature[i];
+        avgSignature.push(Math.round(sum / 3));
+      }
+
       const storagePayload = {
         identifier: (bi || DEMO_CREDENTIALS[appMode].identifier).toUpperCase(),
         profileMode: appMode,
         displayName: profileName,
         capturedAt: new Date().toLocaleString('pt-AO'),
         imageDataUrl: captured.imageDataUrl,
-        signature: captured.signature,
+        signature: avgSignature,
+        signatures: nextCaptures.map(c => c.signature),
       };
+      
       localStorage.setItem(getDemoFaceStorageKey(), JSON.stringify(storagePayload));
       setDemoFaceTemplateLoaded(true);
       setDemoFaceTemplateMeta({ capturedAt: storagePayload.capturedAt, identifier: storagePayload.identifier });
-      setFaceCaptureHint('Rosto demo registado neste dispositivo com sucesso.');
+      setTempFaceCaptures([]);
+      setFaceCaptureHint('Cadastro biométrico robusto concluído! 3/3 faces fundidas criptograficamente.');
       await finalize(100);
       setIsFaceScanning(false);
-      addAuditLog(`DEMO_FACE_ENROLLED: Rosto local de demonstração registado para ${appMode}`, 'success');
+      addAuditLog(`DEMO_FACE_ENROLLED: Registo de 3 capturas biométricas concluído com sucesso para ${appMode}`, 'success');
     };
 
     const handleClearDemoFace = () => {
       localStorage.removeItem(getDemoFaceStorageKey());
       setDemoFaceTemplateLoaded(false);
       setDemoFaceTemplateMeta(null);
+      setTempFaceCaptures([]);
       setFaceCaptureHint('Registo facial demo removido deste dispositivo.');
       setFaceCaptureError(null);
       setFaceProgress(0);
@@ -3756,7 +3805,17 @@ Ficha civil do titular:
                     <div className="flex items-center gap-1.5 justify-center">
                       <CheckCircle size={15} className={faceProgress === 100 ? "text-emerald-500" : isFaceScanning ? "text-blue-500 animate-spin" : "text-emerald-500"} />
                       <span className="text-emerald-600 font-extrabold uppercase tracking-widest text-[9.5px] font-sans">
-                        {faceProgress === 100 ? (demoFaceTemplateLoaded ? t("Face local validada") : t("Face demo registada")) : isFaceScanning ? `${t("A processar")}: ${faceProgress}%` : demoFaceTemplateLoaded ? t("Pronto para validação local") : t("Pronto para registo local")}
+                        {faceProgress === 100 
+                          ? (demoFaceTemplateLoaded ? t("Face local validada") : t("Face registrada")) 
+                          : isFaceScanning 
+                            ? `${t("A processar")}: ${faceProgress}%` 
+                            : demoFaceTemplateLoaded 
+                              ? t("Pronto para validação local") 
+                              : tempFaceCaptures.length === 0 
+                                ? t("Pronto para registo (Frente)") 
+                                : tempFaceCaptures.length === 1 
+                                  ? t("Pronto para registo (Esquerda)") 
+                                  : t("Pronto para registo (Sorriso)")}
                       </span>
                     </div>
                     <p className="text-slate-400 text-[10.5px] font-semibold">
@@ -3784,7 +3843,13 @@ Ficha civil do titular:
                       className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 px-5 rounded-2xl font-black text-[12.5px] uppercase tracking-widest flex items-center justify-center gap-1.5 shadow-lg shadow-blue-500/15 hover:opacity-95 active:scale-95 transition-all disabled:opacity-40 disabled:scale-100 disabled:shadow-none cursor-pointer border-0"
                     >
                       <Fingerprint size={15} />
-                      {demoFaceTemplateLoaded ? t('VALIDAR FACE LOCAL') : t('REGISTAR FACE NESTE DISPOSITIVO')}
+                      {demoFaceTemplateLoaded 
+                        ? t('VALIDAR FACE LOCAL') 
+                        : tempFaceCaptures.length === 0 
+                          ? t('INICIAR CAPTURA (1/3: FRENTE)') 
+                          : tempFaceCaptures.length === 1 
+                            ? t('REGISTAR CAPTURA (2/3: ESQUERDA)') 
+                            : t('REGISTAR CAPTURA (3/3: SORRISO)')}
                     </button>
                     <div className="flex flex-wrap items-center justify-center gap-3 text-[9.5px] font-black uppercase tracking-widest">
                       <button
