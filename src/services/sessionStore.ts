@@ -22,26 +22,32 @@ interface SessionContextType {
 const SessionContext = createContext<SessionContextType | undefined>(undefined);
 
 export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const sanitizeSessionUser = (candidate: any): SessionUser => ({
-    ...CANONICAL_USER,
-    ...(candidate || {}),
-    id: candidate?.id || CANONICAL_USER.id,
-    name: candidate?.name || CANONICAL_USER.name,
-    firstName: candidate?.firstName || candidate?.name?.trim()?.split(' ')?.[0] || CANONICAL_USER.firstName,
-    lastName: candidate?.lastName || candidate?.name?.trim()?.split(' ')?.slice(-1)?.[0] || CANONICAL_USER.lastName,
-    bi: candidate?.bi || CANONICAL_USER.bi,
-    nif: candidate?.nif || CANONICAL_USER.nif,
-    passport: candidate?.passport || CANONICAL_USER.passport,
-    phone: candidate?.phone || CANONICAL_USER.phone,
-    email: candidate?.email || CANONICAL_USER.email,
-    birthDate: candidate?.birthDate || CANONICAL_USER.birthDate,
-    filiation: candidate?.filiation || CANONICAL_USER.filiation,
-    maritalStatus: candidate?.maritalStatus || CANONICAL_USER.maritalStatus,
-    avatarUrl: candidate?.avatarUrl || CANONICAL_USER.avatarUrl,
-    verificationLevel: candidate?.verificationLevel || CANONICAL_USER.verificationLevel,
-    confidenceScore: candidate?.confidenceScore || CANONICAL_USER.confidenceScore,
-    lastAccess: candidate?.lastAccess || CANONICAL_USER.lastAccess,
-  });
+  const sanitizeSessionUser = (candidate: any): SessionUser => {
+    let avatar = candidate?.avatarUrl || CANONICAL_USER.avatarUrl;
+    if (avatar && (avatar.includes("sxWsYGX2") || avatar.includes("foto_perfil_edlasio"))) {
+      avatar = "https://i.postimg.cc/J73QvnGv/Foto-Edlasio.png";
+    }
+    return {
+      ...CANONICAL_USER,
+      ...(candidate || {}),
+      id: candidate?.id || CANONICAL_USER.id,
+      name: candidate?.name || CANONICAL_USER.name,
+      firstName: candidate?.firstName || candidate?.name?.trim()?.split(' ')?.[0] || CANONICAL_USER.firstName,
+      lastName: candidate?.lastName || candidate?.name?.trim()?.split(' ')?.slice(-1)?.[0] || CANONICAL_USER.lastName,
+      bi: candidate?.bi || CANONICAL_USER.bi,
+      nif: candidate?.nif || CANONICAL_USER.nif,
+      passport: candidate?.passport || CANONICAL_USER.passport,
+      phone: candidate?.phone || CANONICAL_USER.phone,
+      email: candidate?.email || CANONICAL_USER.email,
+      birthDate: candidate?.birthDate || CANONICAL_USER.birthDate,
+      filiation: candidate?.filiation || CANONICAL_USER.filiation,
+      maritalStatus: candidate?.maritalStatus || CANONICAL_USER.maritalStatus,
+      avatarUrl: avatar,
+      verificationLevel: candidate?.verificationLevel || CANONICAL_USER.verificationLevel,
+      confidenceScore: candidate?.confidenceScore || CANONICAL_USER.confidenceScore,
+      lastAccess: candidate?.lastAccess || CANONICAL_USER.lastAccess,
+    };
+  };
 
   const [user, setUser] = useState<SessionUser>(() => {
     const saved = localStorage.getItem("correio_digital_session_user");
