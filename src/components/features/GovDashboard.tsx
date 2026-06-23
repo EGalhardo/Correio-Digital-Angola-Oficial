@@ -820,19 +820,26 @@ export function GovDashboard({
             <div className="hidden md:block" />
           </div>
           <div className="flex flex-nowrap gap-2 md:gap-3 overflow-x-auto custom-scrollbar-h pb-2">
-            {masterInstitutions.map((inst) => (
-              <button 
-                key={inst.id}
-                type="button" 
-                onClick={() => {
-                  onNavigate?.('gov-interoperabilidade');
-                }}
-                className="px-4 py-2 rounded-xl text-[10px] md:text-xs font-black bg-[#0c2340] hover:bg-[#152e4d] text-white border border-[#1c3c66] whitespace-nowrap transition-all cursor-pointer shrink-0"
-                title={`Visualizar status de interoperabilidade de ${inst.fullName}`}
-              >
-                {inst.name}
-              </button>
-            ))}
+            {masterInstitutions.map((inst) => {
+              const isTargetColor = ['AGT', 'SME', 'ENDE', 'EPAL', 'MINJUS', 'MINSA', 'PNA', 'INSS', 'CNE', 'Registo Civil', 'Notariado', 'Tribunal de Comarca', 'Universidade Pública'].includes(inst.name);
+              return (
+                <button 
+                  key={inst.id}
+                  type="button" 
+                  onClick={() => {
+                    onNavigate?.('gov-interoperabilidade');
+                  }}
+                  className={`px-4 py-2 rounded-xl text-[10px] md:text-xs font-black text-white whitespace-nowrap transition-all cursor-pointer shrink-0 ${
+                    isTargetColor 
+                      ? 'bg-[#0E2B64] hover:bg-[#0E2B64]/90 border-[#0E2B64]' 
+                      : 'bg-[#0c2340] hover:bg-[#152e4d] border-[#1c3c66]'
+                  }`}
+                  title={`Visualizar status de interoperabilidade de ${inst.fullName}`}
+                >
+                  {inst.name}
+                </button>
+              );
+            })}
           </div>
         </section>
 

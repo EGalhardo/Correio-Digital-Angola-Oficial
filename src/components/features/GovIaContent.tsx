@@ -418,7 +418,7 @@ export function GovIaContent({ onLog }: GovIaContentProps) {
           <div className="flex flex-row md:flex-row items-center gap-3 self-start lg:self-center shrink-0">
             <button
               onClick={() => { playSound('success'); setIsTestModalOpen(true); }}
-              className="px-5 py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-[16px] text-xs font-black uppercase tracking-wider transition-all hover:shadow-md cursor-pointer border-0 flex items-center gap-2"
+              className="px-5 py-3.5 bg-[#0E2B64] hover:bg-[#0C2454] text-white rounded-[16px] text-xs font-black uppercase tracking-wider transition-all hover:shadow-md cursor-pointer border-0 flex items-center gap-2"
             >
               <Sparkles size={14} className="stroke-[2.5]" />
               <span>Testar IA</span>

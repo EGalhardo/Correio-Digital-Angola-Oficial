@@ -704,7 +704,7 @@ export function GovInteroperabilidadeContent({ onLog }: GovInteroperabilidadeCon
                   onClick={() => { setFilterStatus(st); setCurrentPage(1); }}
                   className={`px-4 py-2 border rounded-xl text-[10px] font-black uppercase tracking-wider transition-colors cursor-pointer ${
                     filterStatus === st 
-                      ? 'bg-slate-900 border-slate-900 text-white' 
+                      ? 'bg-[#0E2B64] border-[#0E2B64] text-white' 
                       : 'bg-white border-slate-200 text-slate-655 hover:bg-slate-50'
                   }`}
                 >
@@ -738,7 +738,7 @@ export function GovInteroperabilidadeContent({ onLog }: GovInteroperabilidadeCon
                   <tr key={inst.id} className="text-[#334155] hover:bg-slate-50/70 transition-all">
                     <td className="py-4 px-4 font-bold text-slate-900">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-slate-950 text-white flex items-center justify-center font-mono font-black text-xs uppercase shadow-sm shrink-0 select-none border border-slate-800">
+                        <div className="w-10 h-10 rounded-full bg-[#0E2B64] text-white flex items-center justify-center font-mono font-black text-xs uppercase shadow-sm shrink-0 select-none border border-[#0E2B64]">
                           {inst.name.slice(0, 3)}
                         </div>
                         <div className="min-w-0">

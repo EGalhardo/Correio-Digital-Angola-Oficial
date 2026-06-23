@@ -32,17 +32,24 @@ export const InstitutionProfile: React.FC<InstitutionProfileProps> = ({
   setPrefSubTab,
   setIsConfiguringSecurity,
   setTab,
-  profileName,
-  nif,
+  profileName: originalProfileName,
+  nif: originalNif,
   showSensitiveData,
-  phone = '+244 923 111 222',
-  bi = '123456789',
-  email,
+  phone: originalPhone = '+244 923 111 222',
+  bi: originalBi = '123456789',
+  email: originalEmail,
   role = 'Gestor de Contas Digital',
   department = 'Direcção de Atendimento e Fiscalização Digital',
   institution = 'Administração Geral Tributária (AGT)',
   lastAccess = 'Hoje às 18:45',
 }) => {
+  const profileName = (originalProfileName === "José Kalunga" || originalProfileName === "Jose Kalunga" || !originalProfileName || originalProfileName === "Cidadão de Teste") ? "Edlasio Galhardo" : originalProfileName;
+  const bi = (originalBi === '123456789' || originalBi === '007712342LA021' || !originalBi) ? '009874562LA041' : originalBi;
+  const nif = (originalNif === '5412889422' || !originalNif) ? '5401329188' : originalNif;
+  const phone = (originalPhone === '+244 923 111 222' || originalPhone === '+244 923 111 222' || !originalPhone) ? '+244 923 000 111' : originalPhone;
+  const email = originalEmail || 'edlasio.galhardo@gmail.com';
+  const finalPhoto = (userProfilePhoto && !userProfilePhoto.includes("Foto-Edlasio") && (userProfilePhoto.includes("unsplash") || userProfilePhoto.includes("foto_perfil_edlasio") || userProfilePhoto.includes("sxWsYGX2"))) ? "https://i.postimg.cc/J73QvnGv/Foto-Edlasio.png" : userProfilePhoto || "https://i.postimg.cc/J73QvnGv/Foto-Edlasio.png";
+
   const normalizedInstitution = institution || 'Administração Geral Tributária (AGT)';
   const institutionAcronymMatch = normalizedInstitution.match(/\(([^)]+)\)/);
   const institutionAcronym = institutionAcronymMatch?.[1] || normalizedInstitution.split(' ').map(word => word[0]).join('').slice(0, 8).toUpperCase();
@@ -74,7 +81,7 @@ export const InstitutionProfile: React.FC<InstitutionProfileProps> = ({
           <div className="relative mt-4 mb-4">
             <div className="w-32 h-32 md:w-36 md:h-36 rounded-[28px] border border-slate-150 p-1 bg-white relative">
               <img 
-                src={userProfilePhoto} 
+                src={finalPhoto} 
                 alt={profileName} 
                 className="w-full h-full rounded-[22px] object-cover animate-fade-in"
                 referrerPolicy="no-referrer"
@@ -86,7 +93,7 @@ export const InstitutionProfile: React.FC<InstitutionProfileProps> = ({
           </div>
 
           <h3 className="text-xl font-black text-slate-950 tracking-tight text-center uppercase mb-1">
-            {profileName === "José Kalunga" ? "Edlasio Galhardo" : profileName}
+            {profileName}
           </h3>
           <p className="text-[#2563eb] font-extrabold text-[10px] uppercase text-center tracking-wider mb-2 leading-none">{role}</p>
           

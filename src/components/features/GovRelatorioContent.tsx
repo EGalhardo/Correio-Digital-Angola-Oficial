@@ -479,7 +479,7 @@ export function GovRelatorioContent({
                   handleTriggerPrint();
                 }, 1000);
               }}
-              className="flex items-center justify-center gap-2 px-6 py-3.5 bg-[#0c2340] hover:bg-[#1a3a60] text-white rounded-[16px] text-xs font-black uppercase tracking-wider transition-all duration-200 cursor-pointer shadow-sm active:scale-95 border-0"
+              className="flex items-center justify-center gap-2 px-6 py-3.5 bg-[#0E2B64] hover:bg-[#0C2454] text-white rounded-[16px] text-xs font-black uppercase tracking-wider transition-all duration-200 cursor-pointer shadow-sm active:scale-95 border-0"
             >
               <Printer size={16} />
               <span>Imprimir</span>
@@ -498,13 +498,13 @@ export function GovRelatorioContent({
             <div className="flex items-center gap-2 bg-slate-100 border border-slate-200 rounded-[16px] p-1 shadow-inner">
               <button 
                 onClick={() => { playInteractionSound('click'); setComparePeriod(true); }}
-                className={`px-3.5 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all border-0 cursor-pointer ${comparePeriod ? 'bg-[#0c2340] text-white shadow-sm' : 'bg-transparent text-slate-500 hover:text-slate-800'}`}
+                className={`px-3.5 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all border-0 cursor-pointer ${comparePeriod ? 'bg-[#0E2B64] text-white shadow-sm' : 'bg-transparent text-slate-500 hover:text-slate-800'}`}
               >
                 Comparação Ativa
               </button>
               <button 
                 onClick={() => { playInteractionSound('click'); setComparePeriod(false); }}
-                className={`px-3.5 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all border-0 cursor-pointer ${!comparePeriod ? 'bg-[#0c2340] text-white shadow-sm' : 'bg-transparent text-slate-500 hover:text-[#0c2340]'}`}
+                className={`px-3.5 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all border-0 cursor-pointer ${!comparePeriod ? 'bg-[#0E2B64] text-white shadow-sm' : 'bg-transparent text-slate-500 hover:text-[#0E2B64]'}`}
               >
                 Evolução Absoluta
               </button>
