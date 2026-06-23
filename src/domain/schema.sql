@@ -405,7 +405,7 @@ VALUES (
     'Totalmente Verificado', 
     98, 
     '777ef5cc-11aa-4bbb-9ccc-222ed9874562', 
-    'https://i.postimg.cc/sxWsYGX2/Foto-Edlasio.png'
+    '/src/assets/images/foto_perfil_edlasio.jpg'
 );
 
 -- Seed Digital Security Protocols
@@ -429,5 +429,5 @@ VALUES ('FAT-AGT-IPU-2026', 'inst-agt', 'NIF-5401329188', '889012344', '18.500 K
 -- Seed AI Assistants Configurations
 INSERT INTO ai_assistants (id, name, avatar_url, prompt_theme, greeting_message, voice_pitch, voice_speed)
 VALUES 
-('ai-gove-voice', 'Guia de Voz Angola Digital', 'https://i.postimg.cc/sxWsYGX2/Foto-Edlasio.png', 'Voz Inclusiva', 'Olá Edlasio! Em que posso ajudar no Correio Digital de Angola?', 1.0, 0.95),
-('ai-agt-chat', 'Assistente Fiscal Integrado AGT', 'https://i.postimg.cc/sxWsYGX2/Foto-Edlasio.png', 'Técnico Tributário', 'Olá! Sou o assistente oficial de impostos da AGT. Como ajudo hoje?', 1.05, 1.0);
+('ai-gove-voice', 'Guia de Voz Angola Digital', '/src/assets/images/foto_perfil_edlasio.jpg', 'Voz Inclusiva', 'Olá Edlasio! Em que posso ajudar no Correio Digital de Angola?', 1.0, 0.95),
+('ai-agt-chat', 'Assistente Fiscal Integrado AGT', '/src/assets/images/foto_perfil_edlasio.jpg', 'Técnico Tributário', 'Olá! Sou o assistente oficial de impostos da AGT. Como ajudo hoje?', 1.05, 1.0);

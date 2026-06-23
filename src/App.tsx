@@ -3717,7 +3717,7 @@ Ficha civil do titular:
                           autoPlay
                           playsInline
                           muted
-                          className={`w-[105%] h-[105%] object-cover absolute inset-0 scale-95 transition-all duration-300 ${
+                          className={`w-full h-full object-cover absolute inset-0 rounded-full transition-all duration-300 ${
                             webcamReady && !isSimulatedCamera ? 'opacity-95 z-10' : 'opacity-0 z-0 pointer-events-none'
                           }`}
                         />
