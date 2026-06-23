@@ -277,6 +277,16 @@ export function MessageDetail({
   const messageLocality = getMessageLocality(selectedMessage);
 
   const [activeAction, setActiveAction] = useState<string | null>(null);
+  const [showLocationPage, setShowLocationPage] = useState(false);
+  const [mapQuery, setMapQuery] = useState('');
+  const [mapType, setMapType] = useState<'roadmap' | 'satellite'>('roadmap');
+
+  useEffect(() => {
+    if (showLocationPage) {
+      setMapQuery(messageLocality);
+    }
+  }, [showLocationPage, messageLocality]);
+
   const [showQRValidation, setShowQRValidation] = useState(false);
   const [isValidating, setIsValidating] = useState(false);
   const [showAIPanel, setShowAIPanel] = useState(false);
@@ -1241,6 +1251,183 @@ export function MessageDetail({
                 </button>
               </div>
             )}
+          </div>
+        </div>
+      </motion.div>
+    );
+  }
+
+  if (showLocationPage) {
+    const currentQuery = mapQuery || messageLocality;
+    const isSatellite = mapType === 'satellite';
+    const embedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(currentQuery)}&t=${isSatellite ? 'k' : ''}&z=16&ie=UTF8&iwloc=&output=embed`;
+    const openInNewTabUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(currentQuery)}`;
+    const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(currentQuery)}`;
+    
+    // Split address for the Google Maps mockup overlay:
+    const addressParts = currentQuery.split(',');
+    const mainAddressLine = addressParts[0] ? addressParts[0].trim() : currentQuery;
+    const secondaryAddressLine = addressParts.slice(1).join(',').trim();
+
+    return (
+      <motion.div
+        initial={{ opacity: 0, x: -15 }}
+        animate={{ opacity: 1, x: 0 }}
+        className="space-y-6 pt-2 pb-6 text-left"
+      >
+        {/* Header with Back Arrow and Title */}
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => setShowLocationPage(false)}
+              className="text-[#384e6e] hover:text-slate-900 hover:bg-slate-100/60 p-2.5 rounded-full transition-all cursor-pointer flex items-center justify-center border border-slate-200 shadow-3xs bg-white"
+              title="Voltar ao Detalhe"
+            >
+              <ArrowLeft size={24} />
+            </button>
+            <div>
+              <span className="text-[10px] md:text-xs font-black text-slate-400 uppercase tracking-widest leading-none block mb-1">
+                {t("Tramitação de Correspondência")}
+              </span>
+              <h1 className="text-xl md:text-3xl font-extrabold text-primary tracking-tight leading-none">
+                {t("Ver Localização")}
+              </h1>
+            </div>
+          </div>
+        </div>
+
+        {/* Map Container and Layout */}
+        <div className="bg-white rounded-[28px] md:rounded-[36px] border border-slate-250 p-4 md:p-6 shadow-md relative overflow-hidden flex flex-col gap-6">
+          
+          {/* Top Search Bar & Map Options */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 z-10">
+            <div className="relative flex-1 max-w-lg">
+              <input
+                type="text"
+                placeholder="Pesquisar localidade..."
+                value={mapQuery}
+                onChange={(e) => setMapQuery(e.target.value)}
+                className="w-full bg-slate-50 border border-slate-300 text-slate-800 rounded-2xl py-3 pl-11 pr-4 text-xs font-semibold focus:outline-none focus:border-indigo-505 transition-colors"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    // Trigger map update
+                  }
+                }}
+              />
+              <Search size={14} className="text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" />
+              {mapQuery && mapQuery !== messageLocality && (
+                <button
+                  onClick={() => setMapQuery(messageLocality)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-black uppercase text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 px-2.5 py-1 rounded-lg border-0 cursor-pointer"
+                >
+                  Repor Original
+                </button>
+              )}
+            </div>
+
+            {/* Satellite/Roadmap selectors & Outer Links */}
+            <div className="flex items-center gap-2 self-end sm:self-auto">
+              <button
+                onClick={() => setMapType('roadmap')}
+                className={`px-4 py-2 text-[10px] font-black uppercase tracking-wider rounded-xl transition-all border cursor-pointer ${
+                  !isSatellite 
+                    ? 'bg-primary text-white border-primary shadow-3xs' 
+                    : 'bg-white text-slate-600 border-slate-250 hover:bg-slate-50'
+                }`}
+              >
+                Mapa
+              </button>
+              <button
+                onClick={() => setMapType('satellite')}
+                className={`px-4 py-2 text-[10px] font-black uppercase tracking-wider rounded-xl transition-all border cursor-pointer ${
+                  isSatellite 
+                    ? 'bg-primary text-white border-primary shadow-3xs' 
+                    : 'bg-white text-slate-600 border-slate-250 hover:bg-slate-50'
+                }`}
+              >
+                Satélite
+              </button>
+            </div>
+          </div>
+
+          {/* Interactive Map Wrapper with custom Float Overlay */}
+          <div className="w-full h-[400px] md:h-[520px] rounded-[24px] md:rounded-[30px] overflow-hidden relative border border-slate-250/80 shadow-inner bg-slate-100 z-0">
+            
+            {/* The Actual Interactive Embed Iframe */}
+            <iframe
+              src={embedUrl}
+              className="w-full h-full border-0 z-0 relative"
+              allowFullScreen={true}
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title="Google Maps Location"
+            />
+
+            {/* FLOATING ADDRESS OVERLAY CARD: Exactly matching Image 2 style */}
+            <div className="absolute top-4 left-4 z-10 w-[240px] sm:w-[320px] bg-white rounded-2xl p-4 shadow-xl border border-slate-100/60 translate-y-0 transition-transform">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0 flex-1">
+                  <h3 className="text-xs sm:text-sm font-black text-slate-800 truncate block tracking-tight leading-snug">
+                    {mainAddressLine}
+                  </h3>
+                  <p className="text-[10px] sm:text-xs text-slate-500 font-semibold truncate leading-relaxed mt-0.5">
+                    {secondaryAddressLine || "Luanda, Angola"}
+                  </p>
+                </div>
+                
+                {/* Visual Action Buttons */}
+                <div className="flex items-center gap-2 shrink-0">
+                  {/* External Share Link */}
+                  <a
+                    href={openInNewTabUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-8 h-8 rounded-lg bg-slate-50 border border-slate-200 hover:bg-slate-150 flex items-center justify-center text-indigo-650 hover:text-indigo-850 transition-all cursor-pointer outline-none"
+                    title="Abrir no Google Maps"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="7" y1="17" x2="17" y2="7"></line>
+                      <polyline points="7 7 17 7 17 17"></polyline>
+                    </svg>
+                  </a>
+
+                  {/* Turn-by-turn Direction Blue Circle Button */}
+                  <a
+                    href={directionsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-8 h-8 rounded-full bg-[#1a73e8] hover:bg-[#1557b0] flex items-center justify-center text-white transition-all shadow-md cursor-pointer outline-none hover:scale-105"
+                    title="Como Chegar (Rotas)"
+                  >
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M22.4 10.8L13.2 1.6C12.4 0.8 11.1 0.8 10.3 1.6L1.1 10.8C0.3 11.6 0.3 12.9 1.1 13.7L10.3 22.9C11.1 23.7 12.4 23.7 13.2 22.9L22.4 13.7C23.2 12.9 23.2 11.6 22.4 10.8ZM16.3 11H13V8H11V11.5C11 11.8 11.2 12 11.5 12H16.3V14L19.3 11.5L16.3 9V11Z" fill="currentColor"/>
+                    </svg>
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {/* Custom Interactive Scale / Help Badge */}
+            <div className="absolute bottom-3 left-4 z-10 bg-white/95 backdrop-blur-xs text-[7.5px] font-black text-slate-500 px-2 py-0.5 rounded border border-slate-200 uppercase tracking-widest leading-none pointer-events-none">
+              MÉTRICA REAL-TIME GPS
+            </div>
+          </div>
+
+          {/* Quick recommendations / Official Details */}
+          <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-650 flex items-center justify-center border border-indigo-100 shrink-0">
+                <ShieldCheck size={20} />
+              </div>
+              <div className="text-left">
+                <h4 className="text-xs font-black text-slate-800 uppercase tracking-wider leading-none mb-1">
+                  Localização Autêntica Registada
+                </h4>
+                <p className="text-[10px] md:text-xs text-slate-500 font-semibold leading-relaxed">
+                  Esta coordenada geográfica define a repartição oficial emissora e tramitadora certificada de acordo com o protocolo de identificação nacional do documento.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </motion.div>
@@ -2402,11 +2589,17 @@ export function MessageDetail({
                     </div>
                   </div>
                   <div className="w-[1px] h-5 bg-slate-200 hidden sm:block" />
-                  <div className="flex items-center gap-2 min-w-0">
-                    <MapPin size={13} className="text-indigo-650 shrink-0" />
+                  <div 
+                    onClick={() => {
+                      setShowLocationPage(true);
+                    }}
+                    className="flex items-center gap-2 min-w-0 hover:bg-slate-50 p-1.5 px-2.5 rounded-lg cursor-pointer transition-colors group"
+                    title="Clique para ver no mapa"
+                  >
+                    <MapPin size={13} className="text-indigo-650 shrink-0 group-hover:scale-110 transition-transform" />
                     <div>
-                      <span className="text-[8px] font-black text-slate-400 block uppercase tracking-wider font-display leading-none">Localidade</span>
-                      <span className="text-xs font-bold text-slate-850 mt-0.5 block md:max-w-md leading-relaxed">{messageLocality}</span>
+                      <span className="text-[8px] font-black text-slate-400 block uppercase tracking-wider font-display leading-none group-hover:text-indigo-600">Localidade</span>
+                      <span className="text-xs font-bold text-slate-850 mt-0.5 block md:max-w-md leading-relaxed underline decoration-dotted decoration-indigo-500/40 group-hover:text-indigo-700">{messageLocality}</span>
                     </div>
                   </div>
                 </div>
@@ -2470,13 +2663,38 @@ export function MessageDetail({
                             </div>
                           </div>
 
-                          <div className="flex items-center gap-3 text-slate-700">
-                            <div className="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center shrink-0 border border-blue-600">
-                              <MapPin size={16} className="text-white" />
+                          <div 
+                            onClick={() => {
+                              setShowLocationPage(true);
+                            }}
+                            className="flex items-center gap-3 text-slate-700 hover:bg-slate-50/80 p-2 -m-2 rounded-2xl cursor-pointer transition-all border border-transparent hover:border-slate-100 group relative"
+                            title="Clique para ver no mapa"
+                          >
+                            <div className="relative">
+                              {/* Glowing pulsate ripple around the marker */}
+                              <span className="absolute inset-0 rounded-xl bg-indigo-500/30 animate-ping opacity-75 pointer-events-none" />
+                              
+                              <div className="w-8 h-8 rounded-xl bg-blue-600 group-hover:bg-blue-700 flex items-center justify-center shrink-0 border border-blue-600 relative z-10 transition-colors">
+                                <motion.div
+                                  animate={{ 
+                                    y: [0, -4, 0] 
+                                  }}
+                                  transition={{ 
+                                    duration: 1.6, 
+                                    repeat: Infinity, 
+                                    ease: "easeInOut" 
+                                  }}
+                                >
+                                  <MapPin size={16} className="text-white" />
+                                </motion.div>
+                              </div>
                             </div>
                             <div>
-                              <small className="text-slate-500 text-[9px] md:text-xs font-black uppercase tracking-[0.15em] block leading-none mb-1">{t("Localidade de Tramitação")}</small>
-                              <div className="text-xs md:text-sm font-bold text-primary">{t(messageLocality)}</div>
+                              <small className="text-slate-500 text-[9px] md:text-xs font-black uppercase tracking-[0.15em] block leading-none mb-1 group-hover:text-indigo-600 transition-colors uppercase">{t("Localidade de Tramitação")}</small>
+                              <div className="text-xs md:text-sm font-bold text-primary flex items-center gap-1.5 leading-snug">
+                                <span className="underline decoration-indigo-500/40 group-hover:decoration-indigo-600">{t(messageLocality)}</span>
+                                <span className="text-[10px] bg-indigo-50 text-indigo-700 px-1.5 py-0.5 rounded-md font-mono font-medium opacity-0 group-hover:opacity-100 transition-opacity">VER MAPA</span>
+                              </div>
                             </div>
                           </div>
 
