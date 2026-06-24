@@ -385,12 +385,20 @@ export function Header({
             onClick={onClickConnectivity}
             className={`flex items-center gap-2 px-4 py-1.5 rounded-full border text-[11px] font-black uppercase tracking-wider transition-all pointer-events-auto cursor-pointer ${
               isOnline 
-                ? 'bg-[#e6fdf5] text-[#00925d] border-[#bbf7e1] hover:bg-[#d8f9ed]' 
+                ? 'bg-[#e6fdf5] text-[#00925d] border-[#bbf7e1] hover:bg-[#d8f9ed] shadow-[0_0_12px_rgba(0,221,130,0.25)]' 
                 : 'bg-amber-50 text-amber-900 border-amber-200 hover:bg-amber-100 animate-pulse'
             }`}
             style={{ cursor: 'pointer' }}
           >
-            <div className={`w-2 h-2 rounded-full ${isOnline ? 'bg-[#00dd82]' : 'bg-amber-500'}`} />
+            <div className="relative flex h-2.5 w-2.5 shrink-0 items-center justify-center">
+              {isOnline && (
+                <>
+                  <span className="animate-ping absolute inline-flex h-4 w-4 rounded-full bg-[#00dd82] opacity-75"></span>
+                  <span className="animate-ping absolute inline-flex h-6 w-6 rounded-full bg-[#00dd82]/30 opacity-40" style={{ animationDelay: '0.4s' }}></span>
+                </>
+              )}
+              <span className={`relative inline-flex rounded-full h-2.5 w-2.5 ${isOnline ? 'bg-[#00dd82] shadow-[0_0_8px_#00dd82]' : 'bg-amber-500'}`}></span>
+            </div>
             <span>{isOnline ? 'Online' : 'Offline'}</span>
             {offlineQueueLength > 0 && (
               <span className="bg-amber-600 text-white font-mono rounded-full px-1.5 min-w-[16px] h-[16px] flex items-center justify-center text-[9px] leading-none shrink-0 font-bold">

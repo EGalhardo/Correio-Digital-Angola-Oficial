@@ -2675,18 +2675,7 @@ export function MessageDetail({
                               <span className="absolute inset-0 rounded-xl bg-indigo-500/30 animate-ping opacity-75 pointer-events-none" />
                               
                               <div className="w-8 h-8 rounded-xl bg-blue-600 group-hover:bg-blue-700 flex items-center justify-center shrink-0 border border-blue-600 relative z-10 transition-colors">
-                                <motion.div
-                                  animate={{ 
-                                    y: [0, -4, 0] 
-                                  }}
-                                  transition={{ 
-                                    duration: 1.6, 
-                                    repeat: Infinity, 
-                                    ease: "easeInOut" 
-                                  }}
-                                >
-                                  <MapPin size={16} className="text-white" />
-                                </motion.div>
+                                <MapPin size={16} className="text-white" />
                               </div>
                             </div>
                             <div>
