@@ -202,15 +202,15 @@ export function GovSegurancaContent({
               onClick={() => setActiveTab(tab.id as any)}
               className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer border select-none ${
                 isActive 
-                  ? 'bg-white text-indigo-950 font-black border-slate-300' 
+                  ? 'bg-[#0E2B64] text-white font-black border-[#0E2B64]' 
                   : 'text-slate-500 hover:text-slate-800 bg-transparent hover:bg-slate-200/40 border-transparent'
               }`}
             >
-              <Icon size={14} className={isActive ? 'text-indigo-950' : 'text-slate-400'} />
+              <Icon size={14} className={isActive ? 'text-white' : 'text-slate-400'} />
               <span>{tab.label}</span>
               {tab.count !== undefined && (
                 <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-mono font-bold ${
-                  isActive ? 'bg-indigo-50 text-indigo-950' : 'bg-slate-200/80 text-slate-600'
+                  isActive ? 'bg-white/20 text-white' : 'bg-slate-200/80 text-slate-600'
                 }`}>
                   {tab.count}
                 </span>

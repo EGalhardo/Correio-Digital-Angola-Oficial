@@ -131,9 +131,13 @@ export function GovPerfilContent({
               <button 
                 type="button"
                 onClick={() => setShowSensitiveData(!showSensitiveData)}
-                className="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-50 border border-slate-200 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider"
+                className={`p-2 border rounded-xl transition-all cursor-pointer flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider ${
+                  showSensitiveData 
+                    ? 'bg-[#0E2B64] border-[#0E2B64] text-white hover:bg-[#0E2B64]/90 shadow-sm' 
+                    : 'text-slate-400 hover:text-slate-700 hover:bg-slate-50 border-slate-200 bg-white'
+                }`}
               >
-                {showSensitiveData ? <EyeOff size={14} /> : <Eye size={14} />}
+                {showSensitiveData ? <EyeOff size={14} className={showSensitiveData ? 'text-white' : 'text-slate-400'} /> : <Eye size={14} />}
                 <span>{showSensitiveData ? 'Ocultar' : 'Revelar'}</span>
               </button>
             </div>
@@ -220,9 +224,13 @@ export function GovPerfilContent({
               <button 
                 type="button"
                 onClick={() => setShowLogs(!showLogs)}
-                className="px-3 py-1.5 border border-slate-200 bg-slate-50 hover:bg-slate-100 rounded-xl text-[9px] font-black uppercase tracking-wider text-slate-600 cursor-pointer flex items-center gap-1 shrink-0"
+                className={`px-3 py-1.5 border rounded-xl text-[9px] font-black uppercase tracking-wider cursor-pointer flex items-center gap-1 shrink-0 transition-all ${
+                  showLogs
+                    ? 'bg-[#0E2B64] border-[#0E2B64] text-white hover:bg-[#0E2B64]/90 shadow-sm'
+                    : 'border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600'
+                }`}
               >
-                <History size={11} />
+                <History size={11} className={showLogs ? 'text-white' : ''} />
                 <span>{showLogs ? 'Ocultar Logs' : 'Ver Logs'}</span>
               </button>
             </div>
