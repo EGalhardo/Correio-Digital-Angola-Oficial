@@ -20,11 +20,13 @@ interface JitsiEmbedProps {
   roomName: string;
   subject: string;
   isActive: boolean;
+  isVideoOn?: boolean;
 }
 
 function LocalWebcamOverlay() {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [stream, setStream] = useState<MediaStream | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
   const [cameraState, setCameraState] = useState<'loading' | 'live' | 'virtual'>('loading');
   const [scanOffset, setScanOffset] = useState(0);
 
@@ -42,6 +44,9 @@ function LocalWebcamOverlay() {
   const startCamera = async () => {
     try {
       setCameraState('loading');
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(t => t.stop());
+      }
       if (stream) {
         stream.getTracks().forEach(t => t.stop());
       }
@@ -55,6 +60,7 @@ function LocalWebcamOverlay() {
         audio: false
       };
       const mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
+      streamRef.current = mediaStream;
       setStream(mediaStream);
       if (videoRef.current) {
         videoRef.current.srcObject = mediaStream;
@@ -70,6 +76,9 @@ function LocalWebcamOverlay() {
   useEffect(() => {
     startCamera();
     return () => {
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+      }
       if (stream) {
         stream.getTracks().forEach(track => track.stop());
       }
@@ -146,6 +155,10 @@ function LocalWebcamOverlay() {
               startCamera();
             } else {
               setCameraState('virtual');
+              if (streamRef.current) {
+                streamRef.current.getTracks().forEach(t => t.stop());
+                streamRef.current = null;
+              }
               if (stream) {
                 stream.getTracks().forEach(t => t.stop());
                 setStream(null);
@@ -167,7 +180,7 @@ function LocalWebcamOverlay() {
   );
 }
 
-function JitsiEmbed({ roomName, subject, isActive }: JitsiEmbedProps) {
+function JitsiEmbed({ roomName, subject, isActive, isVideoOn = true }: JitsiEmbedProps) {
   const jitsiUrl = useMemo(() => {
     return `https://meet.jit.si/${roomName}#config.prejoinPageEnabled=false&config.disableDeepLinking=true&interfaceConfig.MOBILE_APP_PROMO=false`;
   }, [roomName]);
@@ -213,7 +226,7 @@ function JitsiEmbed({ roomName, subject, isActive }: JitsiEmbedProps) {
       />
 
       {/* Floating Picture-in-Picture Local Webcam Overlay */}
-      {isActive && <LocalWebcamOverlay />}
+      {isActive && isVideoOn && <LocalWebcamOverlay />}
 
       <div className="absolute bottom-0 left-0 right-0 bg-slate-900/90 backdrop-blur-sm px-4 py-2 border-t border-slate-700">
         <p className="text-[9px] text-slate-400 text-center">
@@ -352,6 +365,8 @@ export function VideoSessionPage({ onBack, addAuditLog }: VideoSessionPageProps)
     setIsInCall(true);
     setCallDuration(0);
     setActiveTab('video');
+    setIsVideoOn(true);
+    setIsAudioOn(true);
     addAuditLog?.(`Iniciou videoatendimento: ${session.subject}`, 'info');
   };
   
@@ -438,6 +453,7 @@ export function VideoSessionPage({ onBack, addAuditLog }: VideoSessionPageProps)
                 roomName={selectedSession.roomName || `cda-atendimento-${selectedSession.id}`} 
                 subject={selectedSession.subject} 
                 isActive={isInCall} 
+                isVideoOn={isVideoOn}
               />
             </motion.div>
           )}
@@ -629,7 +645,12 @@ export function VideoSessionPage({ onBack, addAuditLog }: VideoSessionPageProps)
                 
                 {/* Jitsi Embed visível na coluna direita para Desktops */}
                 {isLargeScreen ? (
-                  <JitsiEmbed roomName={selectedSession.roomName || `cda-atendimento-${selectedSession.id}`} subject={selectedSession.subject} isActive={isInCall} />
+                  <JitsiEmbed 
+                    roomName={selectedSession.roomName || `cda-atendimento-${selectedSession.id}`} 
+                    subject={selectedSession.subject} 
+                    isActive={isInCall} 
+                    isVideoOn={isVideoOn}
+                  />
                 ) : (
                   <div className="bg-slate-900/10 border border-dashed border-slate-300 rounded-2xl p-6 text-center text-slate-500">
                     <Video size={36} className="mx-auto text-primary mb-2 opacity-60 animate-pulse" />
