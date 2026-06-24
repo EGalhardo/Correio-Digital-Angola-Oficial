@@ -5,7 +5,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Mic, Globe, ChevronDown, Check } from 'lucide-react';
+import { Mic, Globe, ChevronDown, Check, Sun, Moon } from 'lucide-react';
 import { useSession } from '../../services/sessionStore';
 import { AppNotification, AppMode, LanguageCode, LANGUAGE_OPTIONS } from '../../types';
 import { useLanguage } from '../../hooks/useLanguage';
@@ -33,6 +33,8 @@ interface HeaderProps {
   tab?: string;
   currentLanguage: LanguageCode;
   setCurrentLanguage: (lang: LanguageCode) => void;
+  theme: 'light' | 'dark';
+  setTheme: (theme: 'light' | 'dark') => void;
 }
 
 function LanguageSelectorDropdown({
@@ -135,7 +137,9 @@ export function Header({
   offlineQueueLength,
   tab,
   currentLanguage,
-  setCurrentLanguage
+  setCurrentLanguage,
+  theme,
+  setTheme
 }: HeaderProps) {
   const { user, activeProfile } = useSession();
   const { t: translate } = useLanguage();
@@ -235,7 +239,10 @@ export function Header({
       }`}>
         <div className="flex items-center" onClick={() => setTab(isAdmin ? 'gov-dashboard' : 'home')}>
           <LazyImage 
-            src="https://i.postimg.cc/Fs8cZJZt/Logomarca-PNG-(1).png" 
+            src={theme === 'dark' 
+              ? "https://i.postimg.cc/6pQwXBFQ/Logomarca-Modo-Claro-Escuro.png"
+              : "https://i.postimg.cc/Fs8cZJZt/Logomarca-PNG-(1).png"
+            }
             alt="Correio Digital" 
             priority={true}
             placeholder="skeleton"
@@ -247,27 +254,46 @@ export function Header({
             </span>
           )}
         </div>
-        <div className="flex items-center gap-1">
-          {/* Connectivity Pill Button Mobile */}
-          <button
-            type="button"
-            onClick={onClickConnectivity}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-[9px] font-black uppercase tracking-wider transition-all pointer-events-auto cursor-pointer shrink-0 ${
-              isOnline 
-                ? 'bg-[#e6fdf5] text-[#00925d] border-[#bbf7e1] hover:bg-[#d8f9ed]' 
-                : 'bg-amber-50 text-amber-900 border-amber-200 hover:bg-amber-100 animate-pulse'
-            }`}
-          >
-            <div className={`w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-[#00dd82]' : 'bg-amber-500'}`} />
-            <span>{isOnline ? 'Online' : 'Offline'}</span>
-            {offlineQueueLength > 0 && (
-              <span className="bg-amber-600 text-white font-mono rounded-full px-1 min-w-[12px] h-[12px] flex items-center justify-center text-[7px] leading-none shrink-0 font-bold">
-                {offlineQueueLength}
-              </span>
-            )}
-          </button>
+        <div className="flex items-center gap-1.5">
 
           <LanguageSelectorDropdown currentLanguage={currentLanguage} setCurrentLanguage={setCurrentLanguage} />
+
+          {/* Claro/Escuro Single-Icon Toggle Button (Mobile) */}
+          <button
+            type="button"
+            onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+            className={`h-8 w-8 rounded-full flex items-center justify-center cursor-pointer focus:outline-none transition-all duration-300 ${
+              theme === 'light' 
+                ? 'bg-white border border-[#E2E8F0] hover:bg-slate-50' 
+                : 'bg-[#141d31] border border-[#263455] hover:bg-[#1e293b]'
+            }`}
+            title={theme === 'light' ? 'Mudar para Modo Escuro' : 'Mudar para Modo Claro'}
+            style={{ cursor: 'pointer' }}
+          >
+            <AnimatePresence mode="wait">
+              {theme === 'light' ? (
+                <motion.div
+                  key="moon"
+                  initial={{ rotate: -30, scale: 0.8, opacity: 0 }}
+                  animate={{ rotate: 0, scale: 1, opacity: 1 }}
+                  exit={{ rotate: 30, scale: 0.8, opacity: 0 }}
+                  transition={{ duration: 0.15 }}
+                >
+                  <Moon size={15} className="text-slate-700" />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="sun"
+                  initial={{ rotate: 30, scale: 0.8, opacity: 0 }}
+                  animate={{ rotate: 0, scale: 1, opacity: 1 }}
+                  exit={{ rotate: -30, scale: 0.8, opacity: 0 }}
+                  transition={{ duration: 0.15 }}
+                >
+                  <Sun size={15} className="text-amber-400" />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </button>
 
           <button 
             disabled={currentLanguage !== 'pt' || !hasPagePresentation(appMode, tab)}
@@ -374,6 +400,43 @@ export function Header({
           </button>
 
           <LanguageSelectorDropdown currentLanguage={currentLanguage} setCurrentLanguage={setCurrentLanguage} />
+
+          {/* Claro/Escuro Single-Icon Toggle Button (Desktop) */}
+          <button
+            type="button"
+            onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+            className={`h-9 w-9 rounded-full flex items-center justify-center cursor-pointer focus:outline-none transition-all duration-300 ${
+              theme === 'light' 
+                ? 'bg-white border border-[#E2E8F0] hover:bg-slate-50' 
+                : 'bg-[#141d31] border border-[#263455] hover:bg-[#1e293b]'
+            }`}
+            title={theme === 'light' ? 'Mudar para Modo Escuro' : 'Mudar para Modo Claro'}
+            style={{ cursor: 'pointer' }}
+          >
+            <AnimatePresence mode="wait">
+              {theme === 'light' ? (
+                <motion.div
+                  key="moon"
+                  initial={{ rotate: -30, scale: 0.8, opacity: 0 }}
+                  animate={{ rotate: 0, scale: 1, opacity: 1 }}
+                  exit={{ rotate: 30, scale: 0.8, opacity: 0 }}
+                  transition={{ duration: 0.15 }}
+                >
+                  <Moon size={17} className="text-slate-700" />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="sun"
+                  initial={{ rotate: 30, scale: 0.8, opacity: 0 }}
+                  animate={{ rotate: 0, scale: 1, opacity: 1 }}
+                  exit={{ rotate: -30, scale: 0.8, opacity: 0 }}
+                  transition={{ duration: 0.15 }}
+                >
+                  <Sun size={17} className="text-amber-400" />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </button>
 
           <button 
             disabled={currentLanguage !== 'pt' || !hasPagePresentation(appMode, tab)}

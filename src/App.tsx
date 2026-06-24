@@ -623,6 +623,22 @@ export default function App() {
   const isInstMode = appMode === 'institution';
   const institutionCode = resolveInstitutionCode(activeProfile.institutionName);
 
+  // Claro/Escuro Theme State
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    const saved = localStorage.getItem('correio_digital_theme');
+    return (saved === 'dark' || saved === 'light') ? saved : 'light';
+  });
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (theme === 'dark') {
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+    }
+    localStorage.setItem('correio_digital_theme', theme);
+  }, [theme]);
+
   useEffect(() => {
     if (stage === 'login' || stage === 'splash') {
       applyDemoPresetForMode(appMode, false);
@@ -4034,6 +4050,7 @@ Ficha civil do titular:
           }
         }}
         currentLanguage={currentLanguage}
+        theme={theme}
       />
       <MobileNavBar 
         tab={tab} 
@@ -4044,7 +4061,7 @@ Ficha civil do titular:
         currentLanguage={currentLanguage}
       />
 
-      <div className="flex-1 md:bg-white md:rounded-[24px] md:shadow-xl md:border-2 md:border-[#D1D5DB] md:overflow-hidden flex flex-col min-h-screen md:min-h-0 relative">
+      <div className="flex-1 md:bg-white md:rounded-[24px] md:shadow-xl md:border-2 md:border-[#E2E8F0] dark:md:border-[#141d31] md:overflow-hidden flex flex-col min-h-screen md:min-h-0 relative">
         <div className={emergencyMode && isGovMode ? 'md:mt-0' : ''}>
           <Header 
             setTab={setTab} 
@@ -4062,6 +4079,8 @@ Ficha civil do titular:
             appMode={appMode}
             emergencyMode={emergencyMode}
             isOnline={isOnline}
+            theme={theme}
+            setTheme={setTheme}
             onClickConnectivity={() => {
               setOfflineQueue(OfflineManager.getQueue());
               setShowOfflineManagerWidget(!showOfflineManagerWidget);

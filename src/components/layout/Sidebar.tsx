@@ -27,6 +27,7 @@ interface SidebarProps {
   setAppMode: (mode: AppMode) => void;
   setStage?: (stage: string) => void;
   currentLanguage?: LanguageCode;
+  theme?: 'light' | 'dark';
 }
 
 // Menu citizen SEM QR Code
@@ -60,7 +61,8 @@ const adminItems: MenuItem[] = [
 
 export function Sidebar({ 
   tab, setTab, setSelectedMessage, setSelectedDoc, handleLogout,
-  appMode: _propsAppMode, setAppMode: _propsSetAppMode, setStage, currentLanguage = 'pt'
+  appMode: _propsAppMode, setAppMode: _propsSetAppMode, setStage, currentLanguage = 'pt',
+  theme = 'light'
 }: SidebarProps) {
   const { appMode } = useSession();
   const { t: translate } = useLanguage();
@@ -76,13 +78,16 @@ export function Sidebar({
   const currentItems = getItemsForMode();
 
   return (
-    <aside className={`hidden md:flex p-5 md:w-[250px] md:rounded-[36px] shadow-2xl transition-all duration-500 shrink-0 md:sticky md:top-5 md:h-[calc(100vh-2.5rem)] flex-col border-[#D1D5DB] ${
-      appMode === 'admin' ? 'bg-white text-slate-900 border shadow-indigo-900/5' : 
-      'bg-white text-slate-900 border shadow-slate-200/50'
+    <aside className={`hidden md:flex p-5 md:w-[250px] md:rounded-[36px] shadow-2xl transition-all duration-500 shrink-0 md:sticky md:top-5 md:h-[calc(100vh-2.5rem)] flex-col border border-slate-200 dark:border-[#141d31] ${
+      appMode === 'admin' ? 'bg-white text-slate-900 shadow-indigo-900/5' : 
+      'bg-white text-slate-900 shadow-slate-200/50'
     }`}>
       <div className="mb-8 px-4">
         <LazyImage
-          src="https://i.postimg.cc/Fs8cZJZt/Logomarca-PNG-(1).png" 
+          src={theme === 'dark' 
+            ? "https://i.postimg.cc/6pQwXBFQ/Logomarca-Modo-Claro-Escuro.png"
+            : "https://i.postimg.cc/Fs8cZJZt/Logomarca-PNG-(1).png"
+          } 
           alt="Correio Digital" 
           priority={true}
           placeholder="skeleton"
