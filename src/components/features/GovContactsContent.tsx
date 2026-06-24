@@ -1423,7 +1423,7 @@ export function GovContactsContent({
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                           {/* NOME COMPLETO */}
                           <div className="grid gap-1.5">
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Nome Completo *</label>
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 min-h-[30px] flex items-end pb-1">Nome Completo *</label>
                             <div className="relative">
                               <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
                                 <User size={16} />
@@ -1441,7 +1441,7 @@ export function GovContactsContent({
 
                           {/* EMAIL INSTITUCIONAL */}
                           <div className="grid gap-1.5">
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Email Institucional *</label>
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 min-h-[30px] flex items-end pb-1">Email Institucional *</label>
                             <div className="relative">
                               <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
                                 <Mail size={16} />
@@ -1459,7 +1459,7 @@ export function GovContactsContent({
 
                           {/* TELEFONE */}
                           <div className="grid gap-1.5">
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Telefone *</label>
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 min-h-[30px] flex items-end pb-1">Telefone *</label>
                             <div className="relative">
                               <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
                                 <Phone size={16} />
@@ -1488,60 +1488,48 @@ export function GovContactsContent({
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                          {/* FUNÇÃO / CARGO (SELECT) */}
+                          {/* FUNÇÃO / CARGO (INPUT) */}
                           <div className="grid gap-1.5">
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Perfil Funcional *</label>
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 min-h-[30px] flex items-end pb-1">Perfil Funcional *</label>
                             <div className="relative">
                               <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
                                 <IdCard size={16} />
                               </span>
-                              <select
+                              <input
+                                type="text"
                                 required
+                                placeholder="Ex: Auditor Geral"
                                 value={newWorkerRole}
                                 onChange={(e) => {
                                   setNewWorkerRole(e.target.value);
                                   setNewWorkerAccessProfile(e.target.value);
                                 }}
-                                className="w-full bg-white border-2 border-slate-100 focus:border-[#4f46e5]/30 rounded-[20px] pl-11 pr-10 py-3.5 text-xs text-slate-800 font-bold outline-none transition-all appearance-none cursor-pointer"
-                              >
-                                <option value="" disabled>Selecione o cargo/perfil</option>
-                                {AVAILABLE_ROLES.map(role => (
-                                  <option key={role} value={role}>{role}</option>
-                                ))}
-                              </select>
-                              <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 text-[9px]">
-                                ▼
-                              </div>
+                                className="w-full bg-white border-2 border-slate-100 focus:border-[#4f46e5]/30 focus:ring-0 rounded-[20px] pl-11 pr-4 py-3.5 text-xs text-slate-800 font-bold outline-none transition-all placeholder:text-slate-300"
+                              />
                             </div>
                           </div>
 
-                          {/* DEPARTAMENTO / ÁREA */}
+                          {/* DEPARTAMENTO / ÁREA (INPUT) */}
                           <div className="grid gap-1.5">
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Departamento / Área Territorial *</label>
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 min-h-[30px] flex items-end pb-1 leading-tight text-left">Departamento / Área Territorial *</label>
                             <div className="relative">
                               <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
                                 <Building size={16} />
                               </span>
-                              <select
+                              <input
+                                type="text"
                                 required
+                                placeholder="Ex: Direcção Geral"
                                 value={newWorkerDept}
                                 onChange={(e) => setNewWorkerDept(e.target.value)}
-                                className="w-full bg-white border-2 border-slate-100 focus:border-[#4f46e5]/30 rounded-[20px] pl-11 pr-10 py-3.5 text-xs text-slate-800 font-bold outline-none transition-all appearance-none cursor-pointer"
-                              >
-                                <option value="" disabled>Selecione a área operacional</option>
-                                {AVAILABLE_DEPARTMENTS.map(dept => (
-                                  <option key={dept} value={dept}>{dept}</option>
-                                ))}
-                              </select>
-                              <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 text-[9px]">
-                                ▼
-                              </div>
+                                className="w-full bg-white border-2 border-slate-100 focus:border-[#4f46e5]/30 focus:ring-0 rounded-[20px] pl-11 pr-4 py-3.5 text-xs text-slate-800 font-bold outline-none transition-all placeholder:text-slate-300"
+                              />
                             </div>
                           </div>
 
                           {/* IDENTIFICADOR EXTERNO */}
                           <div className="grid gap-1.5">
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">ID Único do Agente (Opcional)</label>
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 min-h-[30px] flex items-end pb-1">ID Único do Agente (Opcional)</label>
                             <div className="relative">
                               <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
                                 <Lock size={16} />
@@ -1568,10 +1556,10 @@ export function GovContactsContent({
                           <span className="font-extrabold text-[11px] uppercase tracking-widest">Estágio de Autorização</span>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+                        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
                           {/* ESTADO DROPDOWN SELECT */}
                           <div className="grid gap-1.5 md:col-span-5">
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Estado de Acesso *</label>
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 min-h-[20px] flex items-end pb-1">Estado de Acesso *</label>
                             <div className="relative">
                               <span className="absolute left-4 top-1/2 -translate-y-1/2 text-emerald-500 pointer-events-none">
                                 <CheckCircle2 size={16} />

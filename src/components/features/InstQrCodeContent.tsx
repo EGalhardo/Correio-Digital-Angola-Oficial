@@ -716,10 +716,14 @@ export function InstQrCodeContent({ documents, messages, onSelectMessage, addAud
   };
 
   const clearHistory = () => {
-    if (window.confirm('Tem certeza de que deseja limpar todo o histórico?')) {
-      setHistoryData([]);
-      showToast('Histórico limpo com sucesso.', 'success');
-    }
+    setHistoryData([]);
+    showToast('Histórico limpo com sucesso.', 'success');
+  };
+
+  const deleteHistoryItem = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation(); // prevent opening the item
+    setHistoryData(prev => prev.filter(item => item.id !== id));
+    showToast('Item removido do histórico.', 'success');
   };
 
   // -------------------------
@@ -2063,7 +2067,16 @@ export function InstQrCodeContent({ documents, messages, onSelectMessage, addAud
                       <span className="text-slate-800 flex items-center gap-1">
                         {cfg.emoji} {cfg.label}
                       </span>
-                      <span className="text-slate-450">{item.time}</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-slate-450">{item.time}</span>
+                        <button
+                          onClick={(e) => deleteHistoryItem(item.id, e)}
+                          className="text-red-500 hover:text-red-700 hover:bg-red-50 p-1 rounded-lg transition-all cursor-pointer border-0 bg-transparent flex items-center justify-center"
+                          title="Eliminar"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
                     </div>
                     <p className="text-[11px] text-slate-500 truncate mt-1 font-mono">{item.raw}</p>
                     <div className="text-[9px] font-black text-slate-400 mt-1 uppercase tracking-widest">

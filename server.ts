@@ -759,13 +759,22 @@ ${JSON.stringify(texts, null, 2)}`;
               return res.json({ translations });
             }
           }
-        } catch (geminiErr) {
-          console.error("Gemini translation error:", geminiErr);
+        } catch (geminiErr: any) {
+          const errMsg = geminiErr?.message || String(geminiErr);
+          const isRateLimit = errMsg.includes("429") || errMsg.includes("RESOURCE_EXHAUSTED");
+          const isUnavailable = errMsg.includes("503") || errMsg.includes("UNAVAILABLE");
+          if (isRateLimit) {
+            console.warn("[Translate API] Gemini rate limit exceeded (429). Using fallback.");
+          } else if (isUnavailable) {
+            console.warn("[Translate API] Gemini service temporarily unavailable (503). Using fallback.");
+          } else {
+            console.warn("[Translate API] Gemini translation skipped:", errMsg.substring(0, 150));
+          }
         }
       }
 
       // Fallback with Groq if configured
-      if (groqApiKey) {
+      if (groqApiKey && groq) {
         try {
           const completion = await groq.chat.completions.create({
             messages: [
@@ -783,8 +792,14 @@ ${JSON.stringify(texts, null, 2)}`;
               return res.json({ translations });
             }
           }
-        } catch (groqErr) {
-          console.error("Groq translation fallback failed:", groqErr);
+        } catch (groqErr: any) {
+          const errMsg = groqErr?.message || String(groqErr);
+          const isAuthError = errMsg.includes("401") || errMsg.includes("invalid_api_key") || errMsg.includes("Invalid API Key");
+          if (isAuthError) {
+            console.warn("[Translate API] Groq key is invalid/unauthorized (401). Using local default fallback.");
+          } else {
+            console.warn("[Translate API] Groq translation skipped:", errMsg.substring(0, 150));
+          }
         }
       }
 
