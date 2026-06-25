@@ -151,7 +151,7 @@ export function GovRelatorioContent({
 
   // Standard interactive tabs descriptor
   const reportTabs = [
-    { id: 'correspondences', label: 'Correspondências', icon: <FileText size={16} />, desc: 'Trâmite postal e taxa de entrega' },
+    { id: 'correspondences', label: 'Correspond.', icon: <FileText size={16} />, desc: 'Trâmite postal e taxa de entrega' },
     { id: 'institutions', label: 'Instituições', icon: <Building2 size={16} />, desc: 'Integração pública e tráfego API' },
     { id: 'citizens', label: 'Cidadãos', icon: <Users size={16} />, desc: 'Adesão de usuários e BI Digital' },
     { id: 'workers', label: 'Trabalhadores', icon: <Briefcase size={16} />, desc: 'Auditoria de produtividade' },
@@ -438,8 +438,8 @@ export function GovRelatorioContent({
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-100 border border-slate-200 rounded-full text-[10px] font-sans tracking-wider uppercase font-black text-slate-600">
-                <Globe size={11} className="text-[#00A859] animate-pulse" />
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#0E2B64] border border-[#0E2B64] rounded-full text-[10px] font-sans tracking-wider uppercase font-black text-white">
+                <Globe size={11} className="text-white animate-pulse" />
                 Conselho Digital de Angola
               </span>
             </div>
@@ -495,7 +495,7 @@ export function GovRelatorioContent({
           
           <div className="flex flex-wrap items-center gap-4 text-xs font-bold text-slate-600">
             {/* Compare switch pill */}
-            <div className="flex items-center gap-2 bg-slate-100 border border-slate-200 rounded-[16px] p-1 shadow-inner">
+            <div className="flex items-center gap-2 bg-white border border-slate-300 rounded-[16px] p-1 shadow-sm">
               <button 
                 onClick={() => { playInteractionSound('click'); setComparePeriod(true); }}
                 className={`px-3.5 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all border-0 cursor-pointer ${comparePeriod ? 'bg-[#0E2B64] text-white shadow-sm' : 'bg-transparent text-slate-500 hover:text-slate-800'}`}
@@ -512,7 +512,7 @@ export function GovRelatorioContent({
 
             {/* Comparison Scope Presets */}
             {comparePeriod && (
-              <div className="flex items-center gap-2 bg-slate-100 border border-slate-200 p-2 rounded-xl shadow-2xs">
+              <div className="flex items-center gap-2 bg-white border border-slate-300 p-2 rounded-xl shadow-2xs">
                 <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest pl-1">Escopo:</span>
                 <select
                   value={comparisonPreset}
@@ -535,7 +535,7 @@ export function GovRelatorioContent({
           {/* Calendar Picker Custom Panel */}
           <div className="flex items-center gap-2.5 self-end md:self-auto">
             <span className="text-[10px] text-slate-500 font-mono tracking-widest font-black uppercase hidden sm:inline">Intervalo Customizado:</span>
-            <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-[11px] text-slate-800 font-mono font-bold shadow-2xs">
+            <div className="flex items-center gap-1.5 bg-white border border-slate-300 rounded-xl px-3 py-2 text-[11px] text-slate-800 font-mono font-bold shadow-2xs">
               <input 
                 type="date" 
                 value={customStartDate} 
@@ -592,37 +592,37 @@ export function GovRelatorioContent({
                   }}
                   className={`w-full text-left p-3.5 rounded-[18px] transition-all duration-150 flex items-start gap-3 cursor-pointer border outline-none ${
                     isSelected 
-                      ? 'bg-indigo-50/50 border-indigo-200/60 text-indigo-950 shadow-3xs font-black' 
+                      ? 'bg-[#0E2B64] border-[#0E2B64] text-white shadow-3xs font-black' 
                       : 'bg-white border-transparent text-slate-500 hover:text-slate-800 hover:bg-slate-50/50'
                   }`}
                 >
                   <div className={`mt-0.5 p-2 rounded-xl shrink-0 transition-colors ${
-                    isSelected ? 'bg-indigo-600 text-white shadow-3xs' : 'bg-slate-100 text-slate-550'
+                    isSelected ? 'bg-white/15 text-white border border-white/20' : 'bg-[#0E2B64] border border-[#0E2B64] text-white'
                   }`}>
                     {tab.icon}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <span className={`text-[12px] block tracking-tight ${isSelected ? 'font-black text-indigo-950' : 'font-bold text-slate-700'}`}>
+                    <span className={`text-[12px] block tracking-tight ${isSelected ? 'font-black text-white' : 'font-bold text-slate-700'}`}>
                       {tab.label}
                     </span>
-                    <span className="text-[10px] text-slate-400 font-medium block mt-0.5 leading-snug truncate">
+                    <span className={`text-[10px] font-medium block mt-0.5 leading-snug truncate ${isSelected ? 'text-slate-200' : 'text-slate-400'}`}>
                       {tab.desc}
                     </span>
                   </div>
                   {isSelected && (
-                    <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 self-center animate-pulse shrink-0" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-white self-center animate-pulse shrink-0" />
                   )}
                 </button>
               );
             })}
           </nav>
 
-          <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-100/80 text-left space-y-2">
-            <div className="flex items-center gap-1.5 text-[#00A859] font-black text-[9px] uppercase tracking-wider">
-              <Activity size={12} className="stroke-[3]" />
+          <div className="p-3.5 bg-[#0E2B64] rounded-2xl border border-[#0E2B64] text-left space-y-2">
+            <div className="flex items-center gap-1.5 text-white font-black text-[9px] uppercase tracking-wider">
+              <Activity size={12} className="stroke-[3] text-white" />
               Sincronização Ativa
             </div>
-            <p className="text-[10px] text-slate-450 font-bold leading-normal m-0 select-none">
+            <p className="text-[10px] text-slate-100 font-bold leading-normal m-0 select-none">
               Os dados deste módulo de análise estratégica refletem as tabelas unificadas do Correio Digital Angola em ambiente de produção controlada.
             </p>
           </div>
@@ -742,7 +742,7 @@ export function GovRelatorioContent({
                     <div className="flex items-center gap-2 select-none font-sans">
                       <button
                         onClick={() => executeExporter('CSV')}
-                        className="h-9.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-black uppercase tracking-wider rounded-xl transition-all duration-150 flex items-center gap-1.5 border-0 hover:shadow-xs active:scale-95 cursor-pointer"
+                        className="h-9.5 px-4 bg-white hover:bg-slate-50 text-slate-700 text-xs font-black uppercase tracking-wider rounded-xl transition-all duration-150 flex items-center gap-1.5 border border-slate-300 hover:shadow-xs active:scale-95 cursor-pointer"
                         title="Descarregar ficheiro de valores separados por vírgula"
                       >
                         <Download size={13} />
@@ -835,8 +835,8 @@ export function GovRelatorioContent({
 
                   <div className="overflow-y-auto overflow-x-auto max-h-[610px] min-h-[220px] custom-scrollbar border border-slate-100 rounded-xl">
                     <table className="mobile-data-table w-full text-left font-sans text-xs border-collapse">
-                      <thead className="sticky top-0 bg-slate-50 z-10 shadow-3xs">
-                        <tr className="bg-slate-50 text-slate-450 uppercase text-[10px] font-black tracking-widest border-b border-slate-100">
+                      <thead className="sticky top-0 bg-[#0E2B64] z-10 shadow-3xs">
+                        <tr className="bg-[#0E2B64] text-white uppercase text-[10px] font-black tracking-widest border-b border-[#0E2B64]">
                           {kpiData.csvHeader.map((h, i) => (
                             <th key={i} className="py-3.5 px-4 first:rounded-l-xl last:rounded-r-xl">{h}</th>
                           ))}

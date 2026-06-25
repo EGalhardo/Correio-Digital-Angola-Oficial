@@ -396,8 +396,8 @@ export function GovIaContent({ onLog }: GovIaContentProps) {
             </div>
             <div className="space-y-1">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-100 border border-slate-200 rounded-full text-[10px] font-sans tracking-wide uppercase font-black text-slate-600">
-                  <span className={`w-1.5 h-1.5 rounded-full ${aiStats.groqConfigured ? 'bg-emerald-500 animate-ping' : 'bg-red-500'}`} />
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#0E2B64] border border-[#0E2B64] rounded-full text-[10px] font-sans tracking-wide uppercase font-black text-white">
+                  <span className={`w-1.5 h-1.5 rounded-full ${aiStats.groqConfigured ? 'bg-emerald-400 animate-ping' : 'bg-white'}`} />
                   Conselho Digital de Angola
                 </span>
                 <span className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-indigo-50 text-indigo-700 border border-indigo-100 rounded-full text-[9px] font-mono tracking-wider font-extrabold uppercase">
@@ -426,9 +426,9 @@ export function GovIaContent({ onLog }: GovIaContentProps) {
 
             <button
               onClick={() => setIsConfigOpen(true)}
-              className="px-4 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-[16px] text-xs font-black uppercase tracking-wider transition-all cursor-pointer border border-slate-200 flex items-center gap-2"
+              className="px-4 py-3.5 bg-white hover:bg-slate-50 text-slate-700 rounded-[16px] text-xs font-black uppercase tracking-wider transition-all cursor-pointer border border-slate-300 flex items-center gap-2"
             >
-              <Settings size={14} />
+              <Settings size={14} className="text-slate-500" />
               <span>Configurar</span>
             </button>
           </div>
@@ -441,7 +441,7 @@ export function GovIaContent({ onLog }: GovIaContentProps) {
           
           <div className="flex flex-wrap items-center gap-3">
             <span className="text-[10px] text-slate-400 font-black uppercase tracking-wider">Sistema de IA:</span>
-            <div className="flex items-center gap-2 bg-slate-100 border border-slate-200 rounded-[16px] p-1 shadow-inner">
+            <div className="flex items-center gap-2 bg-white border border-slate-300 rounded-[16px] p-1 shadow-xs">
               <button 
                 onClick={() => { playSound('click'); setIsAssistantActive(true); triggerToast('Serviço de IA Nacional Activado na rede.', 'success'); }}
                 className={`px-3.5 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all border-0 cursor-pointer ${isAssistantActive ? 'bg-emerald-600 text-white shadow-xs' : 'bg-transparent text-slate-500 hover:text-slate-800'}`}
@@ -649,14 +649,14 @@ export function GovIaContent({ onLog }: GovIaContentProps) {
                 placeholder="Pesquisar instituição..."
                 value={institutionsSearch}
                 onChange={(e) => setInstitutionsSearch(e.target.value)}
-                className="w-full bg-slate-50 hover:bg-slate-100/70 focus:bg-white text-xs text-slate-800 placeholder-slate-400 border border-slate-200 focus:border-indigo-400 px-3.5 py-2.5 rounded-xl outline-none transition-all pr-8"
+                className="w-full bg-white hover:bg-slate-50 focus:bg-white text-xs text-slate-800 placeholder-slate-400 border border-slate-300 focus:border-indigo-400 px-3.5 py-2.5 rounded-xl outline-none transition-all pr-8 shadow-3xs"
               />
               <Search size={14} className="text-slate-400 absolute right-3 top-3.5" />
             </div>
 
             <div className="space-y-2 max-h-[280px] overflow-y-auto pr-1">
               {filteredInstitutions.map(inst => (
-                <div key={inst.id} className="flex items-center justify-between p-3.5 bg-slate-50 border border-slate-200/50 hover:border-slate-300 rounded-2xl group transition-all">
+                <div key={inst.id} className="flex items-center justify-between p-3.5 bg-white border border-slate-300 hover:border-indigo-300 rounded-2xl group transition-all shadow-3xs">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 bg-indigo-600 text-white rounded-lg flex items-center justify-center font-bold text-[10px] shrink-0">
                       {inst.code}
@@ -688,7 +688,7 @@ export function GovIaContent({ onLog }: GovIaContentProps) {
           </div>
 
           {/* Quick Add Institution */}
-          <div className="mt-4 pt-4 border-t border-slate-150 bg-slate-50/50 p-3 rounded-2xl border border-dashed border-slate-200">
+          <div className="mt-4 pt-4 border-t border-slate-150 bg-white p-3 rounded-2xl border border-dashed border-slate-300 shadow-3xs">
             <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-2">Adicionar instituição</span>
             <div className="flex gap-2">
               <input
@@ -696,7 +696,7 @@ export function GovIaContent({ onLog }: GovIaContentProps) {
                 placeholder="Nome da instituição..."
                 value={newInstName}
                 onChange={(e) => setNewInstName(e.target.value)}
-                className="flex-1 bg-white border border-slate-200 px-3 py-1.5 text-xs rounded-xl outline-none"
+                className="flex-1 bg-white border border-slate-300 px-3 py-1.5 text-xs rounded-xl outline-none shadow-3xs"
               />
               <button
                 onClick={handleAddInstitution}
@@ -772,9 +772,9 @@ export function GovIaContent({ onLog }: GovIaContentProps) {
 
           <button
             onClick={() => setIsManageKnowledgeOpen(true)}
-            className="w-full mt-4 py-3 bg-slate-50 hover:bg-slate-100 text-[#0c2340] border border-slate-200 rounded-[16px] text-xs font-black uppercase tracking-wider transition-all duration-200 cursor-pointer flex items-center justify-center gap-2"
+            className="w-full mt-4 py-3 bg-[#0E2B64] hover:bg-[#0C2454] text-white border border-[#0E2B64] rounded-[16px] text-xs font-black uppercase tracking-wider transition-all duration-200 cursor-pointer flex items-center justify-center gap-2 shadow-xs"
           >
-            <Upload size={14} className="text-slate-500" />
+            <Upload size={14} className="text-white" />
             <span>Gerir Bases de Conhecimento</span>
           </button>
         </div>
@@ -792,37 +792,37 @@ export function GovIaContent({ onLog }: GovIaContentProps) {
 
             <div className="grid grid-cols-2 gap-3 mt-4">
               
-              <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/50 text-left">
+              <div className="bg-white p-3.5 rounded-2xl border border-slate-300 text-left shadow-3xs">
                 <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Perguntas Respondidas</span>
                 <span className="text-base font-black text-slate-800 font-mono block mt-1">{aiStats.totalConversations.toLocaleString('pt-AO')}</span>
                 <span className="text-[9px] text-emerald-600 font-bold block mt-0.5">↑ 12,4% vs ontem</span>
               </div>
 
-              <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/50 text-left">
+              <div className="bg-white p-3.5 rounded-2xl border border-slate-300 text-left shadow-3xs">
                 <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Tempo Médio Resposta</span>
                 <span className="text-base font-black text-slate-800 font-mono block mt-1">{aiStats.avgResponseTime}</span>
                 <span className="text-[9px] text-emerald-600 font-bold block mt-0.5">↓ 0.3s vs ontem</span>
               </div>
 
-              <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/50 text-left">
+              <div className="bg-white p-3.5 rounded-2xl border border-slate-300 text-left shadow-3xs">
                 <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Taxa de Sucesso</span>
                 <span className="text-base font-black text-indigo-700 font-mono block mt-1">{aiStats.resolutionRate}%</span>
                 <span className="text-[9px] text-emerald-600 font-bold block mt-0.5">↑ 2,1% vs ontem</span>
               </div>
 
-              <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/50 text-left">
+              <div className="bg-white p-3.5 rounded-2xl border border-slate-300 text-left shadow-3xs">
                 <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Utilizadores Atendidos</span>
                 <span className="text-base font-black text-slate-800 font-mono block mt-1">{aiStats.activeUsers.toLocaleString('pt-AO')}</span>
                 <span className="text-[9px] text-emerald-600 font-bold block mt-0.5">↑ 15,8% vs ontem</span>
               </div>
 
-              <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/50 text-left">
+              <div className="bg-white p-3.5 rounded-2xl border border-slate-300 text-left shadow-3xs">
                 <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Docs Consultados</span>
                 <span className="text-base font-black text-slate-800 font-mono block mt-1">{aiStats.docsConsulted.toLocaleString('pt-AO')}</span>
                 <span className="text-[9px] text-emerald-600 font-bold block mt-0.5">↑ 18,6% vs ontem</span>
               </div>
 
-              <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/50 text-left">
+              <div className="bg-white p-3.5 rounded-2xl border border-slate-300 text-left shadow-3xs">
                 <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Taxa de Escalonamento</span>
                 <span className="text-base font-black text-orange-600 font-mono block mt-1">{aiStats.escalationRate}%</span>
                 <span className="text-[9px] text-emerald-600 font-bold block mt-0.5">↓ 1,2% para humano</span>
@@ -833,9 +833,9 @@ export function GovIaContent({ onLog }: GovIaContentProps) {
 
           <button
             onClick={() => triggerToast('A redirecionar para relatórios consolidados...', 'info')}
-            className="w-full mt-4 py-3 bg-[#0c2340] hover:bg-[#1a3a60] text-white rounded-[16px] text-xs font-black uppercase tracking-wider transition-all duration-200 cursor-pointer flex items-center justify-center gap-2 border-0"
+            className="w-full mt-4 py-3 bg-[#0E2B64] hover:bg-[#0C2454] text-white rounded-[16px] text-xs font-black uppercase tracking-wider transition-all duration-200 cursor-pointer flex items-center justify-center gap-2 border border-[#0E2B64] shadow-xs"
           >
-            <BarChart2 size={14} className="text-slate-200" />
+            <BarChart2 size={14} className="text-white" />
             <span>Ver relatório completo</span>
           </button>
         </div>
@@ -903,9 +903,9 @@ export function GovIaContent({ onLog }: GovIaContentProps) {
 
           <button
             onClick={() => setIsManageModelsOpen(true)}
-            className="w-full mt-4 py-3 bg-slate-50 hover:bg-slate-100 text-[#0c2340] border border-slate-200 rounded-[16px] text-xs font-black uppercase tracking-wider transition-all duration-200 cursor-pointer flex items-center justify-center gap-2"
+            className="w-full mt-4 py-3 bg-[#0E2B64] hover:bg-[#0C2454] text-white border border-[#0E2B64] rounded-[16px] text-xs font-black uppercase tracking-wider transition-all duration-200 cursor-pointer flex items-center justify-center gap-2 shadow-xs"
           >
-            <Settings size={14} className="text-slate-500" />
+            <Settings size={14} className="text-white" />
             <span>Gerir Modelos</span>
           </button>
         </div>
