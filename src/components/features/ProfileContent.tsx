@@ -257,8 +257,11 @@ export function ProfileContent({
           setSupabaseStats(result.counts);
         }
       }
+      return result;
     } catch (e: any) {
-      setSupabaseErrorMsg(e?.message || 'Erro de rede ou permissões ao sincronizar.');
+      const errMsg = e?.message || 'Erro de rede ou permissões ao sincronizar.';
+      setSupabaseErrorMsg(errMsg);
+      return { success: false, message: errMsg };
     } finally {
       setSupabaseSyncing(false);
       setSupabaseStatusMsg('');
@@ -385,6 +388,9 @@ export function ProfileContent({
           correspondencesCount={correspondenceCount}
           institutionsCount={institutionsCount}
           lastAccess={user.lastAccess}
+          onSyncSupabase={handleSyncWithSupabase}
+          isSyncingSupabase={supabaseSyncing}
+          addAuditLog={addAuditLog}
         />
       );
     }

@@ -889,20 +889,22 @@ export const supabaseService = {
   async insertCorrespondence(cor: Correspondence) {
     if (!hasValidSupabaseKeys()) return null;
     try {
-      const resolvedRecipientBi = resolveCitizenBi(cor.recipient);
+      const resolvedRecipientBi = resolveCitizenBi(cor.recipient).slice(0, 20);
+      const resolvedSenderBi = resolveInstitutionCode(cor.sender || cor.institution).slice(0, 20);
       const payload = {
         id: parseInt(cor.id.replace(/\D/g, '')) || Math.floor(Math.random() * 1000000),
-        sender_bi: cor.sender,
+        sender_bi: resolvedSenderBi,
         recipient_bi: resolvedRecipientBi,
-        org: cor.institution,
+        org: cor.institution || cor.sender || 'CDA',
         preview: cor.subject,
         unread: false,
         status: cor.priority || 'Normal',
         subject: cor.subject,
         body: cor.body,
-        deadline_text: cor.originProvince, 
-        state_indicator: cor.destinationProvince,
-        actions: [cor.status] // Store current status value in text array
+        deadline_text: cor.originProvince || 'Luanda', 
+        state_indicator: cor.destinationProvince || 'Luanda',
+        actions: [cor.status], // Store current status value in text array
+        sensitivity: 'Correspondencia'
       };
       const { data, error } = await supabase
         .from('messages')
@@ -929,9 +931,17 @@ export const supabaseService = {
       if (error) throw error;
       if (!data) return [];
       
+      const provinces = ['luanda', 'benguela', 'cabinda', 'cuanza norte', 'cuanza sul', 'cunene', 'huambo', 'huíla', 'cuando cubango', 'lunda norte', 'lunda sul', 'moxico', 'namibe', 'uíge', 'zaire', 'bengo', 'bié', 'malanje'];
+      
       // Filter out messages that represent general personal messages of citizen
-      // General citizen messages are filtered where they match citizen's id format
-      return data.map((item: any) => ({
+      // Keep only those with sensitivity 'Correspondencia' or that fallback to provinces in deadline_text
+      const filtered = data.filter((item: any) => {
+        if (item.sensitivity === 'Correspondencia') return true;
+        if (item.deadline_text && provinces.includes(item.deadline_text.toLowerCase())) return true;
+        return false;
+      });
+
+      return filtered.map((item: any) => ({
         id: `COR-${item.id}`,
         sender: item.sender_bi,
         recipient: resolveCitizenName(item.recipient_bi),

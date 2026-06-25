@@ -67,7 +67,8 @@ import {
   List,
   ListOrdered,
   Quote,
-  Eraser
+  Eraser,
+  Download
 } from 'lucide-react';
 import { Message, SENSITIVITY_LEVELS, SensitivityConfig, PRIORITY_CONFIGS } from '../../types';
 import { generateProtocol, generateTimelineEvents, getCategoryMetadata } from '../../utils/protocolGenerator';
@@ -301,6 +302,397 @@ export function MessageDetail({
     documentHash: string;
     files?: { name: string; size: string }[];
   } | null>(null);
+
+  const [previewFile, setPreviewFile] = useState<{ name: string; size: string } | null>(null);
+
+  const handleDownloadFile = (fileName: string) => {
+    const org = selectedMessage.org;
+    const protocolNumber = selectedMessage.protocol?.protocolNumber || 'PRT-' + selectedMessage.id;
+    const signatureDate = selectedMessage.protocol?.signatureDate || messageDate;
+    const officialTime = selectedMessage.protocol?.officialTime || '10:45';
+    const documentHash = selectedMessage.protocol?.documentHash || '3e7a5c9d4b6f2a8e1c9d0f7a3b5e8c2d9f1a6b3c';
+    const digitalSignature = selectedMessage.protocol?.digitalSignature || 'RSA-CDA-INTEGRITY-SIGNATURE-KEY-AO';
+
+    const lowerName = fileName.toLowerCase();
+    
+    if (lowerName.endsWith('.png') || lowerName.endsWith('.jpg') || lowerName.endsWith('.jpeg')) {
+      // Generate a real openable high-quality certified image file
+      const canvas = document.createElement('canvas');
+      canvas.width = 800;
+      canvas.height = 600;
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        // Background linear gradient
+        const grad = ctx.createLinearGradient(0, 0, 0, 600);
+        grad.addColorStop(0, '#0c2340');
+        grad.addColorStop(1, '#1e293b');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, 800, 600);
+
+        // Frame borders
+        ctx.strokeStyle = '#fbbf24';
+        ctx.lineWidth = 6;
+        ctx.strokeRect(20, 20, 760, 560);
+        ctx.strokeStyle = '#3b82f6';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(26, 26, 748, 548);
+
+        // Watermark text rotation
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.03)';
+        ctx.font = 'bold 50px sans-serif';
+        ctx.save();
+        ctx.translate(400, 300);
+        ctx.rotate(-Math.PI / 6);
+        ctx.textAlign = 'center';
+        ctx.fillText('GOVERNO DE ANGOLA', 0, -40);
+        ctx.fillText('DOCUMENTO AUTENTICADO', 0, 40);
+        ctx.restore();
+
+        // Header Texts
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 18px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('REPÚBLICA DE ANGOLA', 400, 70);
+        ctx.font = 'bold 12px sans-serif';
+        ctx.fillStyle = '#fbbf24';
+        ctx.fillText('GOVERNO DIGITAL - CORREIO DIGITAL DE ANGOLA (CDA)', 400, 95);
+        ctx.font = '11px monospace';
+        ctx.fillStyle = '#94a3b8';
+        ctx.fillText('PLATAFORMA NACIONAL DE INTEROPERABILIDADE E EXPEDIENTES', 400, 118);
+
+        // Separator line
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(50, 135);
+        ctx.lineTo(750, 135);
+        ctx.stroke();
+
+        if (lowerName.includes('localizacao') || lowerName.includes('mapa')) {
+          // Dynamic Visual Map rendering for location attachments
+          ctx.fillStyle = '#1e293b';
+          ctx.fillRect(50, 155, 420, 320);
+          ctx.strokeStyle = '#475569';
+          ctx.lineWidth = 2;
+          ctx.strokeRect(50, 155, 420, 320);
+
+          // Render simulated roads/routes
+          ctx.strokeStyle = '#475569';
+          ctx.lineWidth = 6;
+          ctx.beginPath();
+          ctx.moveTo(50, 240); ctx.lineTo(470, 300);
+          ctx.moveTo(160, 155); ctx.lineTo(160, 475);
+          ctx.moveTo(330, 155); ctx.lineTo(330, 475);
+          ctx.moveTo(50, 410); ctx.lineTo(470, 390);
+          ctx.stroke();
+
+          // Highlight route
+          ctx.strokeStyle = '#4f46e5';
+          ctx.lineWidth = 4;
+          ctx.beginPath();
+          ctx.moveTo(160, 410); ctx.lineTo(160, 310); ctx.lineTo(330, 310);
+          ctx.stroke();
+
+          // Greenery zones (Parks)
+          ctx.fillStyle = '#065f46';
+          ctx.fillRect(75, 175, 70, 50);
+          ctx.fillStyle = '#10b981';
+          ctx.font = 'bold 9px sans-serif';
+          ctx.fillText('ZONA VERDE', 110, 205);
+
+          // Hospital Pin
+          ctx.fillStyle = '#ef4444';
+          ctx.beginPath();
+          ctx.arc(330, 310, 12, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = '#ffffff';
+          ctx.beginPath();
+          ctx.arc(330, 310, 5, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Tooltip on Map
+          ctx.fillStyle = '#0f172a';
+          ctx.strokeStyle = '#6366f1';
+          ctx.lineWidth = 1.5;
+          ctx.fillRect(200, 205, 230, 48);
+          ctx.strokeRect(200, 205, 230, 48);
+          ctx.fillStyle = '#ffffff';
+          ctx.font = 'bold 11px sans-serif';
+          ctx.textAlign = 'left';
+          ctx.fillText('HOSPITAL GERAL DE LUANDA', 212, 224);
+          ctx.fillStyle = '#818cf8';
+          ctx.font = '9px monospace';
+          ctx.fillText('LAT: 8.8383° S | LON: 13.2658° E', 212, 238);
+
+          // Info sidebar panel
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.04)';
+          ctx.fillRect(490, 155, 260, 320);
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+          ctx.strokeRect(490, 155, 260, 320);
+
+          ctx.fillStyle = '#ffffff';
+          ctx.font = 'bold 13px sans-serif';
+          ctx.textAlign = 'left';
+          ctx.fillText('INFORMAÇÃO DE LOCALIZAÇÃO', 505, 185);
+
+          ctx.fillStyle = '#94a3b8';
+          ctx.font = '10px sans-serif';
+          ctx.fillText('INSTITUIÇÃO RESPONSÁVEL', 505, 215);
+          ctx.fillStyle = '#ffffff';
+          ctx.font = 'bold 11px sans-serif';
+          ctx.fillText(org, 505, 228);
+
+          ctx.fillStyle = '#94a3b8';
+          ctx.font = '10px sans-serif';
+          ctx.fillText('ENDEREÇO OFICIAL', 505, 258);
+          ctx.fillStyle = '#ffffff';
+          ctx.font = 'bold 11px sans-serif';
+          ctx.fillText('Distrito da Camama, Luanda, Angola', 505, 271);
+
+          ctx.fillStyle = '#94a3b8';
+          ctx.font = '10px sans-serif';
+          ctx.fillText('REFERÊNCIA DE PROTOCOLO', 505, 301);
+          ctx.fillStyle = '#38bdf8';
+          ctx.font = 'bold 11px monospace';
+          ctx.fillText(protocolNumber, 505, 314);
+
+          ctx.fillStyle = '#94a3b8';
+          ctx.font = '10px sans-serif';
+          ctx.fillText('DATA DA CERTIFICAÇÃO', 505, 344);
+          ctx.fillStyle = '#ffffff';
+          ctx.font = 'bold 11px sans-serif';
+          ctx.fillText(`${signatureDate} às ${officialTime}`, 505, 357);
+
+          // Authenticity validation seal
+          ctx.strokeStyle = '#10b981';
+          ctx.lineWidth = 1;
+          ctx.strokeRect(505, 395, 230, 65);
+          ctx.fillStyle = 'rgba(16, 185, 129, 0.05)';
+          ctx.fillRect(505, 395, 230, 65);
+          ctx.fillStyle = '#10b981';
+          ctx.font = 'bold 9px sans-serif';
+          ctx.fillText('✓ CERTIFICAÇÃO JURÍDICA ATIVA', 515, 413);
+          ctx.fillStyle = '#a7f3d0';
+          ctx.font = '8px monospace';
+          ctx.fillText(`HASH: ${documentHash.substring(0, 24)}...`, 515, 428);
+          ctx.fillText('SISTEMA INTEGRADO DE CHAVES PÚBLICAS AO', 515, 442);
+        } else {
+          // General certified file screenshot placeholder
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(80, 160, 640, 310);
+          ctx.strokeStyle = '#475569';
+          ctx.lineWidth = 1.5;
+          ctx.strokeRect(80, 160, 640, 310);
+
+          ctx.fillStyle = '#0c2340';
+          ctx.font = 'bold 15px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText('RECONHECIMENTO E AUTENTICAÇÃO DIGITAL DE ANEXO', 400, 200);
+
+          ctx.strokeStyle = '#e2e8f0';
+          ctx.beginPath();
+          ctx.moveTo(110, 220); ctx.lineTo(690, 220);
+          ctx.stroke();
+
+          ctx.fillStyle = '#334155';
+          ctx.font = '11px sans-serif';
+          ctx.textAlign = 'left';
+          ctx.fillText(`Declaramos e certificamos formalmente que o documento anexo registado sob o nome:`, 110, 250);
+          ctx.fillStyle = '#4f46e5';
+          ctx.font = 'bold 12px monospace';
+          ctx.fillText(fileName, 110, 270);
+
+          ctx.fillStyle = '#334155';
+          ctx.font = '11px sans-serif';
+          ctx.fillText(`Faz parte integrante da correspondência emitida pela instituição oficial:`, 110, 305);
+          ctx.font = 'bold 11px sans-serif';
+          ctx.fillText(org, 110, 320);
+
+          ctx.font = '11px sans-serif';
+          ctx.fillText(`Assunto do expediente:`, 110, 355);
+          ctx.font = 'bold 11px italic sans-serif';
+          ctx.fillText(selectedMessage.details?.subject || selectedMessage.preview, 110, 370);
+
+          // Integrity box
+          ctx.fillStyle = '#f8fafc';
+          ctx.fillRect(110, 395, 580, 55);
+          ctx.strokeStyle = '#cbd5e1';
+          ctx.strokeRect(110, 395, 580, 55);
+
+          ctx.fillStyle = '#0f172a';
+          ctx.font = 'bold 9px monospace';
+          ctx.fillText(`PROTOCOLO: ${protocolNumber}`, 120, 412);
+          ctx.fillText(`DATA: ${signatureDate} ${officialTime}`, 120, 426);
+          ctx.fillStyle = '#059669';
+          ctx.fillText(`HASH DE INTEGRIDADE (SHA256): ${documentHash}`, 120, 440);
+        }
+
+        // Footer block
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '9px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText(`ASSINATURA DIGITAL CDA: ${digitalSignature}`, 400, 515);
+        ctx.font = 'italic 9px sans-serif';
+        ctx.fillText('Este documento digital possui validade jurídica ao abrigo da regulamentação do Governo de Angola.', 400, 535);
+
+        // Download PNG Blob
+        canvas.toBlob((blob) => {
+          if (blob) {
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = fileName;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+          }
+        }, 'image/png');
+      }
+    } else if (lowerName.endsWith('.pdf')) {
+      // Create a valid, fully openable PDF on the fly!
+      const pdfString = [
+        "%PDF-1.4",
+        "1 0 obj",
+        "<< /Type /Catalog /Pages 2 0 R >>",
+        "endobj",
+        "2 0 obj",
+        "<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+        "endobj",
+        "3 0 obj",
+        "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>",
+        "endobj",
+        "4 0 obj",
+        "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>",
+        "endobj",
+        "5 0 obj",
+        "<< /Length 1000 >>",
+        "stream",
+        "BT",
+        "/F1 16 Tf",
+        "50 720 Td",
+        "(GOVERNO DA REPUBLICA DE ANGOLA) Tj",
+        "0 -25 Td",
+        "/F1 12 Tf",
+        "(CORREIO DIGITAL DE ANGOLA - CERTIFICADO LEGAL) Tj",
+        "0 -40 Td",
+        "/F1 10 Tf",
+        "(Nome do Ficheiro Anexo: " + fileName + ") Tj",
+        "0 -20 Td",
+        "(Entidade Oficial Emissora: " + org + ") Tj",
+        "0 -20 Td",
+        "(Numero do Protocolo Nacional: " + protocolNumber + ") Tj",
+        "0 -20 Td",
+        "(Data de Registo: " + signatureDate + " as " + officialTime + ") Tj",
+        "0 -40 Td",
+        "/F1 11 Tf",
+        "(ASSUNTO DA CORRESPONDENCIA EMITIDA:) Tj",
+        "0 -20 Td",
+        "/F1 10 Tf",
+        "(" + (selectedMessage.details?.subject || selectedMessage.preview).substring(0, 60) + ") Tj",
+        "0 -40 Td",
+        "/F1 11 Tf",
+        "(CONTEUDO CERTIFICADO E GARANTIDO:) Tj",
+        "0 -20 Td",
+        "/F1 10 Tf",
+        "(O presente documento atesta legalmente a integridade e veracidade do anexo) Tj",
+        "0 -15 Td",
+        "(" + fileName + " arquivado e custodiado sob os sistemas seguros do CDA.) Tj",
+        "0 -15 Td",
+        "(Em conformidade com a Lei de Desmaterializacao da Administracao Publica.) Tj",
+        "0 -40 Td",
+        "/F1 10 Tf",
+        "(ASSINADO ELETRONICAMENTE - SEGURANÇA INTEGRAL) Tj",
+        "0 -15 Td",
+        "(Chave: " + digitalSignature.substring(0, 36) + ") Tj",
+        "0 -15 Td",
+        "(SHA-256 Hash: " + documentHash + ") Tj",
+        "ET",
+        "endstream",
+        "endobj",
+        "xref",
+        "0 6",
+        "0000000000 65535 f ",
+        "0000000009 00000 n ",
+        "0000000056 00000 n ",
+        "0000000111 00000 n ",
+        "0000000250 00000 n ",
+        "0000000326 00000 n ",
+        "trailer",
+        "<< /Size 6 /Root 1 0 R >>",
+        "startxref",
+        "1375",
+        "%%EOF"
+      ].join("\n");
+
+      const blob = new Blob([pdfString], { type: 'application/pdf' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } else {
+      // Download as text or other registered formats directly without appending extra extensions
+      const contentText = `
+================================================================================
+                    REPÚBLICA DE ANGOLA
+         GOVERNO DIGITAL - CORREIO DIGITAL DE ANGOLA (CDA)
+================================================================================
+                  CERTIFICADO DIGITAL DE EXPEDIENTE
+
+IDENTIFICADOR ÚNICO DO DOCUMENTO:
+👉 ${selectedMessage.id}
+
+CÓDIGO DE PROTOCOLO NACIONAL:
+👉 ${protocolNumber}
+
+EMISSOR OFICIAL:
+🏛️ ${org}
+
+NOME DO FICHEIRO SEGURO ANEXADO:
+📄 ${fileName}
+
+DATA DE CERTIFICAÇÃO:
+📅 ${signatureDate} às ${officialTime}
+
+ESTADO DE VALIDAÇÃO:
+✅ VERIFICADO E ASSINADO (ICP-ANGOLA - INFRAESTRUTURA DE CHAVES PÚBLICAS)
+
+ASSINATURA DIGITAL DO SISTEMA CDA:
+🔑 ${digitalSignature}
+
+HASH CRIPTOGRÁFICO DE INTEGRIDADE (SHA-256):
+🔒 ${documentHash}
+
+ASSUNTO DO EXPEDIENTE ASSOCIADO:
+📝 ${selectedMessage.details?.subject || selectedMessage.preview}
+
+VALIDADE JURÍDICA:
+O presente documento é assinado e certificado digitalmente nos termos da lei de
+Desmaterialização da Administração Pública e de Governação Digital da República
+de Angola. Possui a mesma eficácia e valor probatório que um documento impresso
+com assinatura presencial.
+
+--------------------------------------------------------------------------------
+         ESTE DOCUMENTO FOI EMITIDO PELO PORTAL OFICIAL DE GOVERNO
+             REPÚBLICA DE ANGOLA - TODOS OS DIREITOS RESERVADOS
+================================================================================
+`.trim();
+
+      const blob = new Blob([contentText], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+  };
 
   const [inlineAttachedFiles, setInlineAttachedFiles] = useState<{ name: string; size: string }[]>([]);
 
@@ -700,6 +1092,28 @@ export function MessageDetail({
     selectedMessage.details?.subject || selectedMessage.preview
   );
 
+  const parsedAttachments = React.useMemo(() => {
+    const rawAttachments = selectedMessage.details?.attachments;
+    if (!rawAttachments || !Array.isArray(rawAttachments)) return [];
+    
+    return rawAttachments.map(att => {
+      if (!att) return { name: 'documento.pdf', size: '1.2 MB' };
+      if (typeof att === 'object') {
+        const anyAtt = att as any;
+        return { 
+          name: anyAtt.name || 'documento.pdf', 
+          size: anyAtt.size || '1.2 MB' 
+        };
+      }
+      const attString = String(att);
+      const match = attString.match(/^(.*?)\s*\(([^)]+)\)\s*$/);
+      if (match) {
+        return { name: match[1], size: match[2] };
+      }
+      return { name: attString, size: '1.2 MB' };
+    });
+  }, [selectedMessage.details?.attachments]);
+
   if (activeAction === 'Ver detalhes') {
     return (
       <motion.div 
@@ -750,6 +1164,60 @@ export function MessageDetail({
                 {t("Atenciosamente,")}<br />
                 {t("Secretaria do Correio Digital Angola")}
               </p>
+            </div>
+          )}
+
+          {/* Incoming Document Attachments */}
+          {parsedAttachments.length > 0 && (
+            <div className="mt-8 pt-6 border-t border-slate-150 text-left">
+              <h4 className="font-sans font-extrabold text-[#0c2340] text-xs uppercase tracking-widest mb-3.5 flex items-center gap-1.5">
+                <Paperclip size={14} className="text-indigo-600" />
+                {t("Ficheiros / Anexos Oficiais Recebidos")}
+              </h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {parsedAttachments.map((file, idx) => (
+                  <div 
+                    key={idx} 
+                    className="flex items-center justify-between p-3.5 bg-slate-50/50 hover:bg-slate-50 border border-slate-200 rounded-2xl transition-all group"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-9 h-9 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 shrink-0">
+                        <FileText size={16} />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-xs font-bold text-slate-800 truncate" title={file.name}>
+                          {file.name}
+                        </p>
+                        <span className="text-[10px] font-mono text-slate-400 font-medium">
+                          {file.size}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1 shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setPreviewFile(file);
+                        }}
+                        className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50/50 rounded-xl transition-all border-0 bg-transparent cursor-pointer flex items-center justify-center"
+                        title={t("Visualizar documento")}
+                      >
+                        <Eye size={14} />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          handleDownloadFile(file.name);
+                        }}
+                        className="p-2 text-slate-400 hover:text-[#0c2340] hover:bg-slate-100 rounded-xl transition-all border-0 bg-transparent cursor-pointer flex items-center justify-center"
+                        title={t("Descarregar ficheiro")}
+                      >
+                        <Download size={14} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
 
@@ -2252,6 +2720,60 @@ export function MessageDetail({
                         </p>
                       </div>
                     )}
+
+                    {/* Incoming Document Attachments */}
+                    {parsedAttachments.length > 0 && (
+                      <div className="mt-8 pt-6 border-t border-slate-150 text-left">
+                        <h4 className="font-sans font-extrabold text-[#0c2340] text-xs uppercase tracking-widest mb-3.5 flex items-center gap-1.5">
+                          <Paperclip size={14} className="text-indigo-600" />
+                          {t("Ficheiros / Anexos Oficiais Recebidos")}
+                        </h4>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          {parsedAttachments.map((file, idx) => (
+                            <div 
+                              key={idx} 
+                              className="flex items-center justify-between p-3.5 bg-slate-50/50 hover:bg-slate-50 border border-slate-200 rounded-2xl transition-all group"
+                            >
+                              <div className="flex items-center gap-3 min-w-0">
+                                <div className="w-9 h-9 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 shrink-0">
+                                  <FileText size={16} />
+                                </div>
+                                <div className="min-w-0">
+                                  <p className="text-xs font-bold text-slate-800 truncate" title={file.name}>
+                                    {file.name}
+                                  </p>
+                                  <span className="text-[10px] font-mono text-slate-400 font-medium">
+                                    {file.size}
+                                  </span>
+                                </div>
+                              </div>
+                               <div className="flex items-center gap-1 shrink-0">
+                                 <button
+                                   type="button"
+                                   onClick={() => {
+                                     setPreviewFile(file);
+                                   }}
+                                   className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50/50 rounded-xl transition-all border-0 bg-transparent cursor-pointer flex items-center justify-center"
+                                   title={t("Visualizar documento")}
+                                 >
+                                   <Eye size={14} />
+                                 </button>
+                                 <button
+                                   type="button"
+                                   onClick={() => {
+                                     handleDownloadFile(file.name);
+                                   }}
+                                   className="p-2 text-slate-400 hover:text-[#0c2340] hover:bg-slate-100 rounded-xl transition-all border-0 bg-transparent cursor-pointer flex items-center justify-center"
+                                   title={t("Descarregar ficheiro")}
+                                 >
+                                   <Download size={14} />
+                                 </button>
+                               </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   {/* 13 MANDATORY DIGITAL PROTOCOL FIELDS */}
@@ -2970,6 +3492,286 @@ export function MessageDetail({
                 >
                   Fechar Validação
                 </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+
+        {previewFile && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto"
+            onClick={() => setPreviewFile(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, y: 15, opacity: 0 }}
+              animate={{ scale: 1, y: 0, opacity: 1 }}
+              exit={{ scale: 0.95, y: 15, opacity: 0 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 350 }}
+              className="bg-white rounded-3xl border border-slate-150 shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden text-left"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Header */}
+              <div className="bg-[#0c2340] p-5 text-white flex justify-between items-center shrink-0">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-lg bg-indigo-500 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+                    <FileText size={18} className="text-white" />
+                  </div>
+                  <div>
+                    <h3 className="font-extrabold text-xs uppercase tracking-wider">Visualizador de Ficheiro Oficial</h3>
+                    <p className="text-[10px] text-slate-300 font-mono tracking-tight">{previewFile.name} ({previewFile.size})</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setPreviewFile(null)}
+                  className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/25 transition-all text-white/80 text-xs font-bold font-mono"
+                >
+                  ✕
+                </button>
+              </div>
+
+              {/* Document Container */}
+              <div className="p-6 overflow-y-auto flex-1 min-h-0 bg-slate-50/50">
+                <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm relative overflow-hidden font-sans text-slate-800">
+                  {/* Decorative Watermark */}
+                  <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none select-none">
+                    <div className="text-4xl font-black uppercase tracking-widest rotate-12 text-center">
+                      CÓPIA INTEGRAL<br/>CERTIFICADA<br/>GOVERNO DE ANGOLA
+                    </div>
+                  </div>
+
+                  {/* Top Emblem and Title */}
+                  <div className="text-center border-b border-slate-100 pb-5 mb-5">
+                    <div className="w-14 h-14 mx-auto mb-2 flex items-center justify-center rounded-full bg-amber-50 border border-amber-200 text-amber-600 shadow-sm font-bold text-sm tracking-widest font-sans">
+                      CDA
+                    </div>
+                    <h4 className="font-extrabold text-[11px] uppercase tracking-widest text-slate-400 font-mono">
+                      REPÚBLICA DE ANGOLA
+                    </h4>
+                    <h3 className="font-black text-[#0c2340] text-sm uppercase mt-0.5">
+                      Correio Digital de Angola (CDA)
+                    </h3>
+                    <div className="inline-block mt-2 px-3 py-1 bg-indigo-50 border border-indigo-150 rounded-full">
+                      <span className="text-[9px] font-extrabold tracking-widest text-indigo-700 uppercase">
+                        Selo de Autenticidade Ativo
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Info Grid */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50 border border-slate-150 p-4 rounded-xl text-xs mb-5">
+                    <div>
+                      <span className="block text-slate-400 font-bold uppercase tracking-wider text-[9px] mb-0.5">Instituição Emissora</span>
+                      <strong className="text-slate-800">{selectedMessage.org}</strong>
+                    </div>
+                    <div>
+                      <span className="block text-slate-400 font-bold uppercase tracking-wider text-[9px] mb-0.5">Protocolo Eletrónico</span>
+                      <strong className="text-slate-800 font-mono">{protocol.protocolNumber}</strong>
+                    </div>
+                    <div>
+                      <span className="block text-slate-400 font-bold uppercase tracking-wider text-[9px] mb-0.5">Data de Certificação</span>
+                      <strong className="text-slate-800 font-mono">{protocol.signatureDate} às {protocol.officialTime || '10:45'}</strong>
+                    </div>
+                    <div>
+                      <span className="block text-slate-400 font-bold uppercase tracking-wider text-[9px] mb-0.5">Nome do Ficheiro</span>
+                      <strong className="text-slate-800 truncate block">{previewFile.name}</strong>
+                    </div>
+                  </div>
+
+                  {/* File Body Content Previews */}
+                  <div className="space-y-4 pt-1 border-t border-slate-100 min-h-[150px]">
+                    <h5 className="font-bold text-xs uppercase text-[#0c2340] tracking-wider mb-2">Conteúdo do Documento</h5>
+                    
+                    {previewFile.name.toLowerCase().includes('localizacao') || previewFile.name.toLowerCase().includes('mapa') || previewFile.name.toLowerCase().endsWith('.png') || previewFile.name.toLowerCase().endsWith('.jpg') || previewFile.name.toLowerCase().endsWith('.jpeg') ? (
+                      <div className="space-y-4 text-xs text-left">
+                        <p className="font-medium text-slate-700">
+                          Este ficheiro de imagem contém as coordenadas oficiais e o mapa de localização georreferenciado anexado ao expediente:
+                        </p>
+                        
+                        {/* Interactive Styled Map Component */}
+                        <div className="flex flex-col md:flex-row gap-4 border border-slate-200 rounded-2xl overflow-hidden bg-slate-50">
+                          {/* Map Visual Sandbox */}
+                          <div className="relative w-full md:w-2/3 h-56 bg-slate-900 overflow-hidden flex items-center justify-center select-none shadow-inner">
+                            {/* Grid overlay */}
+                            <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[size:16px_16px]" />
+                            
+                            {/* Simulated Roads/Grid SVGs */}
+                            <svg className="absolute inset-0 w-full h-full text-slate-800 opacity-60" xmlns="http://www.w3.org/2000/svg">
+                              <line x1="10%" y1="0%" x2="40%" y2="100%" stroke="currentColor" strokeWidth="8" />
+                              <line x1="0%" y1="45%" x2="100%" y2="55%" stroke="currentColor" strokeWidth="12" strokeLinecap="round" />
+                              <line x1="55%" y1="0%" x2="55%" y2="100%" stroke="currentColor" strokeWidth="6" />
+                              <line x1="80%" y1="0%" x2="15%" y2="100%" stroke="currentColor" strokeWidth="4" />
+                              <line x1="0%" y1="85%" x2="100%" stroke="currentColor" strokeWidth="6" />
+                            </svg>
+                            
+                            {/* Simulated Navigation Route */}
+                            <svg className="absolute inset-0 w-full h-full text-indigo-500 opacity-90" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M 40,110 L 210,120 L 210,165" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+
+                            {/* Green park area */}
+                            <div className="absolute top-4 left-4 w-28 h-12 rounded-lg bg-emerald-950/45 border border-emerald-800/30 flex items-center justify-center">
+                              <span className="text-[8px] font-black text-emerald-400 tracking-wider uppercase">Parque Camama</span>
+                            </div>
+
+                            {/* Nearby Lake/Water area */}
+                            <div className="absolute bottom-2 right-4 w-24 h-10 rounded-lg bg-sky-950/40 border border-sky-800/20 flex items-center justify-center">
+                              <span className="text-[8px] font-black text-sky-400 tracking-wider uppercase">Lagoa</span>
+                            </div>
+
+                            {/* Location Pin of Hospital */}
+                            <div className="absolute flex flex-col items-center" style={{ top: '62.5%', left: '42%' }}>
+                              {/* Pulsing beacon */}
+                              <span className="absolute w-6 h-6 rounded-full bg-red-500/30 animate-ping -mt-1.5" />
+                              <MapPin size={22} className="text-red-500 drop-shadow-md animate-bounce fill-red-100" />
+                            </div>
+
+                            {/* Stylish Map Pin Label */}
+                            <div className="absolute bg-slate-950/95 border border-amber-500/40 px-2.5 py-1.5 rounded-xl shadow-2xl flex flex-col text-left max-w-[170px]" style={{ top: '24%', left: '26%' }}>
+                              <span className="text-[7.5px] font-extrabold text-amber-500 uppercase tracking-widest leading-none">Hospital Emissor</span>
+                              <span className="text-[9.5px] font-black text-white leading-tight mt-0.5">Hospital Geral Luanda</span>
+                              <span className="text-[8px] font-mono text-slate-400 leading-none mt-0.5">8.8383° S | 13.2658° E</span>
+                            </div>
+                          </div>
+
+                          {/* Map metadata info */}
+                          <div className="flex-1 p-4 flex flex-col justify-between">
+                            <div>
+                              <h4 className="font-extrabold text-xs text-[#0c2340] uppercase tracking-wider mb-2">Instruções de Acesso</h4>
+                              <div className="space-y-2 text-slate-600 text-[11px]">
+                                <p>📍 <strong>Endereço:</strong> Distrito Urbano da Camama, Benfica, Município de Talatona, Luanda.</p>
+                                <p>🚗 <strong>Rotas recomendadas:</strong> Acesso facilitado via Avenida Pedro de Castro Van-Dúnem Loy ou via Expressa Fidel Castro.</p>
+                                <p>⏱️ <strong>Tempo estimado:</strong> Cerca de 12 minutos a partir do centro cívico de Talatona.</p>
+                              </div>
+                            </div>
+                            
+                            <div className="pt-3 border-t border-slate-150 flex items-center justify-between gap-1 mt-3">
+                              <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Serviço CDA Maps</span>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  window.open(`https://www.google.com/maps/search/?api=1&query=Hospital+Geral+de+Luanda`, '_blank');
+                                }}
+                                className="px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 text-indigo-700 rounded-lg font-bold text-[10px] uppercase transition-all flex items-center gap-1 shrink-0 cursor-pointer"
+                              >
+                                🗺️ Abrir Mapa Externo
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ) : previewFile.name.toLowerCase().includes('comprovativo') || previewFile.name.toLowerCase().includes('recibo') ? (
+                      <div className="space-y-3.5 text-xs text-left">
+                        <p className="font-medium text-slate-700">O Governo Digital de Angola certifica, para efeitos legais, que foi efetuada com sucesso a transação eletrónica com os seguintes dados:</p>
+                        <div className="bg-slate-50 border border-slate-150 rounded-lg p-3 space-y-2 divide-y divide-slate-150 font-mono text-[11px]">
+                          <div className="flex justify-between py-1">
+                            <span>ID Transação:</span>
+                            <span className="font-bold">TX-{(selectedMessage.id * 1234).toString(16).toUpperCase()}</span>
+                          </div>
+                          <div className="flex justify-between py-1">
+                            <span>Estado de Envio:</span>
+                            <span className="text-emerald-600 font-bold">SUCESSO (ENTREGUE)</span>
+                          </div>
+                          <div className="flex justify-between py-1">
+                            <span>Tipo de Atendimento:</span>
+                            <span className="font-bold">Digital Direto Integrado</span>
+                          </div>
+                          <div className="flex justify-between py-1">
+                            <span>Assunto de Registro:</span>
+                            <span className="font-bold truncate max-w-[250px]">{selectedMessage.details?.subject || selectedMessage.preview}</span>
+                          </div>
+                        </div>
+                      </div>
+                    ) : previewFile.name.toLowerCase().includes('referencia') || previewFile.name.toLowerCase().includes('arquivistica') ? (
+                      <div className="space-y-3 text-xs text-left">
+                        <p className="font-medium">Índice de Acervo e Referenciamento de Arquivo Nacional Eletrónico de Angola:</p>
+                        <div className="bg-slate-50 border border-slate-150 rounded-lg p-3 space-y-2 font-mono text-[11px]">
+                          <p><strong className="text-indigo-600">Ref. Arquivística:</strong> {protocol.archiveReference || 'CDA-ARQ-' + selectedMessage.id}</p>
+                          <p><strong className="text-indigo-600">Custódia:</strong> Arquivo Geral do Ministério Emissor</p>
+                          <p><strong className="text-indigo-600">Nível de Classificação:</strong> {selectedMessage.sensitivity || 'Público'}</p>
+                          <p><strong className="text-indigo-600">Hash de Validação:</strong> {protocol.documentHash}</p>
+                          <p className="text-[10px] text-slate-400 mt-2">Este código de referência arquivística permite a recuperação integral do documento original a qualquer momento no Balcão de Atendimento do CDA.</p>
+                        </div>
+                      </div>
+                    ) : (
+                      /* Elegant official letterhead document sheet preview for general PDF/Docs matching the message context */
+                      <div className="space-y-4 text-xs text-left">
+                        <div className="border border-slate-200 rounded-xl p-5 bg-slate-50/50">
+                          <div className="border-b border-dashed border-slate-200 pb-3 mb-3 flex justify-between items-start">
+                            <div>
+                              <h4 className="font-black text-slate-800 text-[11px] uppercase tracking-wide">{selectedMessage.org}</h4>
+                              <span className="text-[9px] text-slate-400 block font-mono">{protocol.protocolNumber}</span>
+                            </div>
+                            <span className="bg-indigo-50 border border-indigo-100 text-indigo-700 text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full">
+                              Documento Autenticado
+                            </span>
+                          </div>
+
+                          <div className="space-y-2 text-slate-700 leading-relaxed text-[11.5px]">
+                            <p className="font-bold text-[#0c2340] mb-1">RE: {selectedMessage.details?.subject || selectedMessage.preview}</p>
+                            
+                            {selectedMessage.preview.toLowerCase().includes('consulta') || selectedMessage.preview.toLowerCase().includes('hospital') ? (
+                              <div className="space-y-2">
+                                <p>Certificamos que a ficha de agendamento de consulta médica associada ao cidadão foi devidamente atualizada nos servidores de saúde pública.</p>
+                                <p className="font-medium text-slate-800">DADOS DO AGENDAMENTO:</p>
+                                <ul className="list-disc pl-5 font-mono text-[10.5px] text-slate-600 space-y-1">
+                                  <li><strong>Paciente:</strong> Portador do Bilhete de Identidade Associado</li>
+                                  <li><strong>Especialidade:</strong> Consulta Geral Resendada</li>
+                                  <li><strong>Estado:</strong> REAGENDADA (Próxima Semana)</li>
+                                  <li><strong>Justificação:</strong> Reajuste técnico e operacional na escala médica</li>
+                                </ul>
+                              </div>
+                            ) : (
+                              <p>Este ficheiro anexo constitui cópia digitalizada e certificada oficial de correspondência enviada pelo emissor administrativo. O seu conteúdo é protegido por lei e destina-se única e exclusivamente ao cidadão portador da chave de autenticação correspondente.</p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Certificate Seal */}
+                  <div className="mt-6 pt-5 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-sm">
+                        <Check size={15} strokeWidth={3} />
+                      </div>
+                      <div className="text-left">
+                        <p className="font-bold text-[#0c2340] uppercase tracking-wide text-[10px] leading-tight">Assinatura Digital Válida</p>
+                        <span className="text-[9px] font-mono text-emerald-600 font-bold uppercase tracking-wider block">ICP-Angola Credenciado</span>
+                      </div>
+                    </div>
+                    <div className="text-right font-mono text-[9px] text-slate-400">
+                      ID: {protocol.digitalSeal}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Footer */}
+              <div className="bg-slate-50 border-t border-slate-150 p-4 flex flex-col sm:flex-row justify-between items-center gap-3 shrink-0">
+                <span className="text-[10px] font-mono text-slate-400 text-center sm:text-left">
+                  Visualização em canal seguro encriptado TLS 1.3
+                </span>
+                <div className="flex items-center gap-2.5">
+                  <button
+                    onClick={() => {
+                      handleDownloadFile(previewFile.name);
+                    }}
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl active:scale-95 transition-all flex items-center gap-1.5 shadow-md shadow-indigo-600/20"
+                  >
+                    <Download size={13} />
+                    Descarregar
+                  </button>
+                  <button
+                    onClick={() => setPreviewFile(null)}
+                    className="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs px-4 py-2.5 rounded-xl active:scale-95 transition-all"
+                  >
+                    Fechar
+                  </button>
+                </div>
               </div>
             </motion.div>
           </motion.div>
