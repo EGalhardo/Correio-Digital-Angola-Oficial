@@ -48,7 +48,8 @@ import { Message, SENSITIVITY_LEVELS, PRIORITY_CONFIGS, LanguageCode } from '../
 import { getCategoryMetadata } from '../../utils/protocolGenerator';
 import { translateText } from '../../utils/translator';
 import { useLanguage } from '../../hooks/useLanguage';
-import { Video } from 'lucide-react';
+import { Video, Loader2, CheckCircle2, AlertTriangle } from 'lucide-react';
+import { MOCK_CITIZENS, MOCK_USERS } from '../../constants/mocks';
 
 
 const getOrgBadgeStyles = (org: string) => {
@@ -158,6 +159,145 @@ export function MailContent({
   const [provincia, setProvincia] = useState('Luanda');
   const [cidade, setCidade] = useState('Luanda');
   const [municipio, setMunicipio] = useState('Benfica');
+
+  const [isSearchingRecipient, setIsSearchingRecipient] = useState(false);
+  const [searchTimer, setSearchTimer] = useState<NodeJS.Timeout | null>(null);
+  const [searchStatusText, setSearchStatusText] = useState('');
+  const [searchFeedback, setSearchFeedback] = useState<{
+    status: 'idle' | 'searching' | 'found' | 'not_found';
+    message: string;
+    citizen?: any;
+  }>({ status: 'idle', message: '' });
+  const [searchProgress, setSearchProgress] = useState(0);
+
+  const triggerRecipientSearch = (value: string) => {
+    const term = value.trim();
+    if (!term) {
+      setSearchFeedback({ status: 'idle', message: '' });
+      setIsSearchingRecipient(false);
+      return;
+    }
+
+    if (searchTimer) {
+      clearTimeout(searchTimer);
+    }
+    
+    setIsSearchingRecipient(true);
+    setSearchProgress(0);
+    setSearchFeedback({ status: 'searching', message: 'Iniciando pesquisa na base de dados...' });
+    
+    const statusLogs = [
+      "A ligar ao Servidor de Identificação Civil Nacional...",
+      "A consultar índice de Bilhetes de Identidade...",
+      "A ler base de dados governamental (SME & Registo Civil)...",
+      "A analisar padrões de nomes e caracteres...",
+      "A verificar assinaturas digitais e biometria associada...",
+      "A cruzar dados com a rede central de Luanda...",
+      "A autenticar integridade dos dados obtidos...",
+      "A finalizar compilação de resultados..."
+    ];
+
+    let currentProgress = 0;
+    const intervalTime = 500; // update progress twice a second
+    const totalDuration = 8000; // exactly 8 seconds
+    
+    const interval = setInterval(() => {
+      currentProgress += (100 / (totalDuration / intervalTime));
+      const nextProgress = Math.min(Math.round(currentProgress), 100);
+      setSearchProgress(nextProgress);
+      
+      const logIndex = Math.min(
+        Math.floor((nextProgress / 100) * statusLogs.length),
+        statusLogs.length - 1
+      );
+      setSearchStatusText(statusLogs[logIndex]);
+    }, intervalTime);
+
+    setSearchStatusText(statusLogs[0]);
+
+    const timeout = setTimeout(() => {
+      clearInterval(interval);
+      setIsSearchingRecipient(false);
+      
+      const normalized = term.toLowerCase();
+      const matched = MOCK_CITIZENS.find(c => 
+        c.bi.toLowerCase() === normalized || 
+        c.fullName.toLowerCase() === normalized ||
+        c.fullName.toLowerCase().includes(normalized)
+      );
+
+      if (matched) {
+        setSearchFeedback({
+          status: 'found',
+          message: `Cidadão Localizado: ${matched.fullName}`,
+          citizen: matched
+        });
+        setComposeData({
+          ...composeData,
+          to: matched.bi
+        });
+      } else {
+        const matchedUser = MOCK_USERS.find(u => 
+          u.bi.toLowerCase() === normalized || 
+          u.name.toLowerCase() === normalized ||
+          u.name.toLowerCase().includes(normalized)
+        );
+        if (matchedUser) {
+          setSearchFeedback({
+            status: 'found',
+            message: `Cidadão Localizado: ${matchedUser.name}`,
+            citizen: matchedUser
+          });
+          setComposeData({
+            ...composeData,
+            to: matchedUser.bi
+          });
+        } else {
+          setSearchFeedback({
+            status: 'not_found',
+            message: 'Dado não encontrado!'
+          });
+        }
+      }
+    }, totalDuration);
+
+    setSearchTimer(timeout);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (searchTimer) {
+        clearTimeout(searchTimer);
+      }
+    };
+  }, [searchTimer]);
+
+  useEffect(() => {
+    if (!composeData.to.trim()) {
+      setSearchFeedback({ status: 'idle', message: '' });
+      setIsSearchingRecipient(false);
+      return;
+    }
+
+    if (searchFeedback.status === 'found') {
+      const cit = searchFeedback.citizen;
+      if (cit && (composeData.to === cit.bi || composeData.to === cit.fullName)) {
+        return;
+      }
+    }
+    
+    if (isSearchingRecipient) {
+      return;
+    }
+
+    const debounceTimeout = setTimeout(() => {
+      if (composeData.to.trim().length >= 3) {
+        triggerRecipientSearch(composeData.to);
+      }
+    }, 1500);
+
+    return () => clearTimeout(debounceTimeout);
+  }, [composeData.to]);
 
   const PROVINCIAS_OPCOES = [
     { value: 'Luanda', label: 'Luanda' },
@@ -335,15 +475,116 @@ export function MailContent({
                 <label className="text-[10px] md:text-sm font-black text-slate-600 uppercase tracking-widest pl-1">
                   Destinatário
                 </label>
-                <div className="relative">
+                <div className="relative flex items-center">
                   <input 
                     type="text"
-                    placeholder="Introduza o N-BI"
+                    placeholder="Introduz o N-BI ou Nome Completo"
                     value={composeData.to}
-                    onChange={(e) => setComposeData({ ...composeData, to: e.target.value })}
-                    className="w-full bg-white border border-line rounded-2xl px-5 py-3.5 md:py-4 text-xs md:text-sm font-mono font-bold text-primary focus:ring-4 focus:ring-primary/5 transition-all outline-none"
+                    onChange={(e) => {
+                      setComposeData({ ...composeData, to: e.target.value });
+                    }}
+                    disabled={isSearchingRecipient}
+                    className="w-full bg-white border border-line rounded-2xl pl-5 pr-12 py-3.5 md:py-4 text-xs md:text-sm font-mono font-bold text-primary focus:ring-4 focus:ring-primary/5 transition-all outline-none disabled:opacity-75 disabled:bg-slate-50"
                   />
+                  <div className="absolute right-4 flex items-center gap-2">
+                    {isSearchingRecipient ? (
+                      <Loader2 className="animate-spin text-indigo-600" size={18} />
+                    ) : (
+                      <button
+                        onClick={() => triggerRecipientSearch(composeData.to)}
+                        type="button"
+                        title="Procurar na base de dados"
+                        className="p-1.5 hover:bg-slate-100 rounded-full text-slate-400 hover:text-indigo-600 transition-all cursor-pointer"
+                        disabled={!composeData.to.trim()}
+                      >
+                        <Search size={16} />
+                      </button>
+                    )}
+                  </div>
                 </div>
+
+                {/* Animated searching block & results */}
+                <AnimatePresence mode="wait">
+                  {isSearchingRecipient && (
+                    <motion.div 
+                      key="searching-state"
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="bg-indigo-50 border border-indigo-100 rounded-2xl p-4 mt-2 space-y-3">
+                        <div className="flex items-center gap-3">
+                          <Loader2 className="animate-spin text-indigo-600 shrink-0" size={18} />
+                          <div className="flex-1 min-w-0">
+                            <span className="text-xs font-bold text-indigo-950 block">A pesquisar base de dados civil...</span>
+                            <span className="text-[10px] text-indigo-600 font-semibold block truncate animate-pulse">
+                              {searchStatusText}
+                            </span>
+                          </div>
+                          <span className="text-xs font-mono font-bold text-indigo-700 bg-indigo-100 px-2 py-0.5 rounded-full shrink-0">
+                            {searchProgress}%
+                          </span>
+                        </div>
+                        {/* Progress Bar */}
+                        <div className="w-full h-1.5 bg-indigo-100 rounded-full overflow-hidden">
+                          <motion.div 
+                            className="h-full bg-indigo-600"
+                            initial={{ width: '0%' }}
+                            animate={{ width: `${searchProgress}%` }}
+                            transition={{ duration: 0.3 }}
+                          />
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {!isSearchingRecipient && searchFeedback.status === 'found' && (
+                    <motion.div 
+                      key="found-state"
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 mt-2 flex items-start gap-3">
+                        <CheckCircle2 className="text-emerald-600 shrink-0 mt-0.5" size={18} />
+                        <div className="flex-1 min-w-0">
+                          <span className="text-xs font-extrabold text-emerald-950 block">Cidadão Localizado com Sucesso</span>
+                          <p className="text-[11px] text-emerald-800 font-bold mt-1">
+                            {searchFeedback.citizen?.fullName || searchFeedback.message}
+                          </p>
+                          <div className="grid grid-cols-2 gap-x-4 gap-y-1 mt-2 pt-2 border-t border-emerald-100/60 text-[9.5px] font-mono text-emerald-700 font-bold">
+                            <div>BI: {searchFeedback.citizen?.bi}</div>
+                            <div>NIF: {searchFeedback.citizen?.nif || 'Não associado'}</div>
+                            <div>Tel: {searchFeedback.citizen?.phone || 'Não associado'}</div>
+                            <div>Província: {searchFeedback.citizen?.province || 'Não associado'}</div>
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {!isSearchingRecipient && searchFeedback.status === 'not_found' && (
+                    <motion.div 
+                      key="not-found-state"
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="bg-rose-50 border border-rose-200 rounded-2xl p-4 mt-2 flex items-center gap-3">
+                        <AlertTriangle className="text-rose-600 shrink-0" size={18} />
+                        <div>
+                          <span className="text-xs font-black text-rose-950 block">Dado não encontrado!</span>
+                          <span className="text-[10px] text-rose-700 font-bold block mt-0.5">
+                            Por favor, verifique se o número de BI ou nome completo foi inserido correctamente e tente novamente.
+                          </span>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
               <div className="space-y-2">
                 <label className="text-[10px] md:text-sm font-black text-slate-600 uppercase tracking-widest pl-1">Assunto</label>
