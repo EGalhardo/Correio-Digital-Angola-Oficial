@@ -718,7 +718,7 @@ export function GovIaContent({ onLog }: GovIaContentProps) {
                 <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">Vetorização e Index</span>
                 <h2 className="text-sm font-black text-[#0c2340] uppercase tracking-wide">Bases de Conhecimento</h2>
               </div>
-              <span className="text-[11px] font-mono font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md">
+              <span className="text-[11px] font-mono font-bold text-white bg-[#0E2B64] px-2 py-0.5 rounded-md">
                 {totalDocs.toLocaleString('pt-AO')} Docs
               </span>
             </div>
@@ -985,7 +985,7 @@ export function GovIaContent({ onLog }: GovIaContentProps) {
                 <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">Assuntos e Tendências</span>
                 <h2 className="text-sm font-black text-[#0c2340] uppercase tracking-wide">Top Temas Mais Consultados</h2>
               </div>
-              <span className="text-[9px] font-mono bg-slate-100 text-slate-600 px-2.5 py-0.5 rounded-md font-bold uppercase">
+              <span className="text-[9px] font-mono bg-[#0E2B64] text-white px-2.5 py-0.5 rounded-md font-bold uppercase">
                 Hoje
               </span>
             </div>
@@ -1018,17 +1018,17 @@ export function GovIaContent({ onLog }: GovIaContentProps) {
 
           <button
             onClick={() => triggerToast('Carregando classificação integral de tópicos...', 'info')}
-            className="w-full mt-4 py-3 bg-slate-50 hover:bg-slate-100 text-[#0c2340] border border-slate-200 rounded-[16px] text-xs font-black uppercase tracking-wider transition-all duration-200 cursor-pointer flex items-center justify-center gap-2"
+            className="w-full mt-4 py-3 bg-[#0E2B64] hover:bg-[#0C2454] text-white border border-[#0E2B64] rounded-[16px] text-xs font-black uppercase tracking-wider transition-all duration-200 cursor-pointer flex items-center justify-center gap-2 shadow-xs"
           >
             <span>Ver todos os temas</span>
-            <ArrowRight size={14} className="text-slate-400" />
+            <ArrowRight size={14} className="text-white" />
           </button>
         </div>
 
       </div>
 
       {/* SECURITY POLICIES */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 bg-slate-100 border border-slate-200 p-5 rounded-[24px] text-left">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 bg-[#F8FAFC] border border-slate-200 p-5 rounded-[24px] text-left">
         
         <div className="flex items-start gap-3 bg-white p-4 rounded-xl shadow-3xs border border-slate-150">
           <div className="p-2.5 bg-emerald-50 text-emerald-600 rounded-lg shrink-0">
