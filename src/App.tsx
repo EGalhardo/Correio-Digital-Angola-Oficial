@@ -246,9 +246,25 @@ export default function App() {
     return [12];
   });
 
+  const [hiddenMessageIds, setHiddenMessageIds] = useState<number[]>(() => {
+    const saved = localStorage.getItem('correio_digital_hidden_message_ids');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        console.error('Failed to parse correio_digital_hidden_message_ids:', e);
+      }
+    }
+    return [];
+  });
+
   useEffect(() => {
     localStorage.setItem('correio_digital_deleted_message_ids', JSON.stringify(deletedMessageIds));
   }, [deletedMessageIds]);
+
+  useEffect(() => {
+    localStorage.setItem('correio_digital_hidden_message_ids', JSON.stringify(hiddenMessageIds));
+  }, [hiddenMessageIds]);
 
   const handleDeleteMessage = (id: number) => {
     if (!deletedMessageIds.includes(id)) {
@@ -259,9 +275,23 @@ export default function App() {
         supabaseService.insertMessageStateEvent({
           messageId: baseId,
           state: 'Arquivada',
-          responsible: user.name,
-          description: 'Correspondência arquivada pelo utilizador no portal.'
+          responsible: user?.name || 'Edlasio Galhardo',
+          description: 'Correspondência movida para as eliminadas pelo utilizador.'
         }).catch(() => {});
+      }
+    } else {
+      if (!hiddenMessageIds.includes(id)) {
+        setHiddenMessageIds([...hiddenMessageIds, id]);
+        const baseId = id >= 10000 ? id - 10000 : id;
+        if (isOnline && hasValidSupabaseKeys()) {
+          supabaseService.updateMessageState(baseId, { state_indicator: 'EliminadaPermanente' }).catch(() => {});
+          supabaseService.insertMessageStateEvent({
+            messageId: baseId,
+            state: 'EliminadaPermanente',
+            responsible: user?.name || 'Edlasio Galhardo',
+            description: 'Correspondência eliminada permanentemente da vista do utilizador.'
+          }).catch(() => {});
+        }
       }
     }
   };
@@ -274,7 +304,7 @@ export default function App() {
       supabaseService.insertMessageStateEvent({
         messageId: baseId,
         state: 'Restaurada',
-        responsible: user.name,
+        responsible: user?.name || 'Edlasio Galhardo',
         description: 'Correspondência restaurada do arquivo.'
       }).catch(() => {});
     }
@@ -1239,6 +1269,14 @@ export default function App() {
           console.log('CADA: Semeadura automática para o Supabase concluída!');
         }
 
+        // Define document classifier for messages
+        const isDocumentMailboxMessage = (message: Message) => {
+          const actionFlags = message.details?.actions || [];
+          const compositeText = `${message.preview} ${message.details?.subject || ''}`.toLowerCase();
+          return actionFlags.includes('__DOC__')
+            || (message.id >= 10000 && /fatura|certid|documento|passaporte|bi digital|carta de condução|vacina|receita|guia|tramita/.test(compositeText));
+        };
+
         // 1. Fetch Profile
         const dbProfile = await supabaseService.getProfile(bi);
         if (dbProfile && isSubscribed) {
@@ -1279,90 +1317,131 @@ export default function App() {
 
         // 2. Fetch Citizen Messages / Institution Messages / Sent messages
         const dbMessages = await supabaseService.getMessages(bi);
-        if (dbMessages && isSubscribed) {
-          const isDocumentMailboxMessage = (message: Message) => {
-            const actionFlags = message.details?.actions || [];
-            const compositeText = `${message.preview} ${message.details?.subject || ''}`.toLowerCase();
-            return actionFlags.includes('__DOC__')
-              || (message.id >= 10000 && /fatura|certid|documento|passaporte|bi digital|carta de condução|vacina|receita|guia|tramita/.test(compositeText));
-          };
+        if (dbMessages !== null && isSubscribed) {
           const incoming = dbMessages.filter(m => !isDocumentMailboxMessage(m)).map(ensureProtocolOnMessage);
           const docs = dbMessages.filter(m => isDocumentMailboxMessage(m)).map(ensureProtocolOnMessage);
-          setInbox(incoming);
-          setDocInbox(docs);
-        } else if (isSubscribed) {
-          setInbox([]);
-          setDocInbox([]);
+          
+          setInbox(prevLocal => {
+            const dbIds = new Set(incoming.map(m => m.id));
+            const onlyLocal = prevLocal.filter(m => !dbIds.has(m.id));
+            return [...incoming, ...onlyLocal];
+          });
+          
+          setDocInbox(prevLocal => {
+            const dbIds = new Set(docs.map(m => m.id));
+            const onlyLocal = prevLocal.filter(m => !dbIds.has(m.id));
+            return [...docs, ...onlyLocal];
+          });
         }
 
         const sentSenderKey = isInstMode ? institutionCode : isGovMode ? 'CDA' : bi;
         const dbSentMessages = await supabaseService.getSentMessagesBySender(sentSenderKey);
-        if (dbSentMessages && isSubscribed) {
-          setSentMessages(dbSentMessages.filter(m => m.id < 10000).map(ensureProtocolOnMessage));
-          setDocSentMessages(dbSentMessages.filter(m => m.id >= 10000).map(ensureProtocolOnMessage));
-        } else if (isSubscribed) {
-          setSentMessages([]);
-          setDocSentMessages([]);
+        if (dbSentMessages !== null && isSubscribed) {
+          const sentNormal = dbSentMessages.filter(m => !isDocumentMailboxMessage(m)).map(ensureProtocolOnMessage);
+          const sentDoc = dbSentMessages.filter(m => isDocumentMailboxMessage(m)).map(ensureProtocolOnMessage);
+          
+          setSentMessages(prevLocal => {
+            const dbIds = new Set(sentNormal.map(m => m.id));
+            const onlyLocal = prevLocal.filter(m => !dbIds.has(m.id));
+            return [...sentNormal, ...onlyLocal];
+          });
+          
+          setDocSentMessages(prevLocal => {
+            const dbIds = new Set(sentDoc.map(m => m.id));
+            const onlyLocal = prevLocal.filter(m => !dbIds.has(m.id));
+            return [...sentDoc, ...onlyLocal];
+          });
         }
 
         if (isInstMode) {
           const dbInstitutionMessages = await supabaseService.getInstitutionMessages(institutionCode);
-          if (dbInstitutionMessages && isSubscribed) {
-            setInstInbox(dbInstitutionMessages.map(ensureProtocolOnMessage));
-            setInstDocInbox(dbInstitutionMessages.map(ensureProtocolOnMessage).map(m => ({ ...m, id: m.id + 10000 })));
-          } else if (isSubscribed) {
-            setInstInbox([]);
-            setInstDocInbox([]);
+          if (dbInstitutionMessages !== null && isSubscribed) {
+            const instNormal = dbInstitutionMessages.map(ensureProtocolOnMessage);
+            const instDoc = dbInstitutionMessages.map(ensureProtocolOnMessage).map(m => ({ ...m, id: m.id + 10000 }));
+            
+            setInstInbox(prevLocal => {
+              const dbIds = new Set(instNormal.map(m => m.id));
+              const onlyLocal = prevLocal.filter(m => !dbIds.has(m.id));
+              return [...instNormal, ...onlyLocal];
+            });
+            
+            setInstDocInbox(prevLocal => {
+              const dbIds = new Set(instDoc.map(m => m.id));
+              const onlyLocal = prevLocal.filter(m => !dbIds.has(m.id));
+              return [...instDoc, ...onlyLocal];
+            });
           }
         }
 
         // 3. Fetch Documents
         const dbDocs = await supabaseService.getDocuments(bi);
-        if (dbDocs && isSubscribed) {
-          setDocuments(dbDocs);
+        if (dbDocs !== null && isSubscribed) {
+          setDocuments(prevLocal => {
+            const dbCodes = new Set(dbDocs.map(d => d.code));
+            const onlyLocal = prevLocal.filter(d => !dbCodes.has(d.code));
+            return [...dbDocs, ...onlyLocal];
+          });
         }
 
         // 4. Fetch Contacts
         const dbContacts = await supabaseService.getContacts(bi);
-        if (dbContacts && isSubscribed) {
-          setContacts(dbContacts);
+        if (dbContacts !== null && isSubscribed) {
+          setContacts(prevLocal => {
+            const dbIds = new Set(dbContacts.map(c => c.id));
+            const onlyLocal = prevLocal.filter(c => !dbIds.has(c.id));
+            return [...dbContacts, ...onlyLocal];
+          });
         }
 
         // 5. Fetch User requests
         const dbUserRequests = await supabaseService.getUserRequests(isGovMode ? undefined : bi);
-        if (dbUserRequests && isSubscribed) {
-          setUserRequests(dbUserRequests);
+        if (dbUserRequests !== null && isSubscribed) {
+          setUserRequests(prevLocal => {
+            const dbIds = new Set(dbUserRequests.map(r => r.id));
+            const onlyLocal = prevLocal.filter(r => !dbIds.has(r.id));
+            return [...dbUserRequests, ...onlyLocal];
+          });
         }
 
         // 6. Fetch Doc Requests
         const dbDocRequests = await supabaseService.getDocRequests(isGovMode ? undefined : bi);
-        if (dbDocRequests && isSubscribed) {
-          setDocRequests(dbDocRequests);
+        if (dbDocRequests !== null && isSubscribed) {
+          setDocRequests(prevLocal => {
+            const dbIds = new Set(dbDocRequests.map(r => r.id));
+            const onlyLocal = prevLocal.filter(r => !dbIds.has(r.id));
+            return [...dbDocRequests, ...onlyLocal];
+          });
         }
 
         // 7. Fetch Notifications
-          const notificationTarget = isGovMode ? 'CDA' : isInstMode ? institutionCode : bi;
+        const notificationTarget = isGovMode ? 'CDA' : isInstMode ? institutionCode : bi;
         const dbNotifs = await supabaseService.getNotifications(notificationTarget);
-        if (dbNotifs && isSubscribed) {
-          setNotifications(dbNotifs);
-        } else if (isSubscribed) {
-          setNotifications([]);
+        if (dbNotifs !== null && isSubscribed) {
+          setNotifications(prevLocal => {
+            const dbIds = new Set(dbNotifs.map(n => n.id));
+            const onlyLocal = prevLocal.filter(n => !dbIds.has(n.id));
+            return [...dbNotifs, ...onlyLocal];
+          });
         }
 
         // 8. Fetch Audit Logs
         const dbLogs = await supabaseService.getAuditLogs();
-        if (dbLogs && isSubscribed) {
-          setAuditLogs(dbLogs);
-        } else if (isSubscribed) {
-          setAuditLogs([]);
+        if (dbLogs !== null && isSubscribed) {
+          setAuditLogs(prevLocal => {
+            const dbIds = new Set(dbLogs.map(l => l.id));
+            const onlyLocal = prevLocal.filter(l => !dbIds.has(l.id));
+            return [...dbLogs, ...onlyLocal];
+          });
         }
 
         // 9. Fetch Official Correspondences
         const dbCorrespondences = await supabaseService.getCorrespondences();
-        if (dbCorrespondences && isSubscribed) {
-          setCorrespondences(dbCorrespondences);
-        } else if (isSubscribed) {
-          setCorrespondences([]);
+        if (dbCorrespondences !== null && isSubscribed) {
+          setCorrespondences(prevLocal => {
+            const dbIds = new Set(dbCorrespondences.map(c => c.id));
+            const onlyLocal = prevLocal.filter(c => !dbIds.has(c.id));
+            return [...dbCorrespondences, ...onlyLocal];
+          });
         }
 
         console.log('CADA: Sincronização e carregamento do Supabase efectuados com sucesso!');
@@ -1713,7 +1792,7 @@ export default function App() {
 
   // Derived Memos
   const currentInbox = isInstMode ? instInbox : inbox;
-  const unreadTotal = useMemo(() => currentInbox.filter(msg => !deletedMessageIds.includes(msg.id)).reduce((sum, msg) => sum + (msg.unread || 0), 0), [currentInbox, deletedMessageIds]);
+  const unreadTotal = useMemo(() => currentInbox.filter(msg => !deletedMessageIds.includes(msg.id) && !hiddenMessageIds.includes(msg.id)).reduce((sum, msg) => sum + (msg.unread || 0), 0), [currentInbox, deletedMessageIds, hiddenMessageIds]);
 
   const currentDocInbox = isInstMode ? instDocInbox : docInbox;
   const unreadDocTotal = useMemo(() => currentDocInbox.reduce((sum, msg) => sum + (msg.unread || 0), 0), [currentDocInbox]);
@@ -1722,14 +1801,14 @@ export default function App() {
     let base: Message[] = [];
     if (correspondenciaTab === "excluidas") {
       const allMsgs = [...currentInbox, ...sentMessages];
-      base = allMsgs.filter(item => deletedMessageIds.includes(item.id));
+      base = allMsgs.filter(item => deletedMessageIds.includes(item.id) && !hiddenMessageIds.includes(item.id));
     } else {
       if (correspondenciaTab === "enviadas") {
-        base = sentMessages.filter(item => !deletedMessageIds.includes(item.id));
+        base = sentMessages.filter(item => !deletedMessageIds.includes(item.id) && !hiddenMessageIds.includes(item.id));
       } else if (correspondenciaTab === "lidas") {
-        base = currentInbox.filter(item => !deletedMessageIds.includes(item.id) && !item.unread);
+        base = currentInbox.filter(item => !deletedMessageIds.includes(item.id) && !hiddenMessageIds.includes(item.id) && !item.unread);
       } else {
-        base = currentInbox.filter(item => !deletedMessageIds.includes(item.id) && item.unread);
+        base = currentInbox.filter(item => !deletedMessageIds.includes(item.id) && !hiddenMessageIds.includes(item.id) && item.unread);
       }
     }
 
@@ -1741,7 +1820,7 @@ export default function App() {
       (m.preview?.toLowerCase().includes(term) ?? false) ||
       (m.details?.subject?.toLowerCase().includes(term) ?? false)
     );
-  }, [correspondenciaTab, currentInbox, sentMessages, searchMail, deletedMessageIds]);
+  }, [correspondenciaTab, currentInbox, sentMessages, searchMail, deletedMessageIds, hiddenMessageIds]);
 
   const filteredDocMessages = useMemo(() => {
     let base: Message[] = [];
@@ -1969,7 +2048,7 @@ export default function App() {
       const isOfficialDispatch = isInstMode || isGovMode;
       const sendPromise = isOfficialDispatch
         ? supabaseService.sendOfficialMessage(newMessage, composeData.to, isInstMode ? institutionCode : 'CDA')
-        : supabaseService.sendCitizenMessage(newMessage, bi, composeData.to);
+        : supabaseService.sendCitizenMessage(newMessage, bi, composeData.to, user.name || profileName);
       sendPromise
         .then(async () => {
           // Store protocol in database for QR code reference
@@ -2063,7 +2142,7 @@ export default function App() {
       const isOfficialDispatch = isInstMode || isGovMode;
       const sendPromise = isOfficialDispatch
         ? supabaseService.sendOfficialMessage(newMessage, docComposeData.to, isInstMode ? institutionCode : 'CDA')
-        : supabaseService.sendCitizenMessage(newMessage, bi, docComposeData.to);
+        : supabaseService.sendCitizenMessage(newMessage, bi, docComposeData.to, user.name || profileName);
       sendPromise
         .then(async () => {
           // Store protocol in database for QR code reference
@@ -2544,6 +2623,7 @@ Ficha civil do titular:
             onDeleteMessage={handleDeleteMessage}
             onRestoreMessage={handleRestoreMessage}
             deletedMessageIds={deletedMessageIds}
+            hiddenMessageIds={hiddenMessageIds}
             onNavigateToVideoAtendimento={handleNavigateToVideoAtendimento}
             videoSessionCount={videoSessionCount}
             currentLanguage={currentLanguage}

@@ -595,7 +595,7 @@ export const TRANSLATE_MAP: Record<string, Record<LanguageCode, string>> = {
     fi: "Bitunu"
   },
   "Arquivadas": {
-    pt: "Arquivadas",
+    pt: "Eliminadas",
     um: "Vilundulwi",
     ki: "Kiambot",
     kk: "Mamo",
@@ -628,7 +628,7 @@ export const TRANSLATE_MAP: Record<string, Record<LanguageCode, string>> = {
     fi: "Kota Nzila-Lula"
   },
   "Arquivada": {
-    pt: "Arquivada",
+    pt: "Eliminada",
     um: "Yalundululwa",
     ki: "Kiambot",
     kk: "Mamo",

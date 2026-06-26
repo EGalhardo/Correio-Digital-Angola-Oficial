@@ -303,7 +303,8 @@ export function MessageDetail({
     files?: { name: string; size: string }[];
   } | null>(null);
 
-  const [previewFile, setPreviewFile] = useState<{ name: string; size: string } | null>(null);
+  const [previewFile, setPreviewFile] = useState<{ name: string; size: string; content?: string; type?: string } | null>(null);
+  const [messageToDelete, setMessageToDelete] = useState<{ id: number; isPermanent: boolean } | null>(null);
 
   const handleDownloadFile = (fileName: string) => {
     const org = selectedMessage.org;
@@ -1097,20 +1098,34 @@ com assinatura presencial.
     if (!rawAttachments || !Array.isArray(rawAttachments)) return [];
     
     return rawAttachments.map(att => {
-      if (!att) return { name: 'documento.pdf', size: '1.2 MB' };
+      if (!att) return { name: 'documento.pdf', size: '1.2 MB', content: '' };
       if (typeof att === 'object') {
         const anyAtt = att as any;
         return { 
           name: anyAtt.name || 'documento.pdf', 
-          size: anyAtt.size || '1.2 MB' 
+          size: anyAtt.size || '1.2 MB',
+          content: anyAtt.content || ''
         };
       }
       const attString = String(att);
+      if (attString.trim().startsWith('{')) {
+        try {
+          const parsed = JSON.parse(attString);
+          return {
+            name: parsed.name || 'documento.pdf',
+            size: parsed.size || '1.2 MB',
+            content: parsed.content || '',
+            type: parsed.type || ''
+          };
+        } catch (e) {
+          console.error('Error parsing attachment JSON in MessageDetail:', e);
+        }
+      }
       const match = attString.match(/^(.*?)\s*\(([^)]+)\)\s*$/);
       if (match) {
-        return { name: match[1], size: match[2] };
+        return { name: match[1], size: match[2], content: '' };
       }
-      return { name: attString, size: '1.2 MB' };
+      return { name: attString, size: '1.2 MB', content: '' };
     });
   }, [selectedMessage.details?.attachments]);
 
@@ -1922,33 +1937,38 @@ com assinatura presencial.
         
         <div className="flex items-center gap-2">
           {isDeleted ? (
-            <button
-              onClick={() => {
-                if (onRestoreMessage) {
-                  onRestoreMessage(selectedMessage.id);
-                  setTab('correspondencias');
-                  setSelectedMessage(null);
-                }
-              }}
-              className="px-4 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-extrabold text-sm rounded-xl transition-all active:scale-95 flex items-center gap-1.5 border-0 cursor-pointer"
-            >
-              Restaurar do Arquivo
-            </button>
-          ) : (
-            <button
-              onClick={() => {
-                if (onDeleteMessage) {
-                  if (confirm("Deseja realmente arquivar esta correspondência oficial?")) {
-                    onDeleteMessage(selectedMessage.id);
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => {
+                  if (onRestoreMessage) {
+                    onRestoreMessage(selectedMessage.id);
                     setTab('correspondencias');
                     setSelectedMessage(null);
                   }
-                }
+                }}
+                className="px-4 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-extrabold text-sm rounded-xl transition-all active:scale-95 flex items-center gap-1.5 border-0 cursor-pointer"
+              >
+                Restaurar
+              </button>
+              <button
+                onClick={() => {
+                  setMessageToDelete({ id: selectedMessage.id, isPermanent: true });
+                }}
+                className="px-4 py-2 bg-red-50 hover:bg-red-105 text-red-650 font-extrabold text-sm rounded-xl transition-all active:scale-95 flex items-center gap-1.5 border-0 cursor-pointer"
+              >
+                <Trash2 size={14} />
+                Eliminar Permanentemente
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => {
+                setMessageToDelete({ id: selectedMessage.id, isPermanent: false });
               }}
               className="px-4 py-2 bg-red-50 hover:bg-red-105 text-red-650 font-extrabold text-sm rounded-xl transition-all active:scale-95 flex items-center gap-1.5 border-0 cursor-pointer"
             >
               <Trash2 size={14} />
-              Arquivar
+              Eliminar
             </button>
           )}
 
@@ -3712,7 +3732,19 @@ com assinatura presencial.
                           <div className="space-y-2 text-slate-700 leading-relaxed text-[11.5px]">
                             <p className="font-bold text-[#0c2340] mb-1">RE: {selectedMessage.details?.subject || selectedMessage.preview}</p>
                             
-                            {selectedMessage.preview.toLowerCase().includes('consulta') || selectedMessage.preview.toLowerCase().includes('hospital') ? (
+                            {previewFile.content ? (
+                              <div className="space-y-2">
+                                {previewFile.type?.startsWith('image/') || previewFile.content.startsWith('data:image/') ? (
+                                  <div className="flex justify-center p-2 bg-white rounded-xl border border-slate-200">
+                                    <img src={previewFile.content} alt={previewFile.name} className="max-h-80 object-contain rounded-lg" referrerPolicy="no-referrer" />
+                                  </div>
+                                ) : (
+                                  <div className="bg-white border border-slate-200 rounded-xl p-4 font-sans text-xs text-slate-800 whitespace-pre-wrap leading-relaxed max-h-80 overflow-y-auto selection:bg-indigo-100 select-text">
+                                    {previewFile.content}
+                                  </div>
+                                )}
+                              </div>
+                            ) : selectedMessage.preview.toLowerCase().includes('consulta') || selectedMessage.preview.toLowerCase().includes('hospital') ? (
                               <div className="space-y-2">
                                 <p>Certificamos que a ficha de agendamento de consulta médica associada ao cidadão foi devidamente atualizada nos servidores de saúde pública.</p>
                                 <p className="font-medium text-slate-800">DADOS DO AGENDAMENTO:</p>
@@ -3775,6 +3807,61 @@ com assinatura presencial.
               </div>
             </motion.div>
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {messageToDelete && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setMessageToDelete(null)}
+              className="absolute inset-0 bg-primary/40 backdrop-blur-sm"
+            />
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="relative bg-white rounded-[28px] md:rounded-[32px] p-5 sm:p-6 md:p-8 shadow-2xl max-w-md w-full text-center max-h-[92vh] overflow-y-auto"
+            >
+              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Trash2 size={32} className="text-red-600" />
+              </div>
+              <h3 className="text-xl font-black text-primary mb-3">
+                {messageToDelete.isPermanent ? t("Eliminar Permanentemente?") : t("Eliminar Correspondência?")}
+              </h3>
+              <p className="text-slate-600 text-sm leading-relaxed mb-8">
+                {messageToDelete.isPermanent 
+                  ? t("Deseja eliminar permanentemente esta correspondência oficial? Ela não será mais visível no seu portal, mas continuará registada no sistema do Estado.")
+                  : t("Tem a certeza que deseja eliminar esta correspondência oficial? Ela será movida para as Eliminadas.")}
+              </p>
+              <div className="grid grid-cols-2 gap-3">
+                <button 
+                  type="button"
+                  onClick={() => setMessageToDelete(null)}
+                  className="py-4 bg-slate-100 text-slate-600 rounded-2xl font-bold hover:bg-slate-200 transition-colors cursor-pointer border-0 outline-none"
+                >
+                  {t("Cancelar")}
+                </button>
+                <button 
+                  type="button"
+                  onClick={() => {
+                    if (onDeleteMessage) {
+                      onDeleteMessage(messageToDelete.id);
+                      setTab('correspondencias');
+                      setSelectedMessage(null);
+                    }
+                    setMessageToDelete(null);
+                  }}
+                  className="py-4 bg-red-600 text-white rounded-2xl font-bold shadow-lg shadow-red-200 hover:bg-red-700 transition-colors cursor-pointer border-0 outline-none"
+                >
+                  {t("Eliminar")}
+                </button>
+              </div>
+            </motion.div>
+          </div>
         )}
       </AnimatePresence>
     </motion.div>

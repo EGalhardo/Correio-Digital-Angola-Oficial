@@ -263,26 +263,19 @@ ALTER TABLE video_sessions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE video_session_events ENABLE ROW LEVEL SECURITY;
 ALTER TABLE video_session_notifications ENABLE ROW LEVEL SECURITY;
 
--- Allow authenticated users to read and write their own sessions
-CREATE POLICY "Users can view own video sessions" ON video_sessions
-  FOR SELECT USING (guest_bi = auth.uid() OR host_bi = auth.uid());
+-- Allow general read/write access for the app client (matching development profiles/messages)
+DROP POLICY IF EXISTS "Users can view own video sessions" ON video_sessions;
+DROP POLICY IF EXISTS "Users can create video sessions" ON video_sessions;
+DROP POLICY IF EXISTS "Users can update own video sessions" ON video_sessions;
+DROP POLICY IF EXISTS "Users can view own session events" ON video_session_events;
+DROP POLICY IF EXISTS "Users can create own session events" ON video_session_events;
+DROP POLICY IF EXISTS "Permitir tudo para video_sessions" ON video_sessions;
+DROP POLICY IF EXISTS "Permitir tudo para video_session_events" ON video_session_events;
+DROP POLICY IF EXISTS "Permitir tudo para video_session_notifications" ON video_session_notifications;
 
-CREATE POLICY "Users can create video sessions" ON video_sessions
-  FOR INSERT WITH CHECK (guest_bi = auth.uid() OR host_bi = auth.uid());
-
-CREATE POLICY "Users can update own video sessions" ON video_sessions
-  FOR UPDATE USING (guest_bi = auth.uid() OR host_bi = auth.uid());
-
--- Allow authenticated users to manage events for their sessions
-CREATE POLICY "Users can view own session events" ON video_session_events
-  FOR SELECT USING (
-    session_id IN (SELECT id FROM video_sessions WHERE guest_bi = auth.uid() OR host_bi = auth.uid())
-  );
-
-CREATE POLICY "Users can create own session events" ON video_session_events
-  FOR INSERT WITH CHECK (
-    session_id IN (SELECT id FROM video_sessions WHERE guest_bi = auth.uid() OR host_bi = auth.uid())
-  );
+CREATE POLICY "Permitir tudo para video_sessions" ON video_sessions FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Permitir tudo para video_session_events" ON video_session_events FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Permitir tudo para video_session_notifications" ON video_session_notifications FOR ALL USING (true) WITH CHECK (true);
 
 -- Add protocol_number column to messages table if it doesn't exist
 ALTER TABLE messages ADD COLUMN IF NOT EXISTS protocol_number VARCHAR(100);

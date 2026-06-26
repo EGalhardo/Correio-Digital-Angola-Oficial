@@ -42,7 +42,8 @@ import {
   Quote,
   Eraser,
   Trash2,
-  Paperclip
+  Paperclip,
+  Edit2
 } from 'lucide-react';
 import { Message, SENSITIVITY_LEVELS, PRIORITY_CONFIGS, LanguageCode } from '../../types';
 import { getCategoryMetadata } from '../../utils/protocolGenerator';
@@ -112,6 +113,7 @@ interface MailContentProps {
   onDeleteMessage?: (id: number) => void;
   onRestoreMessage?: (id: number) => void;
   deletedMessageIds?: number[];
+  hiddenMessageIds?: number[];
   onNavigateToVideoAtendimento?: () => void;
   videoSessionCount?: number;
   currentLanguage?: LanguageCode;
@@ -138,6 +140,7 @@ export function MailContent({
   onDeleteMessage,
   onRestoreMessage,
   deletedMessageIds = [],
+  hiddenMessageIds = [],
   onNavigateToVideoAtendimento,
   videoSessionCount = 0,
   currentLanguage: propLanguage = 'pt'
@@ -169,6 +172,10 @@ export function MailContent({
     citizen?: any;
   }>({ status: 'idle', message: '' });
   const [searchProgress, setSearchProgress] = useState(0);
+
+  const [editingAttachmentIdx, setEditingAttachmentIdx] = useState<number | null>(null);
+  const [editingAttachmentContent, setEditingAttachmentContent] = useState<string>('');
+  const [messageToDelete, setMessageToDelete] = useState<{ id: number; isPermanent: boolean } | null>(null);
 
   const triggerRecipientSearch = (value: string) => {
     const term = value.trim();
@@ -424,26 +431,134 @@ export function MailContent({
     const files = e.target.files;
     if (files) {
       const currentList = composeData.attachments || [];
-      const newFiles: string[] = [];
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        if (!currentList.includes(file.name)) {
-          newFiles.push(file.name);
-        }
-      }
-      setComposeData({
-        ...composeData,
-        attachments: [...currentList, ...newFiles]
+      const promises = Array.from(files).map((file: any) => {
+        return new Promise<string>((resolve) => {
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            let content = '';
+            if (file.type.startsWith('image/')) {
+              content = event.target?.result as string || ''; // data URL
+            } else {
+              content = event.target?.result as string || ''; // text content
+            }
+            if (!content) {
+              content = `Este é o conteúdo do documento oficial '${file.name}' anexado a esta correspondência.`;
+            }
+            resolve(JSON.stringify({
+              name: file.name,
+              size: `${(file.size / 1024).toFixed(1)} KB`,
+              content: content,
+              type: file.type
+            }));
+          };
+          reader.onerror = () => {
+            resolve(JSON.stringify({
+              name: file.name,
+              size: `${(file.size / 1024).toFixed(1)} KB`,
+              content: `Erro ao ler o ficheiro ${file.name}.`,
+              type: file.type
+            }));
+          };
+          if (file.type.startsWith('image/')) {
+            reader.readAsDataURL(file);
+          } else {
+            reader.readAsText(file);
+          }
+        });
+      });
+
+      Promise.all(promises).then((newSerializedFiles) => {
+        const existingNames = currentList.map(item => {
+          try {
+            if (item.trim().startsWith('{')) {
+              return JSON.parse(item).name;
+            }
+          } catch {}
+          return item;
+        });
+
+        const filteredNewFiles = newSerializedFiles.filter(item => {
+          try {
+            const name = JSON.parse(item).name;
+            return !existingNames.includes(name);
+          } catch {
+            return !existingNames.includes(item);
+          }
+        });
+
+        setComposeData({
+          ...composeData,
+          attachments: [...currentList, ...filteredNewFiles]
+        });
       });
     }
   };
 
-  const handleFileRemove = (name: string) => {
+  const handleFileRemove = (rawString: string) => {
     const currentList = composeData.attachments || [];
     setComposeData({
       ...composeData,
-      attachments: currentList.filter(f => f !== name)
+      attachments: currentList.filter(f => f !== rawString)
     });
+  };
+
+  const handleCreateVirtualAttachment = () => {
+    const defaultName = `anexo_correspondencia_${Date.now().toString().slice(-4)}.txt`;
+    const newAttachment = JSON.stringify({
+      name: defaultName,
+      size: '1.0 KB',
+      content: `Este é o conteúdo do documento anexado '${defaultName}'.`,
+      type: 'text/plain'
+    });
+    const currentList = composeData.attachments || [];
+    setComposeData({
+      ...composeData,
+      attachments: [...currentList, newAttachment]
+    });
+    setEditingAttachmentIdx(currentList.length);
+    setEditingAttachmentContent(`Este é o conteúdo do documento anexado '${defaultName}'.`);
+  };
+
+  const handleSaveAttachmentContent = (newName: string) => {
+    if (editingAttachmentIdx === null || !composeData.attachments) return;
+    const currentList = [...composeData.attachments];
+    const item = currentList[editingAttachmentIdx];
+    let name = item;
+    let size = '1.0 KB';
+    let type = 'text/plain';
+
+    if (item.trim().startsWith('{')) {
+      try {
+        const parsed = JSON.parse(item);
+        name = newName || parsed.name;
+        size = parsed.size;
+        type = parsed.type;
+      } catch (e) {}
+    } else {
+      name = newName || item;
+    }
+
+    const byteCount = new Blob([editingAttachmentContent]).size;
+    if (byteCount < 1024) {
+      size = `${byteCount} B`;
+    } else if (byteCount < 1024 * 1024) {
+      size = `${(byteCount / 1024).toFixed(1)} KB`;
+    } else {
+      size = `${(byteCount / (1024 * 1024)).toFixed(1)} MB`;
+    }
+
+    currentList[editingAttachmentIdx] = JSON.stringify({
+      name: name,
+      size: size,
+      content: editingAttachmentContent,
+      type: type
+    });
+
+    setComposeData({
+      ...composeData,
+      attachments: currentList
+    });
+    setEditingAttachmentIdx(null);
   };
 
   if (isComposing) {
@@ -958,24 +1073,56 @@ export function MailContent({
           {/* List of Attached Files */}
           {composeData.attachments && composeData.attachments.length > 0 && (
             <div className="flex flex-wrap gap-2 p-3.5 bg-slate-50 border border-slate-200 rounded-2xl mt-4">
-              {composeData.attachments.map((fileName, fIdx) => (
-                <div 
-                  key={fIdx} 
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-xl shadow-xs text-[11px] font-bold text-slate-700 animate-fadeIn"
-                >
-                  <FileText size={13} className="text-[#0c2340]/80 shrink-0" />
-                  <span className="truncate max-w-[160px] select-none">{fileName}</span>
-                  <span className="text-[9px] text-slate-400 font-mono select-none">(150 KB)</span>
-                  <button 
-                    type="button"
-                    onClick={() => handleFileRemove(fileName)}
-                    className="p-0.5 hover:bg-red-50 text-slate-400 hover:text-red-500 rounded transition-colors cursor-pointer ml-1"
-                    title="Remover anexo"
+              {composeData.attachments.map((item, fIdx) => {
+                let name = item;
+                let size = '150 KB';
+                if (item.trim().startsWith('{')) {
+                  try {
+                    const parsed = JSON.parse(item);
+                    name = parsed.name;
+                    size = parsed.size;
+                  } catch (e) {}
+                }
+                return (
+                  <div 
+                    key={fIdx} 
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-xl shadow-xs text-[11px] font-bold text-slate-700 animate-fadeIn"
                   >
-                    <Trash2 size={11} />
-                  </button>
-                </div>
-              ))}
+                    <FileText size={13} className="text-indigo-600 shrink-0" />
+                    <span className="truncate max-w-[160px] select-none" title={name}>{name}</span>
+                    <span className="text-[9px] text-slate-400 font-mono select-none">({size})</span>
+                    
+                    <button 
+                      type="button"
+                      onClick={() => {
+                        setEditingAttachmentIdx(fIdx);
+                        let initialContent = '';
+                        if (item.trim().startsWith('{')) {
+                          try {
+                            initialContent = JSON.parse(item).content || '';
+                          } catch {}
+                        } else {
+                          initialContent = `Este é o conteúdo do documento oficial '${name}' anexado a esta correspondência.`;
+                        }
+                        setEditingAttachmentContent(initialContent);
+                      }}
+                      className="p-0.5 hover:bg-indigo-50 text-slate-450 hover:text-indigo-600 rounded transition-colors cursor-pointer ml-1"
+                      title="Editar conteúdo do anexo"
+                    >
+                      <Edit2 size={11} />
+                    </button>
+
+                    <button 
+                      type="button"
+                      onClick={() => handleFileRemove(item)}
+                      className="p-0.5 hover:bg-red-50 text-slate-450 hover:text-red-500 rounded transition-colors cursor-pointer ml-0.5"
+                      title="Remover anexo"
+                    >
+                      <Trash2 size={11} />
+                    </button>
+                  </div>
+                );
+              })}
             </div>
           )}
 
@@ -1010,6 +1157,16 @@ export function MailContent({
             </label>
 
             <button 
+              type="button"
+              onClick={handleCreateVirtualAttachment}
+              className="w-full md:w-auto flex items-center justify-center gap-2 px-6 py-4 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-extrabold text-sm rounded-2xl transition-all cursor-pointer active:scale-95 border border-indigo-200 shadow-sm shrink-0"
+              title="Criar um anexo virtual de texto diretamente"
+            >
+              <Plus size={18} className="stroke-[2.5]" />
+              <span>Anexo Virtual</span>
+            </button>
+
+            <button 
               onClick={() => {
                 if(confirm("Deseja descartar este rascunho?")) setIsComposing(false);
               }}
@@ -1019,6 +1176,108 @@ export function MailContent({
             </button>
           </div>
         </div>
+
+        <AnimatePresence>
+          {editingAttachmentIdx !== null && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[110] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto font-sans"
+              onClick={() => setEditingAttachmentIdx(null)}
+            >
+              <motion.div
+                initial={{ scale: 0.95, y: 15, opacity: 0 }}
+                animate={{ scale: 1, y: 0, opacity: 1 }}
+                exit={{ scale: 0.95, y: 15, opacity: 0 }}
+                transition={{ type: 'spring', damping: 25, stiffness: 350 }}
+                className="bg-white rounded-[24px] border border-slate-150 shadow-2xl w-full max-w-xl flex flex-col overflow-hidden text-left"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {/* Header */}
+                <div className="bg-[#0c2340] p-5 text-white flex justify-between items-center shrink-0">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-indigo-500 flex items-center justify-center">
+                      <FileText size={16} className="text-white" />
+                    </div>
+                    <div>
+                      <h3 className="font-extrabold text-xs uppercase tracking-wider text-white">Editar Conteúdo do Anexo</h3>
+                      <p className="text-[10px] text-slate-300 font-mono tracking-tight">O conteúdo editado será guardado digitalmente no anexo</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setEditingAttachmentIdx(null)}
+                    className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-all text-white font-bold text-xs"
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                {/* Body */}
+                <div className="p-6 space-y-4">
+                  <div>
+                    <label className="block text-[11px] font-black uppercase text-slate-450 tracking-wider mb-1.5">Nome do Ficheiro</label>
+                    <input 
+                      type="text" 
+                      id="edit-att-name"
+                      defaultValue={(() => {
+                        const item = composeData.attachments?.[editingAttachmentIdx];
+                        if (item && item.trim().startsWith('{')) {
+                          try {
+                            return JSON.parse(item).name;
+                          } catch {}
+                        }
+                        return item || '';
+                      })()}
+                      placeholder="nome_do_anexo.txt"
+                      className="w-full bg-slate-50 border border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 rounded-xl px-4 py-2.5 text-xs font-bold font-sans outline-none transition-all text-slate-800"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-black uppercase text-slate-450 tracking-wider mb-1.5">Conteúdo / Texto do Documento</label>
+                    <textarea
+                      rows={10}
+                      value={editingAttachmentContent}
+                      onChange={(e) => setEditingAttachmentContent(e.target.value)}
+                      placeholder="Escreva aqui o conteúdo que será lido ao abrir o documento anexo..."
+                      className="w-full bg-slate-50 border border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 rounded-2xl px-4 py-3.5 text-xs md:text-sm font-semibold outline-none transition-all resize-none leading-relaxed text-slate-700"
+                    />
+                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-1.5 flex justify-between">
+                      <span>Tamanho aproximado: {new Blob([editingAttachmentContent]).size} bytes</span>
+                      <button
+                        type="button"
+                        onClick={() => setEditingAttachmentContent(composeData.body)}
+                        className="text-indigo-650 hover:text-indigo-800 hover:underline transition-colors cursor-pointer text-[9px]"
+                      >
+                        Copia corpo da mensagem
+                      </button>
+                    </p>
+                  </div>
+                </div>
+
+                {/* Footer */}
+                <div className="bg-slate-50 border-t border-slate-150 p-4 flex justify-end gap-2.5 shrink-0">
+                  <button
+                    onClick={() => setEditingAttachmentIdx(null)}
+                    className="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs px-4 py-2.5 rounded-xl transition-colors"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    onClick={() => {
+                      const nameInput = document.getElementById('edit-att-name') as HTMLInputElement;
+                      handleSaveAttachmentContent(nameInput?.value || '');
+                    }}
+                    className="bg-indigo-650 hover:bg-indigo-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition-colors shadow-md shadow-indigo-500/20"
+                  >
+                    Guardar no Anexo
+                  </button>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.div>
     );
   }
@@ -1065,52 +1324,52 @@ export function MailContent({
       <div className="bg-white border border-slate-300 rounded-[32px] p-2.5 shadow-sm flex flex-col lg:flex-row gap-3">
         <div className="flex flex-wrap md:flex-nowrap gap-1.5 p-1 bg-white border border-slate-200 rounded-2xl lg:min-w-[500px] w-full lg:w-auto">
           {[
-            { id: 'lidas', label: 'Lidas', count: inbox.filter(m => !deletedMessageIds.includes(m.id) && !m.unread).length },
-            { id: 'naoLidas', label: 'Não Lidas', count: inbox.filter(m => !deletedMessageIds.includes(m.id) && m.unread).length },
-            { id: 'enviadas', label: 'Enviadas', count: sentMessages.filter(m => !deletedMessageIds.includes(m.id)).length },
-            { id: 'excluidas', label: 'Arquivadas', count: [...inbox, ...sentMessages].filter(m => deletedMessageIds.includes(m.id)).length }
-          ].map(t => {
-            const isActive = correspondenciaTab === t.id;
+            { id: 'lidas', label: 'Lidas', count: inbox.filter(m => !deletedMessageIds.includes(m.id) && !hiddenMessageIds.includes(m.id) && !m.unread).length },
+            { id: 'naoLidas', label: 'Não Lidas', count: inbox.filter(m => !deletedMessageIds.includes(m.id) && !hiddenMessageIds.includes(m.id) && m.unread).length },
+            { id: 'enviadas', label: 'Enviadas', count: sentMessages.filter(m => !deletedMessageIds.includes(m.id) && !hiddenMessageIds.includes(m.id)).length },
+            { id: 'excluidas', label: 'Arquivadas', count: [...inbox, ...sentMessages].filter(m => deletedMessageIds.includes(m.id) && !hiddenMessageIds.includes(m.id)).length }
+          ].map(tab => {
+            const isActive = correspondenciaTab === tab.id;
             let activeStyle = '';
             let badgeStyle = '';
 
             if (isActive) {
-              if (t.id === 'lidas') {
+              if (tab.id === 'lidas') {
                 activeStyle = 'bg-emerald-600 text-white shadow-md shadow-emerald-200 ring-2 ring-emerald-600';
                 badgeStyle = 'bg-white text-emerald-700';
-              } else if (t.id === 'naoLidas') {
+              } else if (tab.id === 'naoLidas') {
                 activeStyle = 'bg-red-600 text-white shadow-md shadow-red-200 ring-2 ring-red-600';
                 badgeStyle = 'bg-white text-red-600';
-              } else if (t.id === 'enviadas') {
+              } else if (tab.id === 'enviadas') {
                 activeStyle = 'bg-blue-600 text-white shadow-md shadow-blue-200 ring-2 ring-blue-600';
                 badgeStyle = 'bg-white text-blue-600';
-              } else if (t.id === 'excluidas') {
+              } else if (tab.id === 'excluidas') {
                 activeStyle = 'bg-rose-600 text-white shadow-md shadow-rose-200 ring-2 ring-rose-600';
                 badgeStyle = 'bg-white text-rose-600';
               }
             } else {
               activeStyle = 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50';
-              if (t.id === 'lidas') {
+              if (tab.id === 'lidas') {
                 badgeStyle = 'bg-emerald-600 text-white';
-              } else if (t.id === 'naoLidas') {
+              } else if (tab.id === 'naoLidas') {
                 badgeStyle = 'bg-red-600 text-white';
-              } else if (t.id === 'enviadas') {
+              } else if (tab.id === 'enviadas') {
                 badgeStyle = 'bg-blue-600 text-white';
-              } else if (t.id === 'excluidas') {
+              } else if (tab.id === 'excluidas') {
                 badgeStyle = 'bg-rose-600 text-white';
               }
             }
 
             return (
               <button 
-                key={t.id}
-                onClick={() => setCorrespondenciaTab(t.id)}
+                key={tab.id}
+                onClick={() => setCorrespondenciaTab(tab.id)}
                 className={`flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-[11px] md:text-xs font-black uppercase tracking-tight transition-all border-0 cursor-pointer ${activeStyle}`}
               >
-                {translateText(t.label, currentLanguage)}
-                {t.count > 0 && (
+                {translateText(tab.label, currentLanguage)}
+                {tab.count > 0 && (
                   <span className={`px-2 py-0.5 rounded-md text-[9.5px] font-black ${badgeStyle}`}>
-                    {t.count}
+                    {tab.count}
                   </span>
                 )}
               </button>
@@ -1259,24 +1518,30 @@ export function MailContent({
                             {isInst ? 'ANALISAR' : 'ABRIR'}
                           </button>
                           {correspondenciaTab === 'excluidas' ? (
-                            <button
-                              type="button"
-                              onClick={() => onRestoreMessage && onRestoreMessage(item.id)}
-                              className="text-[9.5px] font-black uppercase text-emerald-600 hover:text-emerald-700 transition-colors tracking-widest hover:underline cursor-pointer bg-transparent border-0 outline-none"
-                            >
-                              Restaurar
-                            </button>
+                            <div className="flex items-center justify-center gap-1.5">
+                              <button
+                                type="button"
+                                onClick={() => onRestoreMessage && onRestoreMessage(item.id)}
+                                className="text-[9.5px] font-black uppercase text-emerald-600 hover:text-emerald-700 transition-colors tracking-widest hover:underline cursor-pointer bg-transparent border-0 outline-none"
+                              >
+                                Restaurar
+                              </button>
+                              <span className="text-slate-350">|</span>
+                              <button
+                                type="button"
+                                onClick={() => setMessageToDelete({ id: item.id, isPermanent: true })}
+                                className="text-[9.5px] font-black uppercase text-rose-600 hover:text-rose-800 transition-colors tracking-widest hover:underline cursor-pointer bg-transparent border-0 outline-none"
+                              >
+                                Eliminar
+                              </button>
+                            </div>
                           ) : (
                             <button
                               type="button"
-                              onClick={() => {
-                                if (confirm("Tem a certeza que deseja arquivar esta correspondência oficial?")) {
-                                  onDeleteMessage && onDeleteMessage(item.id);
-                                }
-                              }}
+                              onClick={() => setMessageToDelete({ id: item.id, isPermanent: false })}
                               className="text-[9.5px] font-black uppercase text-rose-600 hover:text-rose-800 transition-colors tracking-widest hover:underline cursor-pointer bg-transparent border-0 outline-none"
                             >
-                              Arquivar
+                              Eliminar
                             </button>
                           )}
                         </div>
@@ -1301,6 +1566,59 @@ export function MailContent({
           </div>
         )}
       </div>
+
+      <AnimatePresence>
+        {messageToDelete && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setMessageToDelete(null)}
+              className="absolute inset-0 bg-primary/40 backdrop-blur-sm"
+            />
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="relative bg-white rounded-[28px] md:rounded-[32px] p-5 sm:p-6 md:p-8 shadow-2xl max-w-md w-full text-center max-h-[92vh] overflow-y-auto"
+            >
+              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Trash2 size={32} className="text-red-600" />
+              </div>
+              <h3 className="text-xl font-black text-primary mb-3">
+                {messageToDelete.isPermanent ? t("Eliminar Permanentemente?") : t("Eliminar Correspondência?")}
+              </h3>
+              <p className="text-slate-600 text-sm leading-relaxed mb-8">
+                {messageToDelete.isPermanent 
+                  ? t("Deseja eliminar permanentemente esta correspondência oficial? Ela não será mais visível no seu portal, mas continuará registada no sistema do Estado.")
+                  : t("Tem a certeza que deseja eliminar esta correspondência oficial? Ela será movida para as Eliminadas.")}
+              </p>
+              <div className="grid grid-cols-2 gap-3">
+                <button 
+                  type="button"
+                  onClick={() => setMessageToDelete(null)}
+                  className="py-4 bg-slate-100 text-slate-600 rounded-2xl font-bold hover:bg-slate-200 transition-colors cursor-pointer border-0 outline-none"
+                >
+                  {t("Cancelar")}
+                </button>
+                <button 
+                  type="button"
+                  onClick={() => {
+                    if (onDeleteMessage) {
+                      onDeleteMessage(messageToDelete.id);
+                    }
+                    setMessageToDelete(null);
+                  }}
+                  className="py-4 bg-red-600 text-white rounded-2xl font-bold shadow-lg shadow-red-200 hover:bg-red-700 transition-colors cursor-pointer border-0 outline-none"
+                >
+                  {t("Eliminar")}
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }

@@ -289,11 +289,11 @@ export const supabaseService = {
     }
   },
 
-  async sendCitizenMessage(msg: Message, citizenBi: string, institutionLabel: string) {
+  async sendCitizenMessage(msg: Message, citizenBi: string, institutionLabel: string, citizenName?: string) {
     if (!hasValidSupabaseKeys()) return null;
     try {
       const institutionCode = resolveInstitutionCode(institutionLabel);
-      await ensureProfileExists(citizenBi, msg.details?.body?.match(/Atentamente,\s*([\wÀ-ÿ\s]+)/i)?.[1]?.trim() || 'Cidadão', 'user');
+      await ensureProfileExists(citizenBi, citizenName || msg.details?.body?.match(/Atentamente,\s*([\wÀ-ÿ\s]+)/i)?.[1]?.trim() || 'Cidadão', 'user');
       await ensureProfileExists(institutionCode, institutionLabel, 'institution');
       const payload = createMessagePayload({
         msg,
@@ -359,6 +359,17 @@ export const supabaseService = {
   }) {
     if (!hasValidSupabaseKeys()) return null;
     try {
+      // Avoid foreign key violations on non-existent messages (e.g. mock/local messages)
+      const { data: exists } = await supabase
+        .from('messages')
+        .select('id')
+        .eq('id', messageId)
+        .maybeSingle();
+      if (!exists) {
+        console.warn(`insertMessageStateEvent: Message with ID ${messageId} does not exist in the database. Skipping state history event.`);
+        return null;
+      }
+
       const payload = createStateHistoryPayload({ messageId, state, responsible, description });
       const { data, error } = await supabase.from('message_state_history').insert([payload]).select();
       if (error) throw error;
@@ -467,7 +478,7 @@ export const supabaseService = {
     try {
       const payload = {
         action: log.action,
-        username: log.user,
+        username: log.user || 'Cidadão',
         action_type: log.type || 'info'
       };
       const { data, error } = await supabase
