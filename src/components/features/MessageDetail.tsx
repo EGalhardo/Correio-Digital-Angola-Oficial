@@ -3616,7 +3616,7 @@ com assinatura presencial.
                   <div className="space-y-4 pt-1 border-t border-slate-100 min-h-[150px]">
                     <h5 className="font-bold text-xs uppercase text-[#0c2340] tracking-wider mb-2">Conteúdo do Documento</h5>
                     
-                    {previewFile.name.toLowerCase().includes('localizacao') || previewFile.name.toLowerCase().includes('mapa') || previewFile.name.toLowerCase().endsWith('.png') || previewFile.name.toLowerCase().endsWith('.jpg') || previewFile.name.toLowerCase().endsWith('.jpeg') ? (
+                    {previewFile.name.toLowerCase().includes('localizacao') || previewFile.name.toLowerCase().includes('mapa') ? (
                       <div className="space-y-4 text-xs text-left">
                         <p className="font-medium text-slate-700">
                           Este ficheiro de imagem contém as coordenadas oficiais e o mapa de localização georreferenciado anexado ao expediente:
@@ -3693,6 +3693,92 @@ com assinatura presencial.
                             </div>
                           </div>
                         </div>
+                      </div>
+                    ) : (previewFile.type?.startsWith('image/') || previewFile.name.toLowerCase().endsWith('.png') || previewFile.name.toLowerCase().endsWith('.jpg') || previewFile.name.toLowerCase().endsWith('.jpeg') || previewFile.name.toLowerCase().endsWith('.gif') || previewFile.name.toLowerCase().endsWith('.webp')) ? (
+                      <div className="space-y-4 text-xs text-left">
+                        {previewFile.content && (previewFile.content.startsWith('http') || previewFile.content.startsWith('data:')) ? (
+                          <div className="flex flex-col items-center justify-center p-3 bg-white border border-slate-200 rounded-2xl shadow-sm">
+                            <img 
+                              src={previewFile.content} 
+                              alt={previewFile.name} 
+                              className="max-h-[50vh] max-w-full object-contain rounded-xl shadow-md border border-slate-100" 
+                              referrerPolicy="no-referrer" 
+                            />
+                            <p className="mt-3 text-[10px] text-slate-500 font-extrabold uppercase tracking-wider">
+                              Visualização de Anexo Digital Recebido
+                            </p>
+                          </div>
+                        ) : (
+                          /* Fallback mock styled tax document for AGT or other institutions if the content is not a real URL */
+                          <div className="border border-slate-200 rounded-2xl p-6 bg-white relative overflow-hidden shadow-inner text-left">
+                            {/* Decorative Watermark */}
+                            <div className="absolute inset-0 flex items-center justify-center opacity-[0.02] pointer-events-none select-none">
+                              <div className="text-4xl font-black uppercase tracking-widest rotate-12 text-center">
+                                DOCUMENTO OFICIAL AGT
+                              </div>
+                            </div>
+                            
+                            {/* Header with AGT Logo styling */}
+                            <div className="flex justify-between items-start border-b border-slate-100 pb-4 mb-4">
+                              <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 bg-red-600 rounded-lg flex items-center justify-center text-white font-black text-sm shadow-md">
+                                  AGT
+                                </div>
+                                <div>
+                                  <h4 className="font-extrabold text-xs text-slate-800 tracking-wide">ADMINISTRAÇÃO GERAL TRIBUTÁRIA</h4>
+                                  <p className="text-[9px] text-slate-400 font-mono">REPÚBLICA DE ANGOLA</p>
+                                </div>
+                              </div>
+                              <span className="bg-emerald-50 border border-emerald-100 text-emerald-700 text-[9px] font-black uppercase px-2.5 py-1 rounded-full shrink-0">
+                                COMPROVATIVO CERTIFICADO
+                              </span>
+                            </div>
+
+                            {/* Body details */}
+                            <div className="space-y-3.5 text-xs">
+                              <div className="bg-slate-50 border border-slate-150 rounded-xl p-3.5 space-y-2 font-sans">
+                                <div className="flex justify-between items-center text-[10px] text-slate-400 uppercase font-bold">
+                                  <span>Tipo de Documento:</span>
+                                  <span className="text-slate-800">Recibo Eletrónico de Liquidação Fiscal</span>
+                                </div>
+                                <div className="flex justify-between items-center text-[10px] text-slate-400 uppercase font-bold">
+                                  <span>Contribuinte (Nome):</span>
+                                  <span className="text-slate-800 font-black">Edlasio Galhardo</span>
+                                </div>
+                                <div className="flex justify-between items-center text-[10px] text-slate-400 uppercase font-bold">
+                                  <span>Identificação (BI):</span>
+                                  <span className="text-slate-800 font-mono">009874562LA041</span>
+                                </div>
+                                <div className="flex justify-between items-center text-[10px] text-slate-400 uppercase font-bold">
+                                  <span>NIF do Emissor:</span>
+                                  <span className="text-slate-800 font-mono">5401329188</span>
+                                </div>
+                                <div className="flex justify-between items-center text-[10px] text-slate-400 uppercase font-bold">
+                                  <span>Código do Ficheiro:</span>
+                                  <span className="text-slate-800 font-mono">{previewFile.name}</span>
+                                </div>
+                              </div>
+
+                              <div className="space-y-2 text-[11px] text-slate-600 leading-relaxed font-sans">
+                                <p>A <strong>Administração Geral Tributária (AGT)</strong> certifica para efeitos legais a recepção e processamento com sucesso deste documento digital de arrecadação fiscal, sob responsabilidade do titular portador.</p>
+                                <p className="text-[10px] text-slate-400 font-mono italic">Documento integrado no ecossistema digital do Correio Digital de Angola (CDA).</p>
+                              </div>
+
+                              {/* Footer with barcode and QR */}
+                              <div className="flex justify-between items-center pt-4 border-t border-slate-100 mt-4">
+                                {/* Simulated barcode */}
+                                <div className="flex flex-col gap-1">
+                                  <div className="h-7 w-28 bg-[repeating-linear-gradient(90deg,black,black_1px,transparent_1px,transparent_4px,black_4px,black_6px,transparent_6px,transparent_8px)] opacity-80" />
+                                  <span className="text-[8px] font-mono text-slate-400">NIF5401329188</span>
+                                </div>
+                                {/* QR Code placeholder */}
+                                <div className="w-10 h-10 border border-slate-200 bg-slate-50 p-1 rounded-lg flex items-center justify-center">
+                                  <div className="w-full h-full bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-indigo-900 via-slate-900 to-black rounded-sm" />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     ) : previewFile.name.toLowerCase().includes('comprovativo') || previewFile.name.toLowerCase().includes('recibo') ? (
                       <div className="space-y-3.5 text-xs text-left">
