@@ -307,6 +307,18 @@ export function MessageDetail({
   const [messageToDelete, setMessageToDelete] = useState<{ id: number; isPermanent: boolean } | null>(null);
 
   const handleDownloadFile = (fileName: string) => {
+    if (previewFile && previewFile.content && (previewFile.content.startsWith('http://') || previewFile.content.startsWith('https://'))) {
+      const link = document.createElement('a');
+      link.href = previewFile.content;
+      link.download = fileName;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      return;
+    }
+
     const org = selectedMessage.org;
     const protocolNumber = selectedMessage.protocol?.protocolNumber || 'PRT-' + selectedMessage.id;
     const signatureDate = selectedMessage.protocol?.signatureDate || messageDate;
@@ -3734,13 +3746,29 @@ com assinatura presencial.
                             
                             {previewFile.content ? (
                               <div className="space-y-2">
-                                {previewFile.type?.startsWith('image/') || previewFile.content.startsWith('data:image/') ? (
+                                {previewFile.type?.startsWith('image/') || previewFile.content.startsWith('data:image/') || (previewFile.content.startsWith('http') && (previewFile.name.toLowerCase().endsWith('.png') || previewFile.name.toLowerCase().endsWith('.jpg') || previewFile.name.toLowerCase().endsWith('.jpeg') || previewFile.name.toLowerCase().endsWith('.gif'))) ? (
                                   <div className="flex justify-center p-2 bg-white rounded-xl border border-slate-200">
-                                    <img src={previewFile.content} alt={previewFile.name} className="max-h-80 object-contain rounded-lg" referrerPolicy="no-referrer" />
+                                    <img src={previewFile.content} alt={previewFile.name} className="max-h-80 object-contain rounded-lg shadow-sm" referrerPolicy="no-referrer" />
                                   </div>
                                 ) : (
                                   <div className="bg-white border border-slate-200 rounded-xl p-4 font-sans text-xs text-slate-800 whitespace-pre-wrap leading-relaxed max-h-80 overflow-y-auto selection:bg-indigo-100 select-text">
-                                    {previewFile.content}
+                                    {previewFile.content.startsWith('http') ? (
+                                      <div className="flex flex-col items-center justify-center py-6 px-4 text-center">
+                                        <FileText size={48} className="text-indigo-500 mb-3 animate-pulse" />
+                                        <p className="font-bold text-slate-800 text-sm mb-1">{previewFile.name}</p>
+                                        <p className="text-xs text-slate-500 mb-4">{previewFile.size} • Ficheiro Digital Guardado</p>
+                                        <a 
+                                          href={previewFile.content} 
+                                          target="_blank" 
+                                          rel="noopener noreferrer" 
+                                          className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-xs rounded-xl shadow-md transition-all cursor-pointer active:scale-95"
+                                        >
+                                          Ver / Descarregar Ficheiro Original
+                                        </a>
+                                      </div>
+                                    ) : (
+                                      previewFile.content
+                                    )}
                                   </div>
                                 )}
                               </div>

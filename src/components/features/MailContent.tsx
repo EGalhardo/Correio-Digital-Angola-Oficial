@@ -51,6 +51,7 @@ import { translateText } from '../../utils/translator';
 import { useLanguage } from '../../hooks/useLanguage';
 import { Video, Loader2, CheckCircle2, AlertTriangle } from 'lucide-react';
 import { MOCK_CITIZENS, MOCK_USERS } from '../../constants/mocks';
+import { supabase } from '../../lib/supabaseClient';
 
 
 const getOrgBadgeStyles = (org: string) => {
@@ -176,6 +177,8 @@ export function MailContent({
   const [editingAttachmentIdx, setEditingAttachmentIdx] = useState<number | null>(null);
   const [editingAttachmentContent, setEditingAttachmentContent] = useState<string>('');
   const [messageToDelete, setMessageToDelete] = useState<{ id: number; isPermanent: boolean } | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgressMessage, setUploadProgressMessage] = useState('');
 
   const triggerRecipientSearch = (value: string) => {
     const term = value.trim();
@@ -429,40 +432,75 @@ export function MailContent({
 
   const handleFileAdd = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-    if (files) {
+    if (files && files.length > 0) {
+      setIsUploading(true);
+      setUploadProgressMessage(t("A carregar ficheiros para o arquivo digital central..."));
       const currentList = composeData.attachments || [];
       const promises = Array.from(files).map((file: any) => {
         return new Promise<string>((resolve) => {
-          const reader = new FileReader();
-          reader.onload = (event) => {
-            let content = '';
-            if (file.type.startsWith('image/')) {
-              content = event.target?.result as string || ''; // data URL
+          const readAsLocalFallback = (f: File, res: (val: string) => void) => {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+              let content = '';
+              if (f.type.startsWith('image/')) {
+                content = event.target?.result as string || ''; // data URL
+              } else {
+                content = event.target?.result as string || ''; // text content
+              }
+              if (!content) {
+                content = `Este é o conteúdo do documento oficial '${f.name}' anexado a esta correspondência.`;
+              }
+              res(JSON.stringify({
+                name: f.name,
+                size: `${(f.size / 1024).toFixed(1)} KB`,
+                content: content,
+                type: f.type
+              }));
+            };
+            reader.onerror = () => {
+              res(JSON.stringify({
+                name: f.name,
+                size: `${(f.size / 1024).toFixed(1)} KB`,
+                content: `Erro ao ler o ficheiro ${f.name}.`,
+                type: f.type
+              }));
+            };
+            if (f.type.startsWith('image/')) {
+              reader.readAsDataURL(f);
             } else {
-              content = event.target?.result as string || ''; // text content
+              reader.readAsText(f);
             }
-            if (!content) {
-              content = `Este é o conteúdo do documento oficial '${file.name}' anexado a esta correspondência.`;
-            }
-            resolve(JSON.stringify({
-              name: file.name,
-              size: `${(file.size / 1024).toFixed(1)} KB`,
-              content: content,
-              type: file.type
-            }));
           };
-          reader.onerror = () => {
-            resolve(JSON.stringify({
-              name: file.name,
-              size: `${(file.size / 1024).toFixed(1)} KB`,
-              content: `Erro ao ler o ficheiro ${file.name}.`,
-              type: file.type
-            }));
-          };
-          if (file.type.startsWith('image/')) {
-            reader.readAsDataURL(file);
+
+          const isSupabaseReady = (import.meta as any).env.VITE_SUPABASE_URL && (import.meta as any).env.VITE_SUPABASE_ANON_KEY;
+          if (isSupabaseReady) {
+            const fileExt = file.name.split('.').pop() || 'dat';
+            const fileCleanName = file.name.replace(/[^a-zA-Z0-9]/g, '_');
+            const filePath = `${bi || 'geral'}/${Date.now()}_${fileCleanName}.${fileExt}`;
+            
+            supabase.storage
+              .from('correspondencias_anexos')
+              .upload(filePath, file)
+              .then(({ error: uploadErr }) => {
+                if (uploadErr) {
+                  console.error('Erro upload anexo:', uploadErr);
+                  readAsLocalFallback(file, resolve);
+                } else {
+                  const { data } = supabase.storage.from('correspondencias_anexos').getPublicUrl(filePath);
+                  resolve(JSON.stringify({
+                    name: file.name,
+                    size: `${(file.size / 1024).toFixed(1)} KB`,
+                    content: data.publicUrl, // URL in Supabase Storage
+                    type: file.type
+                  }));
+                }
+              })
+              .catch((err) => {
+                console.error('Catch erro upload anexo:', err);
+                readAsLocalFallback(file, resolve);
+              });
           } else {
-            reader.readAsText(file);
+            readAsLocalFallback(file, resolve);
           }
         });
       });
@@ -490,6 +528,11 @@ export function MailContent({
           ...composeData,
           attachments: [...currentList, ...filteredNewFiles]
         });
+        setIsUploading(false);
+        setUploadProgressMessage('');
+      }).catch(() => {
+        setIsUploading(false);
+        setUploadProgressMessage('');
       });
     }
   };
@@ -1069,6 +1112,13 @@ export function MailContent({
               }}
             />
           </div>
+
+          {isUploading && (
+            <div className="flex items-center gap-2.5 p-4 bg-indigo-50 border border-indigo-150 rounded-2xl text-indigo-800 text-xs font-black animate-pulse mt-4">
+              <Loader2 size={16} className="animate-spin text-indigo-600 shrink-0" />
+              <span>{uploadProgressMessage}</span>
+            </div>
+          )}
 
           {/* List of Attached Files */}
           {composeData.attachments && composeData.attachments.length > 0 && (
