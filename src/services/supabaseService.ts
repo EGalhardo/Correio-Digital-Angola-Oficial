@@ -525,10 +525,13 @@ export const supabaseService = {
   async insertAuditLog(log: { action: string; user: string; timestamp?: string; type?: string }) {
     if (!hasValidSupabaseKeys()) return null;
     try {
+      const actionStr = (log.action || 'Ação de Auditoria Registada').substring(0, 1000);
+      const userStr = (log.user || 'Cidadão').substring(0, 95);
+      const typeStr = (log.type || 'info').substring(0, 25);
       const payload = {
-        action: log.action,
-        username: log.user || 'Cidadão',
-        action_type: log.type || 'info'
+        action: actionStr,
+        username: userStr,
+        action_type: typeStr
       };
       const { data, error } = await supabase
         .from('audit_logs')

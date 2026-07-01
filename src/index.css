@@ -222,7 +222,6 @@ html.dark {
   --color-success: #10b981 !important;
   --color-warning: #f59e0b !important;
   
-  --color-white: rgb(9, 17, 36) !important;
   --color-slate-50: rgb(9, 17, 36) !important;
   --color-slate-100: rgb(9, 17, 36) !important;
   --color-slate-150: rgb(9, 17, 36) !important;
@@ -342,15 +341,21 @@ html.dark .text-slate-900\/60 {
 }
 
 /* Panel Background Overrides */
-html.dark .bg-white {
+html.dark .bg-white,
+html.dark .md\:bg-white,
+html.dark .lg\:bg-white {
   background-color: rgb(9, 17, 36) !important;
 }
 
-html.dark .bg-slate-50 {
+html.dark .bg-slate-50,
+html.dark .md\:bg-slate-50,
+html.dark .lg\:bg-slate-50 {
   background-color: rgb(9, 17, 36) !important;
 }
 
-html.dark .bg-slate-100 {
+html.dark .bg-slate-100,
+html.dark .md\:bg-slate-100,
+html.dark .lg\:bg-slate-100 {
   background-color: rgb(9, 17, 36) !important;
 }
 
@@ -362,11 +367,11 @@ html.dark .bg-slate-50\/50 {
   background-color: rgba(9, 17, 36, 0.5) !important;
 }
 
-html.dark .bg-[#f0f4f9] {
+html.dark .bg-\[\#f0f4f9\] {
   background-color: rgb(20, 29, 49) !important;
 }
 
-html.dark .bg-[#f1f5f9] {
+html.dark .bg-\[\#f1f5f9\] {
   background-color: rgb(20, 29, 49) !important;
 }
 
@@ -391,11 +396,11 @@ html.dark .border-line\/5 {
   border-color: rgba(38, 52, 85, 0.4) !important;
 }
 
-html.dark .border-[#D1D5DB] {
+html.dark .border-\[\#D1D5DB\] {
   border-color: rgb(38, 52, 85) !important;
 }
 
-html.dark .border-[#E2E8F0] {
+html.dark .border-\[\#E2E8F0\] {
   border-color: rgb(38, 52, 85) !important;
 }
 

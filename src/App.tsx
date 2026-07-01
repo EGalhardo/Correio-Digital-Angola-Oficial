@@ -2437,7 +2437,7 @@ Ficha civil do titular:
     addAuditLog(action, type);
   };
 
-  const handleUpdateDocRequest = (requestId: number, newStatus: 'Aprovado' | 'Rejeitado') => {
+  const handleUpdateDocRequest = async (requestId: number, newStatus: 'Aprovado' | 'Rejeitado') => {
     const request = docRequests.find(r => r.id === requestId);
     if (!request) return;
 
@@ -2445,20 +2445,24 @@ Ficha civil do titular:
     
     // Persist request status update directly on Supabase
     if (isOnline && hasValidSupabaseKeys()) {
-      supabase
-        .from('document_requests')
-        .update({ status: newStatus })
-        .eq('id', requestId)
-        .then(({ error }) => {
-          if (error) console.error('Erro ao atualizar estado da solicitação no Supabase:', error);
-          else {
-            supabaseService.insertAuditLog({
-              action: `DOC_REQUEST_${newStatus.toUpperCase()}: ${request.docType} / ${request.userName}`,
-              user: user.name,
-              type: newStatus === 'Aprovado' ? 'success' : 'warning'
-            }).catch(() => {});
-          }
-        });
+      try {
+        const { error } = await supabase
+          .from('document_requests')
+          .update({ status: newStatus })
+          .eq('id', requestId);
+        
+        if (error) {
+          console.error('Erro ao atualizar estado da solicitação no Supabase:', error);
+        } else {
+          await supabaseService.insertAuditLog({
+            action: `DOC_REQUEST_${newStatus.toUpperCase()}: ${request.docType} / ${request.userName}`,
+            user: user.name,
+            type: newStatus === 'Aprovado' ? 'success' : 'warning'
+          });
+        }
+      } catch (err) {
+        console.error('Network or Supabase error during update request:', err);
+      }
     }
 
     if (newStatus === 'Aprovado') {
