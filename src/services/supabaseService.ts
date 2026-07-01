@@ -219,30 +219,40 @@ export const supabaseService = {
     role?: string;
   }) {
     if (!hasValidSupabaseKeys()) return null;
-    try {
-      // First try to match by bi
+    
+    // Format birth date securely
+    let formattedBirthDate: string | null = null;
+    if (profile.birth_date) {
+      if (profile.birth_date.includes('/')) {
+        formattedBirthDate = profile.birth_date.split('/').reverse().join('-');
+      } else {
+        formattedBirthDate = profile.birth_date;
+      }
+    }
+
+    const payload: any = {
+      bi: profile.bi,
+      name: profile.name,
+      phone: profile.phone || null,
+      nif: profile.nif || null,
+      passport: profile.passport || null,
+      birth_date: formattedBirthDate,
+      filiation: profile.filiation || null,
+      marital_status: profile.marital_status || null,
+      role: profile.role || 'user'
+    };
+
+    const performSave = async (currentPayload: any) => {
       const { data: existing } = await supabase
         .from('profiles')
         .select('id')
         .eq('bi', profile.bi)
         .maybeSingle();
 
-      const payload = {
-        bi: profile.bi,
-        name: profile.name,
-        phone: profile.phone || null,
-        nif: profile.nif || null,
-        passport: profile.passport || null,
-        birth_date: profile.birth_date ? profile.birth_date.split('/').reverse().join('-') : null, // dd/mm/yyyy to yyyy-mm-dd
-        filiation: profile.filiation || null,
-        marital_status: profile.marital_status || null,
-        role: profile.role || 'user'
-      };
-
       if (existing) {
         const { data, error } = await supabase
           .from('profiles')
-          .update(payload)
+          .update(currentPayload)
           .eq('bi', profile.bi)
           .select();
         if (error) throw error;
@@ -250,12 +260,51 @@ export const supabaseService = {
       } else {
         const { data, error } = await supabase
           .from('profiles')
-          .insert([payload])
+          .insert([currentPayload])
           .select();
         if (error) throw error;
         return data;
       }
+    };
+
+    try {
+      return await performSave(payload);
     } catch (e: any) {
+      const errorMsg = String(e?.message || e?.details || '').toLowerCase();
+      const errorCode = String(e?.code || '');
+      
+      const isUniqueViolation = errorCode === '23505' || errorMsg.includes('unique constraint') || errorMsg.includes('duplicate key');
+      
+      if (isUniqueViolation) {
+        console.warn('Aviso: Detetado conflito de chave única no perfil Supabase. Tentando ajustar dados...', e);
+        
+        // Se o conflito for do NIF, tentamos anular o NIF
+        if (errorMsg.includes('nif') || errorMsg.includes('profiles_nif_key')) {
+          console.warn('Conflito no campo NIF. Anulando NIF para salvar o restante dos dados do perfil.');
+          payload.nif = null;
+          try {
+            return await performSave(payload);
+          } catch (retryErr: any) {
+            e = retryErr; // prossegue para o check de passaporte se falhar por passaporte
+          }
+        }
+        
+        // Se o conflito for do Passaporte, tentamos anular o Passaporte
+        const retryErrorMsg = String(e?.message || e?.details || '').toLowerCase();
+        const retryErrorCode = String(e?.code || '');
+        const stillUniqueViolation = retryErrorCode === '23505' || retryErrorMsg.includes('unique constraint') || retryErrorMsg.includes('duplicate key');
+        
+        if (stillUniqueViolation && (retryErrorMsg.includes('passport') || retryErrorMsg.includes('profiles_passport_key'))) {
+          console.warn('Conflito no campo Passaporte. Anulando Passaporte para salvar o restante dos dados do perfil.');
+          payload.passport = null;
+          try {
+            return await performSave(payload);
+          } catch (retryErr: any) {
+            e = retryErr;
+          }
+        }
+      }
+      
       console.error('Supabase update profile error:', e);
       throw e;
     }

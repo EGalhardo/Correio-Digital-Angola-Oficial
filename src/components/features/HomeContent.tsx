@@ -220,7 +220,7 @@ export function HomeContent({
         <section className={`bg-white border border-slate-100 rounded-[28px] md:rounded-[32px] p-5 md:p-6 shadow-sm flex flex-col group ${isInst ? 'order-1' : ''}`}>
           <div className="flex items-center justify-between mb-5 shrink-0">
              <div className="flex items-center gap-2">
-                <FileText size={16} className="text-emerald-500" />
+                <Mail size={16} className="text-emerald-500" />
                 <h3 className="text-slate-950 font-black text-sm md:text-base italic tracking-tighter">{t("Lidas")}</h3>
              </div>
              <span className="text-[9px] font-black text-slate-400 tracking-widest">Histórico</span>
@@ -241,7 +241,7 @@ export function HomeContent({
         <section className={`bg-white border border-slate-100 rounded-[28px] md:rounded-[32px] p-5 md:p-6 shadow-sm flex flex-col group ${inbox.some(m => m.unread) ? 'md:col-span-2 xl:col-span-1' : ''} ${isInst ? 'order-3' : ''}`}>
           <div className="flex items-center justify-between mb-5 shrink-0">
              <div className="flex items-center gap-2">
-                <Send size={16} className="text-blue-500" />
+                <Mail size={16} className="text-blue-500" />
                 <h3 className="text-slate-950 font-black text-sm md:text-base italic tracking-tighter">{t("Enviadas")}</h3>
              </div>
              <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse" />

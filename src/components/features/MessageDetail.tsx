@@ -1105,6 +1105,237 @@ com assinatura presencial.
     selectedMessage.details?.subject || selectedMessage.preview
   );
 
+  const generatePreviewDataUrl = (fileName: string) => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 800;
+    canvas.height = 600;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return '';
+
+    const protocolNumber = protocol.protocolNumber;
+    const signatureDate = protocol.signatureDate || messageDate;
+    const officialTime = protocol.officialTime || '10:45';
+    const documentHash = protocol.documentHash;
+    const digitalSignature = protocol.digitalSignature || 'RSA-CDA-INTEGRITY-SIGNATURE-KEY-AO';
+
+    const lowerName = fileName.toLowerCase();
+
+    // Background linear gradient
+    const grad = ctx.createLinearGradient(0, 0, 0, 600);
+    grad.addColorStop(0, '#0c2340');
+    grad.addColorStop(1, '#1e293b');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 800, 600);
+
+    // Frame borders
+    ctx.strokeStyle = '#fbbf24';
+    ctx.lineWidth = 6;
+    ctx.strokeRect(20, 20, 760, 560);
+    ctx.strokeStyle = '#3b82f6';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(26, 26, 748, 548);
+
+    // Watermark text rotation
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.03)';
+    ctx.font = 'bold 50px sans-serif';
+    ctx.save();
+    ctx.translate(400, 300);
+    ctx.rotate(-Math.PI / 6);
+    ctx.textAlign = 'center';
+    ctx.fillText('GOVERNO DE ANGOLA', 0, -40);
+    ctx.fillText('DOCUMENTO AUTENTICADO', 0, 40);
+    ctx.restore();
+
+    // Header Texts
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 18px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('REPÚBLICA DE ANGOLA', 400, 70);
+    ctx.font = 'bold 12px sans-serif';
+    ctx.fillStyle = '#fbbf24';
+    ctx.fillText('GOVERNO DIGITAL - CORREIO DIGITAL DE ANGOLA (CDA)', 400, 95);
+    ctx.font = '11px monospace';
+    ctx.fillStyle = '#94a3b8';
+    ctx.fillText('PLATAFORMA NACIONAL DE INTEROPERABILIDADE E EXPEDIENTES', 400, 118);
+
+    // Separator line
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(50, 135);
+    ctx.lineTo(750, 135);
+    ctx.stroke();
+
+    if (lowerName.includes('localizacao') || lowerName.includes('mapa')) {
+      // Dynamic Visual Map rendering for location attachments
+      ctx.fillStyle = '#1e293b';
+      ctx.fillRect(50, 155, 420, 320);
+      ctx.strokeStyle = '#475569';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(50, 155, 420, 320);
+
+      // Render simulated roads/routes
+      ctx.strokeStyle = '#475569';
+      ctx.lineWidth = 6;
+      ctx.beginPath();
+      ctx.moveTo(50, 240); ctx.lineTo(470, 300);
+      ctx.moveTo(160, 155); ctx.lineTo(160, 475);
+      ctx.moveTo(330, 155); ctx.lineTo(330, 475);
+      ctx.moveTo(50, 410); ctx.lineTo(470, 390);
+      ctx.stroke();
+
+      // Highlight route
+      ctx.strokeStyle = '#4f46e5';
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(160, 410); ctx.lineTo(160, 310); ctx.lineTo(330, 310);
+      ctx.stroke();
+
+      // Greenery zones (Parks)
+      ctx.fillStyle = '#065f46';
+      ctx.fillRect(75, 175, 70, 50);
+      ctx.fillStyle = '#10b981';
+      ctx.font = 'bold 9px sans-serif';
+      ctx.fillText('ZONA VERDE', 110, 205);
+
+      // Hospital Pin
+      ctx.fillStyle = '#ef4444';
+      ctx.beginPath();
+      ctx.arc(330, 310, 12, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.arc(330, 310, 5, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Tooltip on Map
+      ctx.fillStyle = '#0f172a';
+      ctx.strokeStyle = '#6366f1';
+      ctx.lineWidth = 1.5;
+      ctx.fillRect(200, 205, 230, 48);
+      ctx.strokeRect(200, 205, 230, 48);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 11px sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText('HOSPITAL GERAL DE LUANDA', 212, 224);
+      ctx.fillStyle = '#818cf8';
+      ctx.font = '9px monospace';
+      ctx.fillText('LAT: 8.8383° S | LON: 13.2658° E', 212, 238);
+
+      // Info sidebar panel
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.04)';
+      ctx.fillRect(490, 155, 260, 320);
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+      ctx.strokeRect(490, 155, 260, 320);
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 13px sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText('INFORMAÇÃO DE LOCALIZAÇÃO', 505, 185);
+
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '10px sans-serif';
+      ctx.fillText('INSTITUIÇÃO RESPONSÁVEL', 505, 215);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 11px sans-serif';
+      ctx.fillText(selectedMessage.org, 505, 228);
+
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '10px sans-serif';
+      ctx.fillText('ENDEREÇO OFICIAL', 505, 258);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 11px sans-serif';
+      ctx.fillText('Distrito da Camama, Luanda, Angola', 505, 271);
+
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '10px sans-serif';
+      ctx.fillText('REFERÊNCIA DE PROTOCOLO', 505, 301);
+      ctx.fillStyle = '#38bdf8';
+      ctx.font = 'bold 11px monospace';
+      ctx.fillText(protocolNumber, 505, 314);
+
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '10px sans-serif';
+      ctx.fillText('DATA DA CERTIFICAÇÃO', 505, 344);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 11px sans-serif';
+      ctx.fillText(`${signatureDate} às ${officialTime}`, 505, 357);
+
+      // Authenticity validation seal
+      ctx.strokeStyle = '#10b981';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(505, 395, 230, 65);
+      ctx.fillStyle = 'rgba(16, 185, 129, 0.05)';
+      ctx.fillRect(505, 395, 230, 65);
+      ctx.fillStyle = '#10b981';
+      ctx.font = 'bold 9px sans-serif';
+      ctx.fillText('✓ CERTIFICAÇÃO JURÍDICA ATIVA', 515, 413);
+      ctx.fillStyle = '#a7f3d0';
+      ctx.font = '8px monospace';
+      ctx.fillText(`HASH: ${documentHash.substring(0, 24)}...`, 515, 428);
+      ctx.fillText('SISTEMA INTEGRADO DE CHAVES PÚBLICAS AO', 515, 442);
+    } else {
+      // General certified file screenshot placeholder
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(80, 160, 640, 310);
+      ctx.strokeStyle = '#475569';
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(80, 160, 640, 310);
+
+      ctx.fillStyle = '#0c2340';
+      ctx.font = 'bold 15px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('RECONHECIMENTO E AUTENTICAÇÃO DIGITAL DE ANEXO', 400, 200);
+
+      ctx.strokeStyle = '#e2e8f0';
+      ctx.beginPath();
+      ctx.moveTo(110, 220); ctx.lineTo(690, 220);
+      ctx.stroke();
+
+      ctx.fillStyle = '#334155';
+      ctx.font = '11px sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText(`Declaramos e certificamos formalmente que o documento anexo registado sob o nome:`, 110, 250);
+      ctx.fillStyle = '#4f46e5';
+      ctx.font = 'bold 12px monospace';
+      ctx.fillText(fileName, 110, 270);
+
+      ctx.fillStyle = '#334155';
+      ctx.font = '11px sans-serif';
+      ctx.fillText(`Faz parte integrante da correspondência emitida pela instituição oficial:`, 110, 305);
+      ctx.font = 'bold 11px sans-serif';
+      ctx.fillText(selectedMessage.org, 110, 320);
+
+      ctx.font = '11px sans-serif';
+      ctx.fillText(`Assunto do expediente:`, 110, 355);
+      ctx.font = 'bold 11px italic sans-serif';
+      ctx.fillText(selectedMessage.details?.subject || selectedMessage.preview, 110, 370);
+
+      // Integrity box
+      ctx.fillStyle = '#f8fafc';
+      ctx.fillRect(110, 395, 580, 55);
+      ctx.strokeStyle = '#cbd5e1';
+      ctx.strokeRect(110, 395, 580, 55);
+
+      ctx.fillStyle = '#0f172a';
+      ctx.font = 'bold 9px monospace';
+      ctx.fillText(`PROTOCOLO: ${protocolNumber}`, 120, 412);
+      ctx.fillText(`DATA: ${signatureDate} ${officialTime}`, 120, 426);
+      ctx.fillStyle = '#059669';
+      ctx.fillText(`HASH DE INTEGRIDADE (SHA256): ${documentHash}`, 120, 440);
+    }
+
+    // Footer block
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = '9px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText(`ASSINATURA DIGITAL CDA: ${digitalSignature}`, 400, 515);
+    ctx.font = 'italic 9px sans-serif';
+    ctx.fillText('Este documento digital possui validade jurídica ao abrigo da regulamentação do Governo de Angola.', 400, 535);
+
+    return canvas.toDataURL('image/png');
+  };
+
   const parsedAttachments = React.useMemo(() => {
     const rawAttachments = selectedMessage.details?.attachments;
     if (!rawAttachments || !Array.isArray(rawAttachments)) return [];
@@ -1224,7 +1455,11 @@ com assinatura presencial.
                       <button
                         type="button"
                         onClick={() => {
-                          setPreviewFile(file);
+                          const fileWithContent = {
+                            ...file,
+                            content: file.content || generatePreviewDataUrl(file.name)
+                          };
+                          setPreviewFile(fileWithContent);
                         }}
                         className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50/50 rounded-xl transition-all border-0 bg-transparent cursor-pointer flex items-center justify-center"
                         title={t("Visualizar documento")}
@@ -2783,7 +3018,11 @@ com assinatura presencial.
                                  <button
                                    type="button"
                                    onClick={() => {
-                                     setPreviewFile(file);
+                                     const fileWithContent = {
+                                        ...file,
+                                        content: file.content || generatePreviewDataUrl(file.name)
+                                      };
+                                      setPreviewFile(fileWithContent);
                                    }}
                                    className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50/50 rounded-xl transition-all border-0 bg-transparent cursor-pointer flex items-center justify-center"
                                    title={t("Visualizar documento")}

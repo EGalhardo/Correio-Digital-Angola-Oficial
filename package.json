@@ -11,6 +11,7 @@
     "lint": "tsc --noEmit",
     "seed:supabase": "tsx scripts/bootstrapSupabase.ts",
     "verify:supabase": "tsx scripts/verifySupabase.ts",
+    "test:interop": "tsx scripts/testInteroperabilidade.ts",
     "production:readiness": "tsx scripts/productionReadiness.ts"
   },
   "dependencies": {
