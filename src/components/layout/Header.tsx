@@ -66,7 +66,7 @@ function LanguageSelectorDropdown({
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-1.5 px-3.5 py-2 rounded-full hover:bg-slate-100/50 transition-all border border-slate-200 bg-white text-[#0c2340] font-black shadow-xs active:scale-98"
+        className="flex items-center gap-1.5 px-3.5 py-2 rounded-full hover:bg-slate-100/50 transition-all bg-white text-[#0c2340] font-black active:scale-98"
         style={{ cursor: 'pointer' }}
       >
         <Globe size={16} className="text-[#0055ff] shrink-0" strokeWidth={2.4} />
@@ -264,8 +264,8 @@ export function Header({
             onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
             className={`h-8 w-8 rounded-full flex items-center justify-center cursor-pointer focus:outline-none transition-all duration-300 ${
               theme === 'light' 
-                ? 'bg-white border border-[#E2E8F0] hover:bg-slate-50' 
-                : 'bg-[#141d31] border border-[#263455] hover:bg-[#1e293b]'
+                ? 'bg-white hover:bg-slate-50' 
+                : 'bg-[#141d31] hover:bg-[#1e293b]'
             }`}
             title={theme === 'light' ? 'Mudar para Modo Escuro' : 'Mudar para Modo Claro'}
             style={{ cursor: 'pointer' }}
@@ -340,12 +340,12 @@ export function Header({
                   height: '2rem',
                   borderRadius: '9999px',
                   objectFit: 'cover',
-                  border: '1px solid #e2e8f0',
+                  border: '0.5px solid #e2e8f0',
                   marginLeft: '0.25rem',
                   cursor: 'pointer',
                   transition: 'all 0.2s',
                 }}
-                className="ring-2 ring-primary/5 hover:ring-primary/20"
+                className="ring-1 ring-primary/5 hover:ring-primary/15"
               />
             ) : null}
             {notifications.length > 0 && (
@@ -383,10 +383,10 @@ export function Header({
           <button
             type="button"
             onClick={onClickConnectivity}
-            className={`flex items-center gap-2 px-4 py-1.5 rounded-full border text-[11px] font-black uppercase tracking-wider transition-all pointer-events-auto cursor-pointer ${
+            className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-[11px] font-black uppercase tracking-wider transition-all pointer-events-auto cursor-pointer ${
               isOnline 
-                ? 'bg-[#e6fdf5] text-[#00925d] border-[#bbf7e1] hover:bg-[#d8f9ed] shadow-[0_0_12px_rgba(0,221,130,0.25)]' 
-                : 'bg-amber-50 text-amber-900 border-amber-200 hover:bg-amber-100 animate-pulse'
+                ? 'bg-transparent text-[#00925d]' 
+                : 'border border-amber-200 bg-amber-50 text-amber-900 hover:bg-amber-100 animate-pulse'
             }`}
             style={{ cursor: 'pointer' }}
           >
@@ -397,7 +397,7 @@ export function Header({
                   <span className="animate-ping absolute inline-flex h-6 w-6 rounded-full bg-[#00dd82]/30 opacity-40" style={{ animationDelay: '0.4s' }}></span>
                 </>
               )}
-              <span className={`relative inline-flex rounded-full h-2.5 w-2.5 ${isOnline ? 'bg-[#00dd82] shadow-[0_0_8px_#00dd82]' : 'bg-amber-500'}`}></span>
+              <span className={`relative inline-flex rounded-full h-2.5 w-2.5 ${isOnline ? 'bg-[#00dd82]' : 'bg-amber-500'}`}></span>
             </div>
             <span>{isOnline ? 'Online' : 'Offline'}</span>
             {offlineQueueLength > 0 && (
@@ -415,8 +415,8 @@ export function Header({
             onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
             className={`h-9 w-9 rounded-full flex items-center justify-center cursor-pointer focus:outline-none transition-all duration-300 ${
               theme === 'light' 
-                ? 'bg-white border border-[#E2E8F0] hover:bg-slate-50' 
-                : 'bg-[#141d31] border border-[#263455] hover:bg-[#1e293b]'
+                ? 'bg-white hover:bg-slate-50' 
+                : 'bg-[#141d31] hover:bg-[#1e293b]'
             }`}
             title={theme === 'light' ? 'Mudar para Modo Escuro' : 'Mudar para Modo Claro'}
             style={{ cursor: 'pointer' }}
@@ -491,10 +491,10 @@ export function Header({
                   height: '2.5rem',
                   borderRadius: '9999px',
                   objectFit: 'cover',
-                  border: '2px solid white',
+                  border: '1px solid #e2e8f0',
                   cursor: 'pointer',
                 }}
-                className="ring-2 ring-primary/10 hover:ring-primary/30 shadow-sm transition-all"
+                className="ring-1 ring-primary/5 hover:ring-primary/15 shadow-xs transition-all"
               />
             ) : null}
             {notifications.length > 0 && (
